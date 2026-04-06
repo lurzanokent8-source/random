@@ -2,196 +2,130 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKER_AI_OS // v4.0</title>
+    <title>MAJESTIC_HACKER_AI</title>
     <style>
-        :root { --neon: #00f2ff; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        
-        /* Smooth Transitions */
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.5s ease forwards; }
-        .active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --neon: #00f2ff; --bg: #020202; --panel: rgba(20, 20, 20, 0.8); }
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* Glass UI Boxes */
-        .glass-card { background: var(--glass); border: 1px solid rgba(0, 242, 255, 0.2); backdrop-filter: blur(15px); padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 350px; }
-        input { background: rgba(0,0,0,0.5); border: 1px solid var(--neon); color: var(--neon); padding: 12px; border-radius: 5px; width: 90%; margin: 10px 0; outline: none; font-family: monospace; }
-        button { background: var(--neon); color: #000; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        button:hover { box-shadow: 0 0 20px var(--neon); transform: translateY(-2px); }
+        /* Background Glow Effect */
+        body::before { content: ''; position: absolute; width: 300px; height: 300px; background: var(--neon); filter: blur(150px); opacity: 0.1; top: -100px; left: -100px; z-index: -1; }
 
-        /* Chat Layout */
-        .chat-window { width: 95%; height: 90%; max-width: 1200px; background: var(--glass); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        .top-bar { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
-        .chat-log { flex-grow: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
-        
-        /* Message Bubbles */
-        .msg { padding: 15px 20px; border-radius: 15px; max-width: 75%; line-height: 1.6; font-size: 15px; position: relative; }
-        .user { align-self: flex-end; background: var(--neon); color: #000; font-weight: 500; border-bottom-right-radius: 2px; }
-        .ai { align-self: flex-start; background: rgba(255,255,255,0.08); border-left: 4px solid var(--neon); border-bottom-left-radius: 2px; }
-        
-        /* Thinking Mode Styles */
-        .thinking-box { font-style: italic; color: #888; font-size: 13px; margin-bottom: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px dashed #444; }
+        .screen { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transform: scale(0.98); }
+        .active { display: flex; opacity: 1; transform: scale(1); }
 
-        /* The Thinking Switch */
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        /* Majestic Login Card */
+        .login-card { background: var(--panel); border: 1px solid rgba(0, 242, 255, 0.3); backdrop-filter: blur(20px); padding: 50px; border-radius: 20px; text-align: center; box-shadow: 0 0 50px rgba(0, 242, 255, 0.1); }
+        input { background: rgba(0,0,0,0.6); border: 1px solid #333; color: var(--neon); padding: 15px; border-radius: 10px; width: 280px; outline: none; margin-bottom: 20px; font-family: monospace; text-align: center; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+        button { background: var(--neon); color: #000; border: none; padding: 15px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; letter-spacing: 2px; }
+        button:hover { transform: translateY(-3px); box-shadow: 0 5px 20px var(--neon); }
+
+        /* Main Majestic Chat UI */
+        .app-container { width: 95%; height: 90%; display: flex; gap: 20px; }
+        .sidebar { width: 250px; background: var(--panel); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 20px; display: flex; flex-direction: column; }
+        .main-chat { flex-grow: 1; background: var(--panel); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; overflow: hidden; }
+        
+        .chat-log { flex-grow: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 20px; }
+        .msg { padding: 18px 25px; border-radius: 18px; max-width: 80%; font-size: 15px; line-height: 1.6; animation: slideIn 0.4s ease forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .user { align-self: flex-end; background: linear-gradient(135deg, var(--neon), #00a2ff); color: #000; font-weight: 500; border-bottom-right-radius: 2px; }
+        .ai { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-bottom-left-radius: 2px; }
+
+        .think-trace { color: #888; font-size: 13px; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 2px solid var(--neon); }
+
+        .input-box { padding: 25px; background: rgba(0,0,0,0.4); display: flex; gap: 15px; align-items: center; }
+        .input-box input { flex-grow: 1; margin: 0; text-align: left; background: transparent; border: none; border-bottom: 1px solid #333; border-radius: 0; }
+        
+        /* Toggle Switch */
+        .toggle-group { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #666; }
+        .switch { position: relative; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; border: 1px solid var(--neon); }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: var(--neon); transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: rgba(0, 242, 255, 0.2); }
-        input:checked + .slider:before { transform: translateX(24px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; border-radius: 20px; border: 1px solid var(--neon); }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: var(--neon); border-radius: 50%; }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
 
 <div id="loginScreen" class="screen active">
-    <div class="glass-card">
-        <h1 style="color:var(--neon); letter-spacing: 5px; margin-bottom: 5px;">HACKER_AI</h1>
-        <p style="font-size: 10px; color: #666; margin-bottom: 20px;">ENCRYPTED SESSION v4.0</p>
-        <input type="password" id="authPass" placeholder="ENTER ACCESS KEY">
-        <button onclick="login()">Initialize</button>
-        <p id="loginError" style="color:#ff4444; font-size: 12px; margin-top: 15px; display: none;">ACCESS_DENIED: INVALID_KEY</p>
-    </div>
-</div>
-
-<div id="masterPanel" class="screen">
-    <div class="glass-card">
-        <h2 style="color:var(--neon)">MASTER CONTROL</h2>
-        <p style="font-size: 13px;">Generate access keys for your team.</p>
-        <button onclick="generateKey()">Generate New Key</button>
-        <div id="keyDisplay" style="margin:20px; font-family: monospace; font-size: 18px; color: #fff;"></div>
-        <button onclick="enterChat()" style="background: #fff; color: #000;">Enter Chat Console</button>
+    <div class="login-card">
+        <h1 style="letter-spacing: 8px; color: var(--neon);">OS_INVOKE</h1>
+        <p style="color: #555; margin-bottom: 30px;">BIOMETRIC OR KEY BYPASS REQUIRED</p>
+        <input type="password" id="pass" placeholder="ACCESS_CODE">
+        <br>
+        <button onclick="auth()">INITIALIZE</button>
     </div>
 </div>
 
 <div id="chatScreen" class="screen">
-    <div class="chat-window">
-        <div class="top-bar">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 10px; height: 10px; background: #0f0; border-radius: 50%; box-shadow: 0 0 10px #0f0;"></div>
-                <span id="statusHeader" style="color:var(--neon); font-size: 14px; font-weight: bold;">CORE: ONLINE</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 12px; color: #888;">THINKING MODE</span>
-                <label class="switch">
-                    <input type="checkbox" id="thinkToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
+    <div class="app-container">
+        <div class="sidebar">
+            <h3 style="color: var(--neon); font-size: 14px;">SESSION_LOGS</h3>
+            <div style="flex-grow: 1; color: #444; font-size: 12px;">No previous records...</div>
+            <button onclick="location.reload()" style="background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 10px;">PURGE_SESSION</button>
         </div>
-
-        <div class="chat-log" id="chatLog">
-            <div class="msg ai">System initialized. Awaiting commands...</div>
-        </div>
-
-        <div style="padding: 20px; display: flex; gap: 10px; background: rgba(0,0,0,0.3);">
-            <input type="text" id="userInput" placeholder="Execute command..." style="flex-grow: 1; margin: 0; font-size: 14px;">
-            <button onclick="send()" id="sendBtn">SEND</button>
+        <div class="main-chat">
+            <div class="chat-log" id="log"></div>
+            <div class="input-box">
+                <div class="toggle-group">
+                    <span>THINK</span>
+                    <label class="switch"><input type="checkbox" id="think"><span class="slider"></span></label>
+                </div>
+                <input type="text" id="userInput" placeholder="Type a command..." autocomplete="off">
+                <button onclick="send()" style="padding: 10px 20px;">EXEC</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- CONFIG ---
-    const OWNER_KEY = "admin"; // Your personal login
-    const GUEST_KEYS = ["PRO-PLAYER", "HACKER-777"]; // Other keys that work
-    const OLLAMA_URL = "http://localhost:11434/api/chat";
-
-    // --- NAVIGATION ---
-    function login() {
-        const pass = document.getElementById('authPass').value;
-        const err = document.getElementById('loginError');
-        
-        if (pass === OWNER_KEY) {
-            showScreen('masterPanel');
-        } else if (GUEST_KEYS.includes(pass)) {
-            showScreen('chatScreen');
-            document.getElementById('statusHeader').innerText = "CORE: GUEST_ACCESS";
-        } else {
-            err.style.display = 'block';
-            setTimeout(() => { err.style.display = 'none'; }, 2000);
+    function auth() {
+        if(document.getElementById('pass').value === "admin") {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('chatScreen').classList.add('active');
         }
     }
 
-    function generateKey() {
-        const newKey = "HKR-" + Math.floor(1000 + Math.random() * 9000);
-        GUEST_KEYS.push(newKey);
-        document.getElementById('keyDisplay').innerText = newKey;
-    }
-
-    function enterChat() {
-        showScreen('chatScreen');
-    }
-
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    // --- AI CHAT LOGIC ---
     async function send() {
         const input = document.getElementById('userInput');
-        const log = document.getElementById('chatLog');
-        const btn = document.getElementById('sendBtn');
-        const isThinking = document.getElementById('thinkToggle').checked;
-        const text = input.value.trim();
+        const chatLog = document.getElementById('log');
+        const val = input.value;
+        if(!val) return;
 
-        if (!text) return;
-
-        // Add User Message
         input.value = '';
-        log.innerHTML += `<div class="msg user">${text}</div>`;
-        log.scrollTop = log.scrollHeight;
+        chatLog.innerHTML += `<div class="msg user">${val}</div>`;
+        chatLog.scrollTop = chatLog.scrollHeight;
 
-        // Create AI Placeholder
-        const aiBubble = document.createElement('div');
-        aiBubble.className = 'msg ai';
-        aiBubble.innerText = "...";
-        log.appendChild(aiBubble);
-        log.scrollTop = log.scrollHeight;
-
-        // Pick Model
-        // Normal Mode = Llama 3.2 (Fast)
-        // Thinking Mode = DeepSeek R1 (Smart)
-        const modelName = isThinking ? "deepseek-r1:1.5b" : "llama3.2";
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'msg ai';
+        aiMsg.innerHTML = '<i>Processing...</i>';
+        chatLog.appendChild(aiMsg);
 
         try {
-            btn.disabled = true;
-            const response = await fetch(OLLAMA_URL, {
+            const res = await fetch('http://localhost:11434/api/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: modelName,
-                    messages: [{ role: "user", content: text }],
+                    model: "deepseek-r1:1.5b",
+                    messages: [{role: "user", content: val}],
                     stream: false
                 })
             });
+            const data = await res.json();
+            aiMsg.innerHTML = '';
 
-            const data = await response.json();
-            aiBubble.innerText = ""; // Clear "..."
-
-            // Display Thinking if it exists
-            if (data.message.reasoning || data.message.thinking) {
-                const thought = data.message.reasoning || data.message.thinking;
-                aiBubble.innerHTML += `<div class="thinking-box">Thought: ${thought}</div>`;
+            if(data.message.reasoning) {
+                aiMsg.innerHTML += `<div class="think-trace">THOUGHT: ${data.message.reasoning}</div>`;
             }
-
-            aiBubble.innerHTML += `<div>${data.message.content}</div>`;
-
-        } catch (error) {
-            aiBubble.style.color = "#ff4444";
-            aiBubble.innerText = "ERROR: SYSTEM_OFFLINE. Ensure Ollama is running and OLLAMA_ORIGINS is set to *";
-            console.error(error);
-        } finally {
-            btn.disabled = false;
-            log.scrollTop = log.scrollHeight;
+            aiMsg.innerHTML += `<div>${data.message.content}</div>`;
+        } catch (e) {
+            aiMsg.innerHTML = '<span style="color:red">CONNECTION_LOST: Run Ollama with OLLAMA_ORIGINS="*"</span>';
         }
+        chatLog.scrollTop = chatLog.scrollHeight;
     }
 
-    // Enter Key Listener
-    document.getElementById('userInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') send();
-    });
+    document.getElementById('userInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') send(); });
 </script>
-
 </body>
 </html>
