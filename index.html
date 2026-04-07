@@ -3,892 +3,851 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OS_INVOKE</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<title>NexusAI — Powered by GLM-4.5-Flash</title>
 <style>
-:root {
-  --neon: #00f5d4;
-  --neon2: #00b4d8;
-  --bg: #060810;
-  --panel: rgba(8, 12, 24, 0.85);
-  --border: rgba(0, 245, 212, 0.15);
-  --border-hot: rgba(0, 245, 212, 0.5);
-  --text: #c8d8e8;
-  --text-dim: #4a6070;
-  --danger: #ff3d6b;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070f;--surface:#10101e;--surface2:#181830;--surface3:#1e1e38;
+  --accent:#7c6aff;--accent2:#a855f7;--border:rgba(124,106,255,0.15);
+  --border2:rgba(255,255,255,0.07);--text:#eeeeff;--muted:#7777aa;
+  --green:#22d3a5;--red:#ff5577;--gold:#fbbf24;
+  --r:14px;--font:'Segoe UI',system-ui,sans-serif;
 }
+body{font-family:var(--font);background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;display:flex;flex-direction:column}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ===== SCREENS ===== */
+.screen{display:none;flex:1;overflow:hidden}
+.screen.active{display:flex;flex-direction:column}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
-  overflow: hidden;
-  height: 100vh;
-  cursor: default;
+/* ===== LOGIN SCREEN ===== */
+#login-screen{align-items:center;justify-content:center;background:var(--bg)}
+.login-box{
+  width:100%;max-width:420px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:40px 36px;
+  display:flex;flex-direction:column;gap:24px;
+  margin:20px;
 }
+.login-logo{text-align:center}
+.logo-ring{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+}
+.logo-ring svg{width:34px;height:34px;fill:white}
+.login-logo h1{font-size:24px;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-logo p{font-size:13px;color:var(--muted);margin-top:4px}
+.tab-row{display:flex;gap:6px;background:var(--surface2);border-radius:10px;padding:4px}
+.tab-btn{flex:1;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
+.tab-btn.active{background:var(--accent);color:white}
+.input-group{display:flex;flex-direction:column;gap:6px}
+.input-group label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.inp{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:10px;padding:11px 14px;
+  font-size:14px;color:var(--text);font-family:var(--font);
+  outline:none;transition:border-color .15s;width:100%;
+}
+.inp:focus{border-color:var(--accent)}
+.inp::placeholder{color:var(--muted)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:10px;padding:12px;
+  font-size:15px;font-weight:700;color:white;cursor:pointer;
+  transition:opacity .15s;letter-spacing:.3px;
+}
+.btn-primary:hover{opacity:.88}
+.err-msg{font-size:13px;color:var(--red);text-align:center;display:none;padding:8px;background:rgba(255,85,119,.1);border-radius:8px;border:1px solid rgba(255,85,119,.2)}
 
-/* ── CANVAS BACKGROUND ── */
-#bg-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.4;
+/* ===== OWNER PANEL ===== */
+#owner-screen{flex-direction:row}
+.sidebar{
+  width:240px;min-width:240px;
+  background:var(--surface);
+  border-right:1px solid var(--border2);
+  display:flex;flex-direction:column;
+  padding:20px 0;
 }
+.sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border2);margin-bottom:12px}
+.sidebar-logo h2{font-size:16px;font-weight:700;color:var(--accent)}
+.sidebar-logo p{font-size:11px;color:var(--muted)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;font-weight:500;
+  cursor:pointer;color:var(--muted);transition:all .15s;
+  border-left:3px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--accent);background:rgba(124,106,255,.08);border-left-color:var(--accent)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border2)}
+.owner-badge{display:flex;align-items:center;gap:10px}
+.badge-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.badge-info p{font-size:13px;font-weight:600}
+.badge-info span{font-size:11px;color:var(--gold)}
 
-/* ── SCANLINES ── */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.08) 2px,
-    rgba(0,0,0,0.08) 4px
-  );
-}
+.main-panel{flex:1;overflow-y:auto;padding:30px;background:var(--bg)}
+.main-panel::-webkit-scrollbar{width:4px}
+.main-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.panel-section{display:none}
+.panel-section.active{display:block}
+.section-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
 
-/* ── SCREEN SYSTEM ── */
-.screen {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.6s ease;
-}
-.screen.active {
-  opacity: 1;
-  pointer-events: all;
-}
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:18px}
+.stat-card .label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.stat-card .value{font-size:26px;font-weight:700}
+.stat-card.blue .value{color:var(--accent)}
+.stat-card.green .value{color:var(--green)}
+.stat-card.gold .value{color:var(--gold)}
+.stat-card.red .value{color:var(--red)}
 
-/* ══════════════════════════════════
-   LOGIN SCREEN
-══════════════════════════════════ */
-.login-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
-}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-bottom:18px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card h3 svg{width:16px;height:16px;color:var(--accent)}
 
-.logo-block {
-  text-align: center;
-  position: relative;
+/* Generate key */
+.gen-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.gen-row .input-group{flex:1;min-width:140px}
+.btn-accent{
+  background:var(--accent);border:none;border-radius:10px;
+  padding:11px 18px;font-size:13px;font-weight:600;color:white;cursor:pointer;transition:opacity .15s;white-space:nowrap;
 }
+.btn-accent:hover{opacity:.85}
+.btn-danger{background:rgba(255,85,119,.15);border:1px solid rgba(255,85,119,.3);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--red);cursor:pointer;transition:all .15s}
+.btn-danger:hover{background:rgba(255,85,119,.25)}
+.btn-small{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:5px 11px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
+.btn-small:hover{color:var(--text);border-color:var(--accent)}
 
-.logo-title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 42px;
-  font-weight: 900;
-  letter-spacing: 12px;
-  color: var(--neon);
-  text-shadow: 0 0 30px rgba(0,245,212,0.6), 0 0 60px rgba(0,245,212,0.2);
-  animation: glitch-title 6s infinite;
-  position: relative;
+/* Key list */
+.key-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.key-list::-webkit-scrollbar{width:3px}
+.key-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.key-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:10px;padding:11px 14px;
 }
+.key-item.used{border-color:rgba(34,211,165,.2);background:rgba(34,211,165,.04)}
+.key-item.expired{opacity:.5}
+.key-code{font-family:monospace;font-size:13px;color:var(--accent);flex:1;letter-spacing:.5px}
+.key-meta{font-size:11px;color:var(--muted)}
+.key-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.key-status.active{background:rgba(34,211,165,.15);color:var(--green)}
+.key-status.used{background:rgba(124,106,255,.15);color:var(--accent)}
+.key-status.expired{background:rgba(255,85,119,.1);color:var(--red)}
 
-@keyframes glitch-title {
-  0%,94%,100% { clip-path: none; transform: none; }
-  95% { clip-path: inset(30% 0 40% 0); transform: translateX(-4px); color: var(--danger); }
-  96% { clip-path: inset(60% 0 10% 0); transform: translateX(4px); color: var(--neon2); }
-  97% { clip-path: none; transform: none; color: var(--neon); }
-}
+/* API config */
+.api-row{display:flex;gap:10px}
+.api-row .inp{flex:1;font-family:monospace;font-size:13px}
 
-.logo-sub {
-  font-size: 10px;
-  letter-spacing: 6px;
-  color: var(--text-dim);
-  margin-top: 8px;
-}
+/* Settings */
+.settings-group{display:flex;flex-direction:column;gap:14px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--surface2);border-radius:10px;border:1px solid var(--border2)}
+.setting-row label{font-size:14px;font-weight:500}
+.setting-row span{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:999px;cursor:pointer;transition:.2s}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
+.toggle input:checked + .toggle-slider{background:var(--accent)}
+.toggle input:checked + .toggle-slider:before{transform:translateX(20px);background:white}
 
-.login-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(30px);
-  padding: 48px 56px;
-  border-radius: 4px;
-  position: relative;
-  min-width: 380px;
+/* ===== CHAT SCREEN ===== */
+#chat-screen{flex-direction:column;height:100dvh}
+.chat-header{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 18px;background:var(--surface);
+  border-bottom:1px solid var(--border2);flex-shrink:0;
 }
+.chat-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-avatar svg{width:18px;height:18px;fill:white}
+.chat-info h2{font-size:15px;font-weight:600}
+.chat-info p{font-size:12px;color:var(--green)}
+.chat-header-actions{margin-left:auto;display:flex;gap:8px}
+.icon-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icon-btn:hover{color:var(--text);border-color:var(--border)}
 
-/* corner decorations */
-.login-card::before, .login-card::after {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-color: var(--neon);
-  border-style: solid;
-}
-.login-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-.login-card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.model-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(124,106,255,.15);color:var(--accent);border:1px solid rgba(124,106,255,.25)}
 
-.login-label {
-  font-size: 9px;
-  letter-spacing: 4px;
-  color: var(--text-dim);
-  margin-bottom: 12px;
-}
+#messages{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+#messages::-webkit-scrollbar{width:4px}
+#messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-.login-input-wrap {
-  position: relative;
-  margin-bottom: 28px;
-}
+.msg{display:flex;gap:10px;max-width:78%;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg.ai{align-self:flex-start}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.msg.user .msg-av{background:var(--accent);color:white}
+.msg.ai .msg-av{background:var(--surface2);color:var(--accent);font-size:15px}
+.bubble{padding:10px 15px;border-radius:16px;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.msg.user .bubble{background:var(--accent);color:white;border-bottom-right-radius:4px}
+.msg.ai .bubble{background:var(--surface);color:var(--text);border:1px solid var(--border2);border-bottom-left-radius:4px}
 
-.login-input-wrap::before {
-  content: '//';
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--neon);
-  font-size: 13px;
-  opacity: 0.7;
-}
+.typing .bubble{display:flex;gap:5px;align-items:center;padding:14px 16px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bonce 1.2s infinite ease-in-out}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes bonce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 
-input[type="password"], input[type="text"] {
-  font-family: 'JetBrains Mono', monospace;
-}
+#welcome-msg{margin:auto;text-align:center;padding:30px 20px}
+#welcome-msg .icon{width:60px;height:60px;background:rgba(124,106,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid rgba(124,106,255,.2)}
+#welcome-msg .icon svg{width:28px;height:28px;fill:var(--accent)}
+#welcome-msg h2{font-size:20px;font-weight:700;margin-bottom:8px}
+#welcome-msg p{font-size:13px;color:var(--muted);margin-bottom:20px;max-width:300px;margin-left:auto;margin-right:auto}
+.suggestions{display:flex;flex-direction:column;gap:7px;max-width:320px;margin:0 auto}
+.sug{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;transition:all .15s}
+.sug:hover{border-color:var(--accent);background:rgba(124,106,255,.08)}
 
-.l-input {
-  width: 100%;
-  background: rgba(0, 245, 212, 0.03);
-  border: 1px solid var(--border);
-  color: var(--neon);
-  padding: 14px 14px 14px 44px;
-  font-size: 14px;
-  letter-spacing: 3px;
-  outline: none;
-  border-radius: 2px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-.l-input:focus {
-  border-color: var(--border-hot);
-  box-shadow: 0 0 20px rgba(0,245,212,0.1), inset 0 0 20px rgba(0,245,212,0.02);
-}
-.l-input::placeholder { color: var(--text-dim); letter-spacing: 2px; }
+.chat-footer{padding:12px 14px;background:var(--surface);border-top:1px solid var(--border2);flex-shrink:0}
+.input-wrap{display:flex;gap:8px;align-items:flex-end;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:8px 8px 8px 14px;transition:border-color .15s}
+.input-wrap:focus-within{border-color:rgba(124,106,255,.4)}
+#msg-in{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--text);font-family:var(--font);resize:none;max-height:110px;line-height:1.5;padding:3px 0}
+#msg-in::placeholder{color:var(--muted)}
+.send-btn{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+.send-btn:hover{opacity:.85}
+.send-btn svg{width:16px;height:16px;fill:white}
+.send-btn:disabled{opacity:.4;cursor:not-allowed}
+.footer-info{display:flex;justify-content:center;margin-top:7px}
+.footer-info span{font-size:11px;color:var(--muted)}
 
-.auth-btn {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--border-hot);
-  color: var(--neon);
-  padding: 14px;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 6px;
-  cursor: pointer;
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-  transition: color 0.3s;
-}
-.auth-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--neon);
-  transform: translateX(-101%);
-  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-  z-index: 0;
-}
-.auth-btn:hover::before { transform: translateX(0); }
-.auth-btn:hover { color: #000; }
-.auth-btn span { position: relative; z-index: 1; }
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);z-index:999;animation:slideIn .2s ease;pointer-events:none}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.status-dots {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 28px;
-}
-.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); }
-.dot.live { background: var(--neon); animation: pulse-dot 2s infinite; }
-@keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-
-.err-msg {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--danger);
-  text-align: center;
-  margin-top: 14px;
-  height: 14px;
-  transition: opacity 0.3s;
-}
-
-
-/* ══════════════════════════════════
-   MAIN CHAT APP
-══════════════════════════════════ */
-.app-container {
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  grid-template-rows: 48px 1fr;
-}
-
-/* ── TOP BAR ── */
-.topbar {
-  grid-column: 1 / -1;
-  background: rgba(6,8,16,0.95);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 20px;
-}
-
-.topbar-brand {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 5px;
-  color: var(--neon);
-}
-
-.topbar-sep { width: 1px; height: 20px; background: var(--border); }
-
-.topbar-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-}
-.status-led { width: 6px; height: 6px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px #00ff88; animation: pulse-dot 2s infinite; }
-
-.topbar-spacer { flex: 1; }
-
-.topbar-time {
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-}
-
-.topbar-close {
-  background: transparent;
-  border: 1px solid rgba(255,61,107,0.3);
-  color: var(--danger);
-  padding: 4px 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-.topbar-close:hover { background: rgba(255,61,107,0.1); box-shadow: 0 0 10px rgba(255,61,107,0.2); }
-
-/* ── SIDEBAR ── */
-.sidebar {
-  background: rgba(6,8,16,0.9);
-  border-right: 1px solid var(--border);
-  padding: 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow: hidden;
-}
-
-.sidebar-section-label {
-  font-size: 8px;
-  letter-spacing: 4px;
-  color: var(--text-dim);
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-item {
-  padding: 10px 12px;
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-  border: 1px solid transparent;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.sidebar-item:hover { border-color: var(--border); color: var(--text); }
-.sidebar-item.current { border-color: var(--border-hot); color: var(--neon); }
-
-.sidebar-item-icon {
-  width: 6px; height: 6px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.sidebar-item.current .sidebar-item-icon {
-  background: var(--neon);
-  box-shadow: 0 0 6px var(--neon);
-}
-
-.sidebar-spacer { flex: 1; }
-
-.model-badge {
-  background: rgba(0,245,212,0.05);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 10px 12px;
-}
-.model-badge-label { font-size: 8px; letter-spacing: 3px; color: var(--text-dim); margin-bottom: 5px; }
-.model-badge-name { font-size: 10px; color: var(--neon); letter-spacing: 1px; }
-
-/* ── CHAT AREA ── */
-.chat-main {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.chat-log {
-  flex: 1;
-  overflow-y: auto;
-  padding: 28px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  scroll-behavior: smooth;
-}
-
-/* custom scrollbar */
-.chat-log::-webkit-scrollbar { width: 4px; }
-.chat-log::-webkit-scrollbar-track { background: transparent; }
-.chat-log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.chat-log::-webkit-scrollbar-thumb:hover { background: var(--border-hot); }
-
-/* ── MESSAGES ── */
-.msg-row {
-  display: flex;
-  gap: 14px;
-  animation: msg-in 0.35s cubic-bezier(0.2,0,0,1) both;
-}
-@keyframes msg-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.msg-row.user { flex-direction: row-reverse; }
-
-.msg-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 2px;
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  letter-spacing: 1px;
-  color: var(--neon);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.msg-row.user .msg-avatar {
-  background: rgba(0,245,212,0.08);
-  border-color: var(--border-hot);
-}
-.msg-row.ai .msg-avatar {
-  background: rgba(0,180,216,0.05);
-}
-
-.msg-body { max-width: 72%; display: flex; flex-direction: column; gap: 6px; }
-.msg-row.user .msg-body { align-items: flex-end; }
-
-.msg-meta {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-}
-
-.msg-bubble {
-  padding: 14px 18px;
-  border-radius: 2px;
-  font-size: 13px;
-  line-height: 1.7;
-  border: 1px solid var(--border);
-  position: relative;
-}
-
-.msg-row.user .msg-bubble {
-  background: rgba(0,245,212,0.07);
-  border-color: rgba(0,245,212,0.25);
-  color: var(--neon);
-}
-.msg-row.ai .msg-bubble {
-  background: rgba(255,255,255,0.02);
-  color: var(--text);
-}
-
-/* think trace */
-.think-trace {
-  background: rgba(0,0,0,0.5);
-  border: 1px solid rgba(0,245,212,0.1);
-  border-left: 2px solid var(--neon);
-  border-radius: 2px;
-  padding: 10px 14px;
-  font-size: 11px;
-  color: #4a7080;
-  line-height: 1.6;
-  margin-bottom: 8px;
-}
-.think-trace-label {
-  font-size: 8px;
-  letter-spacing: 3px;
-  color: var(--neon);
-  opacity: 0.5;
-  margin-bottom: 6px;
-}
-
-/* typing indicator */
-.typing-indicator {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  padding: 14px 18px;
-}
-.typing-indicator span {
-  width: 6px; height: 6px;
-  background: var(--neon);
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: blink 1.2s infinite;
-}
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes blink { 0%,80%,100%{opacity:0.2;} 40%{opacity:1;} }
-
-/* welcome */
-.welcome-block {
-  text-align: center;
-  padding: 60px 20px;
-  animation: msg-in 0.6s ease both;
-}
-.welcome-ascii {
-  font-size: 11px;
-  color: var(--text-dim);
-  line-height: 1.4;
-  margin-bottom: 24px;
-}
-.welcome-title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
-  color: var(--neon);
-  letter-spacing: 6px;
-  margin-bottom: 10px;
-}
-.welcome-sub { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); }
-
-/* ── INPUT BAR ── */
-.input-bar {
-  background: rgba(6,8,16,0.95);
-  border-top: 1px solid var(--border);
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.think-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
-}
-.think-toggle-label {
-  font-size: 8px;
-  letter-spacing: 3px;
-  color: var(--text-dim);
-  transition: color 0.2s;
-}
-.think-toggle.on .think-toggle-label { color: var(--neon); }
-
-.toggle-track {
-  width: 36px;
-  height: 18px;
-  background: rgba(0,0,0,0.6);
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  position: relative;
-  transition: border-color 0.2s;
-}
-.think-toggle.on .toggle-track { border-color: var(--neon); box-shadow: 0 0 8px rgba(0,245,212,0.2); }
-
-.toggle-thumb {
-  width: 10px;
-  height: 10px;
-  background: var(--text-dim);
-  border-radius: 50%;
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  transition: transform 0.2s, background 0.2s;
-}
-.think-toggle.on .toggle-thumb { transform: translateX(18px); background: var(--neon); }
-
-/* hidden checkbox */
-#think { display: none; }
-
-.chat-input-wrap {
-  flex: 1;
-  position: relative;
-}
-.chat-input-wrap::before {
-  content: '>';
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--neon);
-  font-size: 13px;
-  opacity: 0.6;
-}
-
-.c-input {
-  width: 100%;
-  background: rgba(0,245,212,0.02);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 12px 14px 12px 34px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  outline: none;
-  border-radius: 2px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.c-input:focus {
-  border-color: var(--border-hot);
-  box-shadow: 0 0 15px rgba(0,245,212,0.06);
-}
-.c-input::placeholder { color: var(--text-dim); }
-
-.exec-btn {
-  background: transparent;
-  border: 1px solid var(--border-hot);
-  color: var(--neon);
-  padding: 12px 22px;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  cursor: pointer;
-  border-radius: 2px;
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-  transition: color 0.3s;
-}
-.exec-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--neon);
-  transform: translateX(-101%);
-  transition: transform 0.3s;
-}
-.exec-btn:hover::before { transform: translateX(0); }
-.exec-btn:hover { color: #000; }
-.exec-btn span { position: relative; z-index: 1; }
-
-/* connection error */
-.conn-err { color: var(--danger); font-size: 12px; }
+select.inp option{background:var(--surface2)}
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-
-<!-- ════════════ LOGIN ════════════ -->
-<div id="loginScreen" class="screen active">
-  <div class="login-wrap">
-    <div class="logo-block">
-      <div class="logo-title">OS_INVOKE</div>
-      <div class="logo-sub">NEURAL INTERFACE v4.2.1 — CLASSIFIED</div>
-    </div>
-    <div class="login-card">
-      <div class="login-label">AUTHENTICATION REQUIRED</div>
-      <div class="login-input-wrap">
-        <input class="l-input" type="password" id="pass" placeholder="ACCESS_CODE" autocomplete="off">
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="screen active" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-ring">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg>
       </div>
-      <button class="auth-btn" onclick="auth()"><span>INITIALIZE SESSION</span></button>
-      <div id="err-msg" class="err-msg"></div>
-      <div class="status-dots">
-        <div class="dot live"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot live"></div>
+      <h1>NexusAI</h1>
+      <p>Powered by GLM-4.5-Flash</p>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="setTab('owner')">Owner</button>
+      <button class="tab-btn" onclick="setTab('player')">Player</button>
+    </div>
+    <div id="owner-fields">
+      <div class="input-group">
+        <label>Owner Password</label>
+        <input class="inp" type="password" id="owner-pass" placeholder="Enter owner password" onkeydown="if(event.key==='Enter')ownerLogin()">
       </div>
     </div>
+    <div id="player-fields" style="display:none">
+      <div class="input-group">
+        <label>Session Key</label>
+        <input class="inp" id="player-key" placeholder="Enter your session key e.g. NX-XXXXXX" onkeydown="if(event.key==='Enter')playerLogin()">
+      </div>
+    </div>
+    <div class="err-msg" id="err-msg">Incorrect credentials. Try again.</div>
+    <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
+    <p style="font-size:12px;color:var(--muted);text-align:center">Default owner password: <code style="color:var(--accent)">admin123</code></p>
   </div>
 </div>
 
-<!-- ════════════ CHAT APP ════════════ -->
-<div id="chatScreen" class="screen">
-  <div class="app-container">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="topbar-brand">OS_INVOKE</div>
-      <div class="topbar-sep"></div>
-      <div class="topbar-status">
-        <div class="status-led"></div>
-        <span>SECURE_CHANNEL</span>
-      </div>
-      <div class="topbar-spacer"></div>
-      <div class="topbar-time" id="clock">--:--:--</div>
-      <div class="topbar-sep"></div>
-      <button class="topbar-close" onclick="location.reload()">PURGE_SESSION</button>
+<!-- ===== OWNER SCREEN ===== -->
+<div class="screen" id="owner-screen">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>NexusAI</h2>
+      <p>Owner Dashboard</p>
     </div>
-
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="sidebar-section-label">SESSION_LOGS</div>
-      <div class="sidebar-item current" id="current-session">
-        <div class="sidebar-item-icon"></div>
-        <span>ACTIVE_SESSION</span>
-      </div>
-      <div class="sidebar-spacer"></div>
-      <div class="model-badge">
-        <div class="model-badge-label">ACTIVE MODEL</div>
-        <div class="model-badge-name">deepseek-r1:1.5b</div>
+    <div class="nav-item active" onclick="showPanel('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('keys',this)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.65 10A6 6 0 1 0 7 18H21v-2h-2v-2h-2v-2h-2.09A5.99 5.99 0 0 0 12.65 10zM7 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>
+      Session Keys
+    </div>
+    <div class="nav-item" onclick="showPanel('api',this)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9h1a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM7 19V9h10v10H7zm12-12H5V5h14v2z"/></svg>
+      API Config
+    </div>
+    <div class="nav-item" onclick="showPanel('settings',this)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.07 7.07 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      Settings
+    </div>
+    <div class="nav-item" onclick="showPanel('mychat',this)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+      My Chat
+    </div>
+    <div class="nav-item" onclick="logout()" style="color:var(--red)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Logout
+    </div>
+    <div class="sidebar-footer">
+      <div class="owner-badge">
+        <div class="badge-avatar">O</div>
+        <div class="badge-info"><p>Owner</p><span>★ Master Access</span></div>
       </div>
     </div>
+  </div>
 
-    <!-- CHAT MAIN -->
-    <div class="chat-main">
-      <div class="chat-log" id="log">
-        <div class="welcome-block">
-          <div class="welcome-ascii">
-░█████╗░░██████╗  ██╗███╗░░██╗██╗░░░██╗░█████╗░██╗░░██╗███████╗<br>
-██╔══██╗██╔════╝  ██║████╗░██║██║░░░██║██╔══██╗██║░██╔╝██╔════╝<br>
-██║░░██║╚█████╗░  ██║██╔██╗██║╚██╗░██╔╝██║░░██║█████═╝░█████╗░░
+  <div class="main-panel">
+    <!-- Dashboard -->
+    <div class="panel-section active" id="panel-dashboard">
+      <div class="section-title">Dashboard</div>
+      <div class="section-sub">Overview of your NexusAI instance</div>
+      <div class="stats-row">
+        <div class="stat-card blue"><div class="label">Total Keys</div><div class="value" id="stat-total">0</div></div>
+        <div class="stat-card green"><div class="label">Active Keys</div><div class="value" id="stat-active">0</div></div>
+        <div class="stat-card gold"><div class="label">Used Keys</div><div class="value" id="stat-used">0</div></div>
+        <div class="stat-card red"><div class="label">Expired</div><div class="value" id="stat-exp">0</div></div>
+      </div>
+      <div class="card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          Quick Generate Key
+        </h3>
+        <div class="gen-row">
+          <div class="input-group">
+            <label>Label (optional)</label>
+            <input class="inp" id="q-label" placeholder="e.g. Friend1">
           </div>
-          <div class="welcome-title">SYSTEM ONLINE</div>
-          <div class="welcome-sub">AWAITING COMMAND INPUT — CHANNEL ENCRYPTED</div>
+          <div class="input-group">
+            <label>Expires in</label>
+            <select class="inp" id="q-exp">
+              <option value="0">Never</option>
+              <option value="1">1 day</option>
+              <option value="7">7 days</option>
+              <option value="30">30 days</option>
+            </select>
+          </div>
+          <button class="btn-accent" onclick="generateKey()">Generate Key</button>
+        </div>
+        <div id="last-key" style="display:none;margin-top:14px;padding:12px 16px;background:var(--surface2);border:1px solid rgba(34,211,165,.25);border-radius:10px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px">New key generated:</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <code id="last-key-val" style="font-size:16px;color:var(--green);letter-spacing:1px;flex:1"></code>
+            <button class="btn-small" onclick="copyKey()">Copy</button>
+          </div>
         </div>
       </div>
-
-      <div class="input-bar">
-        <label class="think-toggle" id="thinkToggle" onclick="toggleThink()">
-          <input type="checkbox" id="think">
-          <div class="toggle-track"><div class="toggle-thumb"></div></div>
-          <div class="think-toggle-label">THINK</div>
-        </label>
-        <div class="chat-input-wrap">
-          <input class="c-input" type="text" id="userInput" placeholder="Type command..." autocomplete="off">
-        </div>
-        <button class="exec-btn" onclick="send()"><span>EXEC</span></button>
+      <div class="card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          Getting Started
+        </h3>
+        <ol style="font-size:13px;color:var(--muted);line-height:2;padding-left:18px">
+          <li>Go to <strong style="color:var(--text)">API Config</strong> and paste your Zhipu AI API key</li>
+          <li>Go to <strong style="color:var(--text)">Session Keys</strong> to generate keys for your friends</li>
+          <li>Share the key — they enter it on the login page to chat</li>
+          <li>Use <strong style="color:var(--text)">My Chat</strong> to chat directly as owner</li>
+        </ol>
       </div>
     </div>
 
+    <!-- Session Keys -->
+    <div class="panel-section" id="panel-keys">
+      <div class="section-title">Session Keys</div>
+      <div class="section-sub">Generate and manage access keys for your friends</div>
+      <div class="card">
+        <h3>Generate New Key</h3>
+        <div class="gen-row">
+          <div class="input-group">
+            <label>Label</label>
+            <input class="inp" id="k-label" placeholder="Who is this for?">
+          </div>
+          <div class="input-group">
+            <label>Expires in</label>
+            <select class="inp" id="k-exp">
+              <option value="0">Never</option>
+              <option value="1">1 day</option>
+              <option value="7">7 days</option>
+              <option value="30">30 days</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Max uses</label>
+            <select class="inp" id="k-uses">
+              <option value="0">Unlimited</option>
+              <option value="1">1 use</option>
+              <option value="10">10 uses</option>
+              <option value="50">50 uses</option>
+            </select>
+          </div>
+          <button class="btn-accent" onclick="generateKey('keys')">+ Generate</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>All Keys</h3>
+        <div class="key-list" id="key-list">
+          <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No keys yet. Generate one above!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Config -->
+    <div class="panel-section" id="panel-api">
+      <div class="section-title">API Configuration</div>
+      <div class="section-sub">Configure your Zhipu AI credentials</div>
+      <div class="card">
+        <h3>Zhipu AI API Key</h3>
+        <div class="api-row" style="margin-bottom:10px">
+          <input class="inp" id="api-key-input" type="password" placeholder="Paste your Zhipu API key here...">
+          <button class="btn-accent" onclick="saveApiKey()">Save</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Get your key at <a href="https://open.bigmodel.cn" style="color:var(--accent)">open.bigmodel.cn</a>. Stored locally in your browser only.</p>
+      </div>
+      <div class="card">
+        <h3>Owner Password</h3>
+        <div class="api-row" style="margin-bottom:10px">
+          <input class="inp" id="new-pass-input" type="password" placeholder="New owner password...">
+          <button class="btn-accent" onclick="changePassword()">Update</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Change the password used to log in as owner.</p>
+      </div>
+      <div class="card">
+        <h3>Model Settings</h3>
+        <div class="settings-group">
+          <div class="setting-row">
+            <div><label>Model</label><br><span>Current AI model</span></div>
+            <div style="background:var(--surface3);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--accent)">GLM-4.5-Flash</div>
+          </div>
+          <div class="setting-row">
+            <div><label>Temperature</label><br><span>Creativity level (0.1 – 1.5)</span></div>
+            <input class="inp" id="temp-input" type="number" min="0.1" max="1.5" step="0.1" value="0.9" style="width:80px;text-align:center">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="panel-section" id="panel-settings">
+      <div class="section-title">Settings</div>
+      <div class="section-sub">Customize your NexusAI experience</div>
+      <div class="card">
+        <h3>Chat Behavior</h3>
+        <div class="settings-group">
+          <div class="setting-row">
+            <div><label>System Prompt</label><br><span>Personality for the AI</span></div>
+          </div>
+          <textarea class="inp" id="sys-prompt" rows="4" style="resize:vertical">You are NexusAI, a helpful, smart, and friendly AI assistant. You can help with coding, writing, analysis, creative tasks, and general questions. Be concise and clear.</textarea>
+          <button class="btn-accent" onclick="saveSettings()" style="align-self:flex-start">Save Settings</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Danger Zone</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-danger" onclick="clearKeys()">Delete All Keys</button>
+          <button class="btn-danger" onclick="clearAll()">Reset Everything</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Chat (owner) -->
+    <div class="panel-section" id="panel-mychat" style="height:calc(100vh - 40px);display:none;flex-direction:column">
+      <div class="section-title" style="flex-shrink:0">My Chat</div>
+      <div class="section-sub" style="flex-shrink:0">Chat directly as owner</div>
+      <div style="flex:1;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;min-height:0">
+        <div id="owner-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div id="owner-welcome" style="margin:auto;text-align:center;padding:20px;color:var(--muted);font-size:13px">Owner chat — full access. Start typing below.</div>
+        </div>
+        <div style="padding:12px;border-top:1px solid var(--border2)">
+          <div class="input-wrap">
+            <textarea class="inp" id="owner-msg-in" placeholder="Message NexusAI..." rows="1" style="max-height:80px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendOwnerMsg()}"></textarea>
+            <button class="send-btn" onclick="sendOwnerMsg()">
+              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CHAT SCREEN (Player) ===== -->
+<div class="screen" id="chat-screen">
+  <div class="chat-header">
+    <div class="chat-avatar">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg>
+    </div>
+    <div class="chat-info">
+      <h2>NexusAI</h2>
+      <p id="chat-status">● Online</p>
+    </div>
+    <div class="chat-header-actions">
+      <span class="model-tag">GLM-4.5-Flash</span>
+      <button class="icon-btn" onclick="clearChat()" title="Clear chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="logout()" title="Logout">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="messages">
+    <div id="welcome-msg">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div>
+      <h2>Hi! I'm NexusAI</h2>
+      <p>Powered by GLM-4.5-Flash. Ask me anything — I'm here to help!</p>
+      <div class="suggestions">
+        <button class="sug" onclick="useSug(this)">Write a short story about a robot exploring space</button>
+        <button class="sug" onclick="useSug(this)">Explain how neural networks work simply</button>
+        <button class="sug" onclick="useSug(this)">Help me write a Python function to sort a list</button>
+        <button class="sug" onclick="useSug(this)">Give me 5 creative business ideas</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-footer">
+    <div class="input-wrap">
+      <textarea id="msg-in" placeholder="Message NexusAI..." rows="1" style="max-height:110px"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMsg()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+    <div class="footer-info">
+      <span>NexusAI can make mistakes. Verify important info.</span>
+    </div>
   </div>
 </div>
 
 <script>
-/* ─── CANVAS BACKGROUND ─── */
-(function() {
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, cols, rows, particles = [];
+// ===== STATE =====
+let state = {
+  ownerPassword: 'admin123',
+  apiKey: '',
+  keys: [],
+  sysPrompt: 'You are NexusAI, a helpful, smart, and friendly AI assistant. You can help with coding, writing, analysis, creative tasks, and general questions. Be concise and clear.',
+  temperature: 0.9,
+};
+let chatHistory = [];
+let ownerHistory = [];
+let currentTab = 'owner';
+let loginType = '';
 
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    initGrid();
-  }
-
-  function initGrid() {
-    cols = Math.floor(W / 60);
-    rows = Math.floor(H / 60);
-  }
-
-  function spawnParticle() {
-    if (particles.length < 60) {
-      particles.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.5 + 0.5,
-        a: Math.random() * 0.6 + 0.2
-      });
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    // grid
-    ctx.strokeStyle = 'rgba(0,245,212,0.04)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 60) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    for (let y = 0; y < H; y += 60) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
-
-    // particles & connections
-    particles.forEach((p, i) => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0 || p.x > W) p.vx *= -1;
-      if (p.y < 0 || p.y > H) p.vy *= -1;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,245,212,${p.a})`;
-      ctx.fill();
-
-      for (let j = i + 1; j < particles.length; j++) {
-        const q = particles[j];
-        const d = Math.hypot(p.x - q.x, p.y - q.y);
-        if (d < 140) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(0,245,212,${0.06 * (1 - d/140)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  resize();
-  window.addEventListener('resize', resize);
-  for (let i = 0; i < 50; i++) spawnParticle();
-  draw();
-})();
-
-/* ─── CLOCK ─── */
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    now.toTimeString().slice(0,8);
+function loadState() {
+  const s = localStorage.getItem('nexusai_state');
+  if (s) { try { state = {...state, ...JSON.parse(s)}; } catch(e){} }
 }
-setInterval(updateClock, 1000);
-updateClock();
+function saveState() {
+  localStorage.setItem('nexusai_state', JSON.stringify(state));
+}
+loadState();
 
-/* ─── THINK TOGGLE ─── */
-function toggleThink() {
-  const cb = document.getElementById('think');
-  const tog = document.getElementById('thinkToggle');
-  setTimeout(() => {
-    tog.classList.toggle('on', cb.checked);
-  }, 0);
+// ===== LOGIN =====
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='owner')||(i===1&&tab==='player')));
+  document.getElementById('owner-fields').style.display = tab==='owner' ? 'block' : 'none';
+  document.getElementById('player-fields').style.display = tab==='player' ? 'block' : 'none';
+  document.getElementById('err-msg').style.display = 'none';
+  document.getElementById('login-btn').onclick = tab==='owner' ? ownerLogin : playerLogin;
 }
 
-/* ─── AUTH ─── */
-function auth() {
-  const val = document.getElementById('pass').value;
-  const err = document.getElementById('err-msg');
-  if (val === 'admin') {
-    document.getElementById('loginScreen').classList.remove('active');
-    document.getElementById('chatScreen').classList.add('active');
+function doLogin() { currentTab==='owner' ? ownerLogin() : playerLogin(); }
+
+function ownerLogin() {
+  const pw = document.getElementById('owner-pass').value;
+  if (pw === state.ownerPassword) {
+    loginType = 'owner';
+    showScreen('owner-screen');
+    refreshKeys();
+    updateStats();
+    if (state.apiKey) document.getElementById('api-key-input').value = state.apiKey;
+    document.getElementById('sys-prompt').value = state.sysPrompt;
+    document.getElementById('temp-input').value = state.temperature;
   } else {
-    err.textContent = 'ERR_401: AUTHENTICATION_FAILED';
-    document.getElementById('pass').value = '';
-    setTimeout(() => err.textContent = '', 2500);
+    showErr('Wrong owner password!');
   }
 }
-document.getElementById('pass').addEventListener('keypress', e => { if (e.key === 'Enter') auth(); });
 
-/* ─── TIMESTAMP ─── */
-function ts() {
-  return new Date().toTimeString().slice(0,8);
+function playerLogin() {
+  const key = document.getElementById('player-key').value.trim().toUpperCase();
+  const k = state.keys.find(k => k.code === key);
+  if (!k) { showErr('Invalid session key!'); return; }
+  if (k.status === 'expired') { showErr('This key has expired!'); return; }
+  const now = Date.now();
+  if (k.expiry && now > k.expiry) {
+    k.status = 'expired'; saveState();
+    showErr('This key has expired!'); return;
+  }
+  k.status = 'used';
+  k.usedAt = new Date().toLocaleString();
+  k.useCount = (k.useCount||0)+1;
+  saveState();
+  loginType = 'player';
+  showScreen('chat-screen');
 }
 
-/* ─── ADD MESSAGE ─── */
-function addMsg(role, content) {
-  const log = document.getElementById('log');
-  const row = document.createElement('div');
-  row.className = `msg-row ${role}`;
-
-  const avatarLabel = role === 'user' ? 'USR' : 'AI';
-  row.innerHTML = `
-    <div class="msg-avatar">${avatarLabel}</div>
-    <div class="msg-body">
-      <div class="msg-meta">${role === 'user' ? 'OPERATOR' : 'SYSTEM'} / ${ts()}</div>
-      <div class="msg-bubble">${content}</div>
-    </div>`;
-  log.appendChild(row);
-  log.scrollTop = log.scrollHeight;
-  return row.querySelector('.msg-bubble');
+function showErr(msg) {
+  const el = document.getElementById('err-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-/* ─── SEND ─── */
-async function send() {
-  const input = document.getElementById('userInput');
-  const val = input.value.trim();
-  if (!val) return;
-  input.value = '';
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-  addMsg('user', escapeHtml(val));
+function logout() {
+  chatHistory = [];
+  ownerHistory = [];
+  document.getElementById('owner-pass').value = '';
+  document.getElementById('player-key').value = '';
+  document.getElementById('err-msg').style.display='none';
+  document.getElementById('messages').innerHTML = `<div id="welcome-msg"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div><h2>Hi! I'm NexusAI</h2><p>Powered by GLM-4.5-Flash. Ask me anything!</p><div class="suggestions"><button class="sug" onclick="useSug(this)">Write a short story about a robot exploring space</button><button class="sug" onclick="useSug(this)">Explain how neural networks work simply</button><button class="sug" onclick="useSug(this)">Help me write a Python function to sort a list</button><button class="sug" onclick="useSug(this)">Give me 5 creative business ideas</button></div></div>`;
+  showScreen('login-screen');
+}
 
-  // typing indicator
-  const log = document.getElementById('log');
-  const typingRow = document.createElement('div');
-  typingRow.className = 'msg-row ai';
-  typingRow.id = 'typing-row';
-  typingRow.innerHTML = `
-    <div class="msg-avatar">AI</div>
-    <div class="msg-body">
-      <div class="msg-meta">SYSTEM / ${ts()}</div>
-      <div class="msg-bubble">
-        <div class="typing-indicator"><span></span><span></span><span></span></div>
+// ===== OWNER PANEL =====
+function showPanel(name, el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.panel-section').forEach(p => {
+    p.classList.remove('active');
+    p.style.display='none';
+  });
+  const panel = document.getElementById('panel-'+name);
+  if (panel) {
+    if (name==='mychat') { panel.style.display='flex'; panel.classList.add('active'); }
+    else { panel.style.display='block'; panel.classList.add('active'); }
+  }
+  if(name==='keys') refreshKeys();
+  if(name==='dashboard') updateStats();
+}
+
+function generateKey(from) {
+  const label = (document.getElementById(from==='keys'?'k-label':'q-label').value)||'Unnamed';
+  const expDays = parseInt(document.getElementById(from==='keys'?'k-exp':'q-exp').value)||0;
+  const maxUses = from==='keys' ? parseInt(document.getElementById('k-uses').value)||0 : 0;
+  const code = 'NX-' + Math.random().toString(36).substring(2,8).toUpperCase();
+  const key = {
+    code, label,
+    created: new Date().toLocaleString(),
+    expiry: expDays ? Date.now()+(expDays*86400000) : 0,
+    maxUses,
+    useCount: 0,
+    status: 'active',
+  };
+  state.keys.push(key);
+  saveState();
+  updateStats();
+  refreshKeys();
+  document.getElementById('last-key').style.display='block';
+  document.getElementById('last-key-val').textContent=code;
+  if(from==='keys'){ document.getElementById('k-label').value=''; }
+  else { document.getElementById('q-label').value=''; }
+  toast('Key generated: '+code);
+}
+
+function copyKey() {
+  const val = document.getElementById('last-key-val').textContent;
+  navigator.clipboard.writeText(val).then(()=>toast('Copied to clipboard!'));
+}
+
+function refreshKeys() {
+  const list = document.getElementById('key-list');
+  if (!list) return;
+  if (!state.keys.length) { list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No keys yet.</div>'; return; }
+  list.innerHTML = state.keys.map((k,i) => {
+    const now = Date.now();
+    let status = k.status;
+    if (k.expiry && now > k.expiry) status='expired';
+    return `<div class="key-item ${status}">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+          <span class="key-code">${k.code}</span>
+          <span class="key-status ${status}">${status}</span>
+        </div>
+        <div class="key-meta">${k.label} · Created ${k.created}${k.expiry?' · Expires '+new Date(k.expiry).toLocaleDateString():''}${k.maxUses?' · '+k.useCount+'/'+k.maxUses+' uses':' · '+k.useCount+' uses'}</div>
       </div>
+      <button class="btn-small" onclick="copyCode('${k.code}')">Copy</button>
+      <button class="btn-danger" onclick="deleteKey(${i})">×</button>
     </div>`;
-  log.appendChild(typingRow);
-  log.scrollTop = log.scrollHeight;
+  }).join('');
+}
 
+function copyCode(code) {
+  navigator.clipboard.writeText(code).then(()=>toast('Copied: '+code));
+}
+
+function deleteKey(i) {
+  state.keys.splice(i,1);
+  saveState();
+  refreshKeys();
+  updateStats();
+}
+
+function updateStats() {
+  const now = Date.now();
+  const total = state.keys.length;
+  const active = state.keys.filter(k=>k.status==='active'&&(!k.expiry||k.expiry>now)).length;
+  const used = state.keys.filter(k=>k.useCount>0).length;
+  const exp = state.keys.filter(k=>k.expiry&&k.expiry<now).length;
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-active').textContent=active;
+  document.getElementById('stat-used').textContent=used;
+  document.getElementById('stat-exp').textContent=exp;
+}
+
+function saveApiKey() {
+  state.apiKey = document.getElementById('api-key-input').value.trim();
+  saveState();
+  toast('API key saved!');
+}
+
+function changePassword() {
+  const np = document.getElementById('new-pass-input').value;
+  if (!np) { toast('Enter a new password first'); return; }
+  state.ownerPassword = np;
+  saveState();
+  document.getElementById('new-pass-input').value='';
+  toast('Password updated!');
+}
+
+function saveSettings() {
+  state.sysPrompt = document.getElementById('sys-prompt').value;
+  state.temperature = parseFloat(document.getElementById('temp-input').value)||0.9;
+  saveState();
+  toast('Settings saved!');
+}
+
+function clearKeys() {
+  if (!confirm('Delete ALL keys?')) return;
+  state.keys=[];
+  saveState();
+  refreshKeys();
+  updateStats();
+  toast('All keys deleted');
+}
+
+function clearAll() {
+  if (!confirm('Reset everything? This cannot be undone!')) return;
+  localStorage.removeItem('nexusai_state');
+  location.reload();
+}
+
+// ===== CHAT =====
+function useSug(btn) {
+  document.getElementById('msg-in').value = btn.textContent;
+  sendMsg();
+}
+
+async function sendMsg() {
+  const inp = document.getElementById('msg-in');
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!state.apiKey) { toast('No API key set! Ask the owner to configure it.'); return; }
+  inp.value='';inp.style.height='auto';
+  const welcome=document.getElementById('welcome-msg');
+  if(welcome)welcome.remove();
+  addMsg('user',text,'messages');
+  chatHistory.push({role:'user',content:text});
+  const typingId = addTyping('messages');
+  document.getElementById('send-btn').disabled=true;
   try {
-    const res = await fetch('http://localhost:11434/api/chat', {
-      method: 'POST',
-      body: JSON.stringify({
-        model: "deepseek-r1:1.5b",
-        messages: [{ role: "user", content: val }],
-        stream: false
-      })
-    });
-    const data = await res.json();
-    typingRow.remove();
+    const reply = await callGLM(chatHistory);
+    removeTyping(typingId,'messages');
+    addMsg('ai',reply,'messages');
+    chatHistory.push({role:'assistant',content:reply});
+  } catch(e) {
+    removeTyping(typingId,'messages');
+    addMsg('ai','Error: '+e.message,'messages');
+  }
+  document.getElementById('send-btn').disabled=false;
+  inp.focus();
+}
 
-    const bubble = addMsg('ai', '');
-    if (data.message.reasoning) {
-      bubble.innerHTML += `<div class="think-trace"><div class="think-trace-label">REASONING_TRACE</div>${escapeHtml(data.message.reasoning)}</div>`;
-    }
-    bubble.innerHTML += `<div>${escapeHtml(data.message.content)}</div>`;
-    log.scrollTop = log.scrollHeight;
-
-  } catch (e) {
-    typingRow.remove();
-    const bubble = addMsg('ai', '');
-    bubble.innerHTML = `<span class="conn-err">ERR_CONN: Run Ollama with OLLAMA_ORIGINS="*" — ${e.message}</span>`;
-    log.scrollTop = log.scrollHeight;
+async function sendOwnerMsg() {
+  const inp = document.getElementById('owner-msg-in');
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!state.apiKey) { toast('Set your API key in API Config first!'); return; }
+  inp.value='';
+  const welcome=document.getElementById('owner-welcome');
+  if(welcome)welcome.remove();
+  addMsg('user',text,'owner-messages');
+  ownerHistory.push({role:'user',content:text});
+  const typingId = addTyping('owner-messages');
+  try {
+    const reply = await callGLM(ownerHistory);
+    removeTyping(typingId,'owner-messages');
+    addMsg('ai',reply,'owner-messages');
+    ownerHistory.push({role:'assistant',content:reply});
+  } catch(e) {
+    removeTyping(typingId,'owner-messages');
+    addMsg('ai','Error: '+e.message,'owner-messages');
   }
 }
 
-function escapeHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+async function callGLM(history) {
+  const sys = state.sysPrompt || 'You are NexusAI, a helpful AI assistant.';
+  const resp = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+state.apiKey},
+    body:JSON.stringify({
+      model:'glm-4-flash',
+      temperature: state.temperature||0.9,
+      messages:[{role:'system',content:sys},...history],
+    })
+  });
+  if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'API error '+resp.status);}
+  const data=await resp.json();
+  return data.choices[0].message.content;
 }
 
-document.getElementById('userInput').addEventListener('keypress', e => { if (e.key === 'Enter') send(); });
+function addMsg(role, text, containerId) {
+  const c = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className='msg '+role;
+  div.innerHTML=`<div class="msg-av">${role==='user'?'U':'★'}</div><div class="bubble">${escHtml(text)}</div>`;
+  c.appendChild(div);
+  c.scrollTop=c.scrollHeight;
+}
+
+function addTyping(containerId) {
+  const c = document.getElementById(containerId);
+  const id = 'typing-'+Date.now();
+  const div = document.createElement('div');
+  div.className='msg ai typing';div.id=id;
+  div.innerHTML='<div class="msg-av">★</div><div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+  return id;
+}
+
+function removeTyping(id, containerId) {
+  const el=document.getElementById(id);if(el)el.remove();
+}
+
+function clearChat() {
+  chatHistory=[];
+  document.getElementById('messages').innerHTML=`<div id="welcome-msg"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div><h2>Chat cleared!</h2><p>Start a new conversation.</p></div>`;
+}
+
+function escHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ===== TOAST =====
+function toast(msg) {
+  const t=document.createElement('div');
+  t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
+
+// Init
+document.getElementById('login-btn').onclick = ownerLogin;
 </script>
 </body>
 </html>
