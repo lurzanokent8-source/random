@@ -255,7 +255,6 @@ select.inp option{background:var(--s2)}
 </head>
 <body>
 
-<!-- ══════════════ LOGIN ══════════════ -->
 <div class="screen active" id="login-screen">
   <div class="login-wrap">
     <div class="login-box">
@@ -284,7 +283,6 @@ select.inp option{background:var(--s2)}
   </div>
 </div>
 
-<!-- ══════════════ OWNER ══════════════ -->
 <div class="screen" id="owner-screen">
   <div class="sb">
     <div class="sb-logo"><h2>NexusAI</h2><span>Owner Dashboard</span></div>
@@ -315,7 +313,6 @@ select.inp option{background:var(--s2)}
   </div>
 
   <div class="mp">
-    <!-- Dashboard -->
     <div class="sec on" id="sec-dashboard">
       <div class="sec-title">Dashboard</div>
       <div class="sec-sub">Welcome back, Owner</div>
@@ -352,7 +349,6 @@ select.inp option{background:var(--s2)}
       </div>
     </div>
 
-    <!-- Keys -->
     <div class="sec" id="sec-keys">
       <div class="sec-title">Session Keys</div>
       <div class="sec-sub">Generate and manage access keys for your friends</div>
@@ -384,7 +380,6 @@ select.inp option{background:var(--s2)}
       </div>
     </div>
 
-    <!-- Providers -->
     <div class="sec" id="sec-providers">
       <div class="sec-title">AI Providers</div>
       <div class="sec-sub">Select a provider, configure your API key, and explore available models</div>
@@ -392,7 +387,6 @@ select.inp option{background:var(--s2)}
       <div id="prov-detail"></div>
     </div>
 
-    <!-- Settings -->
     <div class="sec" id="sec-settings">
       <div class="sec-title">Settings</div>
       <div class="sec-sub">Customize NexusAI behavior</div>
@@ -406,7 +400,9 @@ select.inp option{background:var(--s2)}
       </div>
       <div class="card">
         <h3>AI Personality (System Prompt)</h3>
-        <textarea class="inp" id="sys-prompt" rows="5" style="resize:vertical;margin-bottom:10px">You are NexusAI, a helpful, smart, and friendly AI assistant. You can help with coding, writing, analysis, math, creative tasks, and general questions. Be clear, concise, and engaging.</textarea>
+        <textarea class="inp" id="sys-prompt" rows="5" style="resize:vertical;margin-bottom:10px">You are NexusAI, a helpful, smart, and friendly AI assistant.
+You can help with coding, writing, analysis, math, creative tasks, and general questions.
+Be clear, concise, and engaging.</textarea>
         <div style="display:flex;gap:10px;align-items:center">
           <div class="ig" style="flex:1"><label class="lbl">Temperature (creativity)</label><input class="inp" type="number" id="inp-temp" min="0" max="2" step="0.1" value="0.8" style="width:100px"></div>
           <button class="btn btn-ac" onclick="saveSettings()" style="align-self:flex-end">Save Settings</button>
@@ -418,13 +414,13 @@ select.inp option{background:var(--s2)}
       </div>
     </div>
 
-    <!-- My Chat -->
     <div class="sec" id="sec-mychat">
       <div class="sec-title" style="flex-shrink:0;margin-bottom:4px">My Chat</div>
       <div class="sec-sub" style="flex-shrink:0">Direct owner chat — full access</div>
       <div class="embed-chat">
         <div class="embed-msgs" id="oc-msgs">
-          <div style="margin:auto;text-align:center;color:var(--dx);font-size:13px;padding:20px">Owner chat ready. Select a provider in AI Providers first.</div>
+          <div style="margin:auto;text-align:center;color:var(--dx);font-size:13px;padding:20px">Owner chat ready.
+Select a provider in AI Providers first.</div>
         </div>
         <div class="embed-input">
           <div class="think-toggle-row" id="oc-think-row">
@@ -443,7 +439,6 @@ select.inp option{background:var(--s2)}
   </div>
 </div>
 
-<!-- ══════════════ CHAT ══════════════ -->
 <div class="screen" id="chat-screen">
   <div class="ch">
     <div class="ch-av"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14v-4H7l5-8v4h4l-5 8z"/></svg></div>
@@ -462,7 +457,6 @@ select.inp option{background:var(--s2)}
     </div>
   </div>
 
-  <!-- Model picker dropdown -->
   <div class="mdrop" id="mdrop">
     <div class="mdrop-head">
       <span>Select Provider &amp; Model</span>
@@ -675,7 +669,6 @@ const PROVIDERS = {
     ]
   },
 };
-
 // ══ TIER BADGE HTML ══
 const TIER_MAP = {
   free:'<span class="tier tier-free">FREE</span>',
@@ -691,7 +684,7 @@ let S = {
   ownerPassword:'admin123',
   apiKeys:{},
   keys:[],
-  sysPrompt:'You are NexusAI, a helpful, smart, and friendly AI assistant. You can help with coding, writing, analysis, math, creative tasks, and general questions. Be clear, concise, and engaging.',
+  sysPrompt:'You are NexusAI, a helpful, smart, and friendly AI assistant.\nYou can help with coding, writing, analysis, math, creative tasks, and general questions.\nBe clear, concise, and engaging.',
   temperature:0.8,
   selectedProvider:'zhipu',
   selectedModel:'glm-4-flash',
@@ -701,7 +694,6 @@ let chatHist=[], ownerHist=[], currentTab='owner', dropOpen=false;
 function loadS(){const d=localStorage.getItem('nxs');if(d){try{S={...S,...JSON.parse(d)};}catch(e){}}}
 function saveS(){localStorage.setItem('nxs',JSON.stringify(S))}
 loadS();
-
 // ══ SESSION PERSISTENCE ══
 window.addEventListener('load',()=>{
   const sess=sessionStorage.getItem('nxsess');
@@ -714,7 +706,6 @@ window.addEventListener('load',()=>{
     }
   }
 });
-
 // ══ LOGIN ══
 function setTab(t){
   currentTab=t;
@@ -843,8 +834,10 @@ function buildProvGrid(){
 }
 function selectProv(id){
   S.selectedProvider=id;
-  const firstModel=PROVIDERS[id].models[0].id;
-  S.selectedModel=firstModel;
+  const modelExists = PROVIDERS[id].models.some(m => m.id === S.selectedModel);
+  if(!modelExists) {
+    S.selectedModel = PROVIDERS[id].models[0].id;
+  }
   saveS();
   buildProvGrid();
   updateSelLabel();updateThinkRow();updateOcThinkRow();
@@ -869,7 +862,7 @@ function renderProvDetail(pid){
     <div class="prov-cfg">
       <h4>Available Models</h4>
       <div class="model-list">${p.models.map(m=>`
-        <div class="mi">
+        <div class="mi" style="cursor:pointer; transition:all 0.15s; ${S.selectedProvider===pid&&S.selectedModel===m.id?'border-color:var(--ac);background:rgba(124,106,255,.07)':''}" onclick="pickModel('${pid}','${m.id}'); renderProvDetail('${pid}')">
           <div class="mi-top">
             <span class="mi-name">${m.name}</span>
             ${m.thinking?'<span style="font-size:10px;color:var(--gd)">⚡ Thinking</span>':''}
