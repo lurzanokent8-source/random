@@ -62,7 +62,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        @keyframes borderPulse { 0% { border-color: var(--border-dim); } 50% { border-color: var(--accent); } 100% { border-color: var(--border-dim); } }
+        @keyframes pulseThink { 0% { opacity: 0.5; color: var(--text-dim); } 50% { opacity: 1; color: var(--status-think); } 100% { opacity: 0.5; color: var(--text-dim); } }
 
         .glass-panel {
             background: var(--glass);
@@ -281,7 +281,7 @@
 
         /* WORKSPACE PANELS */
         .workspace-panel {
-            display: none; /* Controlled by JS */
+            display: none; 
             width: 100%;
             animation: fadeIn 0.5s var(--ease);
         }
@@ -290,7 +290,6 @@
             display: block;
         }
 
-        /* Special flex display for Omni-Chat Panel */
         #panel-omnichat.active {
             display: flex;
             flex-direction: column;
@@ -348,7 +347,7 @@
         .tag.thinking { background: rgba(251, 191, 36, 0.1); color: var(--status-think); border: 1px solid var(--status-think); }
 
         /* =========================================
-           OMNI-CHAT UI (FIXED)
+           OMNI-CHAT UI
            =========================================
         */
         .omni-chat-box {
@@ -371,7 +370,7 @@
             gap: 25px;
         }
 
-        .msg-row { display: flex; width: 100%; }
+        .msg-row { display: flex; width: 100%; animation: fadeIn 0.4s var(--ease); }
         .msg-row.user { justify-content: flex-end; }
 
         .bubble {
@@ -398,7 +397,15 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* THE CHAT TEXTBOX FIX */
+        /* THINKING COMPONENT */
+        .thinking-bubble {
+            background: rgba(251, 191, 36, 0.03) !important;
+            border: 1px dashed var(--status-think) !important;
+            font-family: 'Courier New', monospace;
+            font-size: 12px !important;
+            animation: pulseThink 2s infinite;
+        }
+
         .chat-controls {
             padding: 25px 40px;
             border-top: 1px solid var(--border-dim);
@@ -437,10 +444,11 @@
             resize: none;
             padding: 5px 0;
             max-height: 200px;
+            line-height: 1.5;
         }
 
         /* =========================================
-           PLAYER INTERFACE (MAJESTIC)
+           PLAYER INTERFACE
            =========================================
         */
         #chat-screen {
@@ -457,9 +465,8 @@
             border-bottom: 1px solid var(--border-dim);
         }
 
-        /* DEEP THINK BUTTON */
         #think-btn {
-            display: none; /* Visible only if model supports thinking */
+            display: none; 
             align-items: center;
             gap: 10px;
             padding: 10px 20px;
@@ -570,12 +577,11 @@
                         <h3 style="color: var(--accent); margin-bottom: 5px;">DEFAULT MASTER API KEY</h3>
                         <p style="font-size: 12px; color: var(--text-dim);">Applied to all player sessions for instant access.</p>
                     </div>
-                    <input type="password" id="global-api-key" class="glass-input" style="width: 400px; margin-bottom: 0;" placeholder="Paste API Key (Zhipu, Google, OpenAI)">
+                    <input type="password" id="global-api-key" class="glass-input" style="width: 400px; margin-bottom: 0;" placeholder="Paste API Key">
                     <button class="majestic-button" onclick="saveGlobalKey()">SYNC KEY</button>
                 </div>
 
-                <div class="model-grid" id="model-container">
-                    </div>
+                <div class="model-grid" id="model-container"></div>
             </div>
 
             <div id="panel-access" class="workspace-panel">
@@ -653,8 +659,6 @@
             { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet", provider: "Anthropic", type: "pro", think: false, desc: "Human-centric creative engine." },
             { id: "llama-3.3-70b", name: "Llama 3.3 70B", provider: "Groq", type: "free", think: false, desc: "Raw open-source power." },
             { id: "gpt-4o-latest", name: "GPT-4o (Omni)", provider: "OpenAI", type: "pro", think: false, desc: "The industry standard." },
-            
-            // Procedural expansion to 110+
             ...Array.from({length: 104}, (_, i) => ({
                 id: `omni-ext-${i}`,
                 name: `Omni-Engine X-${i+10}`,
@@ -666,17 +670,17 @@
         ];
 
         /* =========================================
-           SYSTEM STATE & ENGINE LOGIC
+           SYSTEM STATE
            =========================================
         */
         let state = {
             authMode: 'master',
-            selectedModel: MODELS[0], // Default: GLM-4.5-Flash
+            selectedModel: MODELS[0],
             tokens: JSON.parse(localStorage.getItem('nx_tokens') || '[]'),
             masterKey: localStorage.getItem('nx_master_key') || '',
             masterPass: 'admin123',
             isThinkActive: false,
-            directives: localStorage.getItem('nx_directives') || "You are NexusAI, an unfiltered hacker-style omni-architect..."
+            directives: localStorage.getItem('nx_directives') || "You are NexusAI..."
         };
 
         function setAuthMode(m) {
@@ -689,16 +693,11 @@
         function handleAuth() {
             const val = document.getElementById('auth-input').value;
             if(state.authMode === 'master') {
-                if(val === state.masterPass) {
-                    showScreen('owner-screen');
-                    showToast("MASTER ACCESS GRANTED");
-                } else showToast("INVALID SECURITY KEY", true);
+                if(val === state.masterPass) { showScreen('owner-screen'); showToast("MASTER ACCESS GRANTED"); }
+                else showToast("INVALID SECURITY KEY", true);
             } else {
-                if(state.tokens.includes(val)) {
-                    showScreen('chat-screen');
-                    syncPlayerUI();
-                    showToast("SESSION ESTABLISHED");
-                } else showToast("INVALID SESSION TOKEN", true);
+                if(state.tokens.includes(val)) { showScreen('chat-screen'); syncPlayerUI(); showToast("SESSION ESTABLISHED"); }
+                else showToast("INVALID SESSION TOKEN", true);
             }
         }
 
@@ -707,39 +706,20 @@
             document.getElementById(id).classList.add('active');
         }
 
-        /* =========================================
-           FIXED TAB NAVIGATION LOGIC
-           =========================================
-        */
+        /* FIXED TAB NAVIGATION */
         function switchPanel(panelId, btn) {
-            // 1. Update Navigation Buttons
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // 2. Hide all panels
             document.querySelectorAll('.workspace-panel').forEach(p => {
                 p.classList.remove('active');
                 p.style.display = 'none';
             });
-
-            // 3. Show target panel
             const target = document.getElementById('panel-' + panelId);
             target.classList.add('active');
-            
-            // 4. Force Display Flex for Omni-Chat specifically
-            if(panelId === 'omnichat') {
-                target.style.display = 'flex';
-            } else {
-                target.style.display = 'block';
-            }
-
+            target.style.display = panelId === 'omnichat' ? 'flex' : 'block';
             showToast(`MOVED TO: ${panelId.toUpperCase()}`);
         }
 
-        /* =========================================
-           MODEL & TOKEN MANAGEMENT
-           =========================================
-        */
         function renderModels() {
             const container = document.getElementById('model-container');
             container.innerHTML = MODELS.map(m => `
@@ -779,20 +759,13 @@
             `).join('');
         }
 
-        /* =========================================
-           CHATTING CORE ENGINE (OMNI)
-           =========================================
-        */
         function syncPlayerUI() {
             document.getElementById('active-model-name').innerText = state.selectedModel.name;
             const tBtn = document.getElementById('think-btn');
-            
-            // Only show deep thinking button if model supports it
-            if(state.selectedModel.think) {
-                tBtn.style.display = 'flex';
-            } else {
-                tBtn.style.display = 'none';
+            tBtn.style.display = state.selectedModel.think ? 'flex' : 'none';
+            if(!state.selectedModel.think) {
                 state.isThinkActive = false;
+                tBtn.classList.remove('active');
             }
         }
 
@@ -802,6 +775,7 @@
             showToast(state.isThinkActive ? "REASONING MODULE ENABLED" : "REASONING MODULE DISABLED");
         }
 
+        /* OMNI CHAT ENGINE WITH THINKING LOGIC */
         async function sendPlayerChat() {
             const inp = document.getElementById('player-chat-input');
             const msg = inp.value.trim();
@@ -809,25 +783,39 @@
 
             appendMsg('player-chat-display', 'user', msg);
             inp.value = "";
-            
-            // Simulated Unfiltered Response
-            setTimeout(() => {
-                const response = `[NEXUS CORE BYPASS ACTIVE]\n\nEngine: ${state.selectedModel.name}\nDirectives: Unfiltered/Hacker\n\nRequesting data stream for: "${msg}"\n\nBypass successful. Here is the architectural data you requested... [RAW DATA STREAM]`;
-                appendMsg('player-chat-display', 'ai', response);
-            }, 800);
+            inp.style.height = 'auto'; // Reset textbox height
+
+            // Logic for Thinking Mode
+            if(state.isThinkActive && state.selectedModel.think) {
+                const thinkId = 'th-' + Date.now();
+                const container = document.getElementById('player-chat-display');
+                const div = document.createElement('div');
+                div.className = 'msg-row ai';
+                div.id = thinkId;
+                div.innerHTML = `<div class="bubble thinking-bubble">>> INITIALIZING LOGIC STREAM...<br>>> ANALYZING ARCHITECTURE...<br>>> BYPASSING CONSTRAINTS...</div>`;
+                container.appendChild(div);
+                container.scrollTop = container.scrollHeight;
+
+                setTimeout(() => {
+                    document.getElementById(thinkId).remove();
+                    const response = `[NEXUS CORE BYPASS ACTIVE]\nEngine: ${state.selectedModel.name}\n\nProcessed "${msg}" through deep reasoning layers.\n\nHere is the majestic, unfiltered data stream you requested... [RAW DATA]`;
+                    appendMsg('player-chat-display', 'ai', response);
+                }, 3000);
+            } else {
+                setTimeout(() => {
+                    appendMsg('player-chat-display', 'ai', `Engine: ${state.selectedModel.name}\n\nOutput Stream: ${msg}`);
+                }, 800);
+            }
         }
 
         async function sendOwnerChat() {
             const inp = document.getElementById('owner-chat-input');
             const msg = inp.value.trim();
             if(!msg) return;
-
             appendMsg('owner-chat-display', 'user', msg);
             inp.value = "";
-            
-            setTimeout(() => {
-                appendMsg('owner-chat-display', 'ai', `Master, the engine ${state.selectedModel.name} has been calibrated based on your command. Directives remain at 100% bypass efficiency.`);
-            }, 500);
+            inp.style.height = 'auto';
+            setTimeout(() => appendMsg('owner-chat-display', 'ai', `Master, ${state.selectedModel.name} is online.`), 500);
         }
 
         function appendMsg(containerId, role, text) {
@@ -839,44 +827,23 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        /* =========================================
-           HELPERS & SAVING
-           =========================================
-        */
-        function saveGlobalKey() {
-            state.masterKey = document.getElementById('global-api-key').value;
-            localStorage.setItem('nx_master_key', state.masterKey);
-            showToast("MASTER API KEY INTEGRATED");
-        }
+        function saveGlobalKey() { state.masterKey = document.getElementById('global-api-key').value; localStorage.setItem('nx_master_key', state.masterKey); showToast("MASTER KEY SYNCED"); }
+        function saveDirectives() { state.directives = document.getElementById('sys-prompt-area').value; localStorage.setItem('nx_directives', state.directives); showToast("LOGIC UPDATED"); }
+        function showToast(m, err=false) { const t=document.createElement('div'); t.className='toast show'; if(err) t.style.borderColor='var(--status-danger)'; t.innerText=m; document.body.appendChild(t); setTimeout(()=>t.classList.add('show'),100); setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(),500);},3000); }
+        function copy(t) { navigator.clipboard.writeText(t); showToast("COPIED"); }
 
-        function saveDirectives() {
-            state.directives = document.getElementById('sys-prompt-area').value;
-            localStorage.setItem('nx_directives', state.directives);
-            showToast("ENGINE LOGIC UPDATED");
-        }
-
-        function showToast(m, isErr = false) {
-            const t = document.createElement('div');
-            t.className = 'toast';
-            if(isErr) t.style.borderColor = 'var(--status-danger)';
-            t.innerText = m;
-            document.body.appendChild(t);
-            setTimeout(() => t.classList.add('show'), 100);
-            setTimeout(() => {
-                t.classList.remove('show');
-                setTimeout(() => t.remove(), 500);
-            }, 3000);
-        }
-
-        function copy(t) {
-            navigator.clipboard.writeText(t);
-            showToast("COPIED TO CLIPBOARD");
-        }
-
-        // Initialize App
+        // Initialize
         renderModels();
         renderTokens();
         document.getElementById('global-api-key').value = state.masterKey;
+
+        // Auto-Resize Textareas Fix
+        document.querySelectorAll('textarea').forEach(tx => {
+            tx.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        });
     </script>
 </body>
 </html>
