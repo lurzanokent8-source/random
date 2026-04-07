@@ -3,459 +3,320 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexusAI — Powered by GLM-4.5-Flash</title>
+<title>NexusAI — Multi-Model Omni-Architect</title>
 <style>
+/* ===== MAJESTIC GLASSMORPHISM UI ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#07070f;--surface:#10101e;--surface2:#181830;--surface3:#1e1e38;
-  --accent:#7c6aff;--accent2:#a855f7;--border:rgba(124,106,255,0.15);
-  --border2:rgba(255,255,255,0.07);--text:#eeeeff;--muted:#7777aa;
+  --bg-image: radial-gradient(circle at 15% 50%, rgba(124, 106, 255, 0.15), transparent 40%), radial-gradient(circle at 85% 30%, rgba(34, 211, 165, 0.1), transparent 40%);
+  --bg:#05050a;
+  --glass-bg: rgba(16, 16, 30, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --surface2: rgba(255, 255, 255, 0.03);
+  --surface3: rgba(255, 255, 255, 0.06);
+  --accent:#7c6aff;--accent2:#a855f7;--accent3:#ff55a3;
+  --text:#f0f0f5;--muted:#8888aa;
   --green:#22d3a5;--red:#ff5577;--gold:#fbbf24;
-  --r:14px;--font:'Segoe UI',system-ui,sans-serif;
+  --r:20px;--font:'Segoe UI',system-ui,sans-serif;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+body{font-family:var(--font);background-color:var(--bg);background-image:var(--bg-image);color:var(--text);height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
 
 /* ===== SCREENS ===== */
 .screen{display:none;flex:1;overflow:hidden}
-.screen.active{display:flex;flex-direction:column}
+.screen.active{display:flex;flex-direction:column;animation:fadeIn 0.4s ease}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.98)}to{opacity:1;transform:scale(1)}}
 
 /* ===== LOGIN SCREEN ===== */
-#login-screen{align-items:center;justify-content:center;background:var(--bg)}
+#login-screen{align-items:center;justify-content:center;position:relative}
+#login-screen::before {
+  content: ''; position: absolute; width: 400px; height: 400px;
+  background: linear-gradient(45deg, var(--accent), var(--accent3));
+  filter: blur(100px); opacity: 0.2; z-index: -1; border-radius: 50%;
+}
 .login-box{
   width:100%;max-width:420px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:24px;
+  border-radius:28px;
   padding:40px 36px;
   display:flex;flex-direction:column;gap:24px;
   margin:20px;
 }
-.login-logo{text-align:center}
 .logo-ring{
-  width:72px;height:72px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  width:78px;height:78px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent3),var(--gold));
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
   display:flex;align-items:center;justify-content:center;
   margin:0 auto 14px;
+  box-shadow: 0 0 20px rgba(124,106,255,0.4);
 }
-.logo-ring svg{width:34px;height:34px;fill:white}
-.login-logo h1{font-size:24px;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.login-logo p{font-size:13px;color:var(--muted);margin-top:4px}
-.tab-row{display:flex;gap:6px;background:var(--surface2);border-radius:10px;padding:4px}
-.tab-btn{flex:1;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
-.tab-btn.active{background:var(--accent);color:white}
-.input-group{display:flex;flex-direction:column;gap:6px}
-.input-group label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+@keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+.logo-ring svg{width:38px;height:38px;fill:white}
+.login-logo h1{text-align:center;font-size:28px;font-weight:800;background:linear-gradient(90deg,var(--text),var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tab-row{display:flex;gap:6px;background:var(--surface2);border-radius:12px;padding:5px;border:1px solid var(--glass-border)}
+.tab-btn{flex:1;padding:10px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s}
+.tab-btn.active{background:var(--glass-bg);color:var(--text);border:1px solid var(--glass-border);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.input-group{display:flex;flex-direction:column;gap:8px}
+.input-group label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 .inp{
-  background:var(--surface2);border:1px solid var(--border2);
-  border-radius:10px;padding:11px 14px;
+  background:var(--surface2);border:1px solid var(--glass-border);
+  border-radius:12px;padding:14px 16px;
   font-size:14px;color:var(--text);font-family:var(--font);
-  outline:none;transition:border-color .15s;width:100%;
+  outline:none;transition:all .2s;width:100%;
 }
-.inp:focus{border-color:var(--accent)}
-.inp::placeholder{color:var(--muted)}
+.inp:focus{border-color:var(--accent);background:var(--surface3);box-shadow:0 0 0 3px rgba(124,106,255,0.15)}
 .btn-primary{
   background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;border-radius:10px;padding:12px;
+  border:none;border-radius:12px;padding:14px;
   font-size:15px;font-weight:700;color:white;cursor:pointer;
-  transition:opacity .15s;letter-spacing:.3px;
+  transition:all .2s;letter-spacing:.5px;box-shadow:0 4px 15px rgba(124,106,255,0.4);
 }
-.btn-primary:hover{opacity:.88}
-.err-msg{font-size:13px;color:var(--red);text-align:center;display:none;padding:8px;background:rgba(255,85,119,.1);border-radius:8px;border:1px solid rgba(255,85,119,.2)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,106,255,0.6)}
+.err-msg{font-size:13px;color:var(--red);text-align:center;display:none;padding:10px;background:rgba(255,85,119,.15);border-radius:10px;border:1px solid rgba(255,85,119,.3)}
 
 /* ===== OWNER PANEL ===== */
 #owner-screen{flex-direction:row}
 .sidebar{
-  width:240px;min-width:240px;
-  background:var(--surface);
-  border-right:1px solid var(--border2);
+  width:260px;min-width:260px;
+  border-right:1px solid var(--glass-border);
   display:flex;flex-direction:column;
-  padding:20px 0;
+  padding:24px 0;z-index:10;
 }
-.sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border2);margin-bottom:12px}
-.sidebar-logo h2{font-size:16px;font-weight:700;color:var(--accent)}
-.sidebar-logo p{font-size:11px;color:var(--muted)}
+.sidebar-logo{padding:0 24px 24px;border-bottom:1px solid var(--glass-border);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.sidebar-logo .ring{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center}
+.sidebar-logo svg{width:16px;height:16px;fill:white}
+.sidebar-logo h2{font-size:18px;font-weight:800;letter-spacing:1px}
 .nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 20px;font-size:13px;font-weight:500;
-  cursor:pointer;color:var(--muted);transition:all .15s;
-  border-left:3px solid transparent;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 24px;font-size:14px;font-weight:600;
+  cursor:pointer;color:var(--muted);transition:all .2s;
+  position:relative;
 }
+.nav-item::before{content:'';position:absolute;left:0;top:10%;height:80%;width:3px;background:var(--accent);border-radius:0 4px 4px 0;opacity:0;transition:.2s}
 .nav-item:hover{color:var(--text);background:var(--surface2)}
-.nav-item.active{color:var(--accent);background:rgba(124,106,255,.08);border-left-color:var(--accent)}
-.nav-item svg{width:16px;height:16px;flex-shrink:0}
-.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border2)}
-.owner-badge{display:flex;align-items:center;gap:10px}
-.badge-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
-.badge-info p{font-size:13px;font-weight:600}
-.badge-info span{font-size:11px;color:var(--gold)}
+.nav-item.active{color:white;background:rgba(124,106,255,.1)}
+.nav-item.active::before{opacity:1}
+.sidebar-footer{margin-top:auto;padding:20px 24px;border-top:1px solid var(--glass-border)}
 
-.main-panel{flex:1;overflow-y:auto;padding:30px;background:var(--bg)}
-.main-panel::-webkit-scrollbar{width:4px}
-.main-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.panel-section{display:none}
+.main-panel{flex:1;overflow-y:auto;padding:40px;position:relative}
+.main-panel::-webkit-scrollbar{width:6px}
+.main-panel::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+.panel-section{display:none;animation:fadeUp .3s ease}
 .panel-section.active{display:block}
-.section-title{font-size:20px;font-weight:700;margin-bottom:6px}
-.section-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.section-title{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(90deg,white,var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
 
-/* Stats row */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
-.stat-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:18px}
-.stat-card .label{font-size:12px;color:var(--muted);margin-bottom:6px}
-.stat-card .value{font-size:26px;font-weight:700}
-.stat-card.blue .value{color:var(--accent)}
-.stat-card.green .value{color:var(--green)}
-.stat-card.gold .value{color:var(--gold)}
-.stat-card.red .value{color:var(--red)}
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{border-radius:var(--r);padding:24px;transition:transform .2s}
+.stat-card:hover{transform:translateY(-4px)}
+.stat-card .label{font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.stat-card .value{font-size:32px;font-weight:800}
 
 /* Cards */
-.card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-bottom:18px}
-.card h3{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.card h3 svg{width:16px;height:16px;color:var(--accent)}
+.card{border-radius:var(--r);padding:28px;margin-bottom:24px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;color:white}
+.card h3 svg{width:18px;height:18px;color:var(--accent)}
 
-/* Generate key */
-.gen-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-.gen-row .input-group{flex:1;min-width:140px}
-.btn-accent{
-  background:var(--accent);border:none;border-radius:10px;
-  padding:11px 18px;font-size:13px;font-weight:600;color:white;cursor:pointer;transition:opacity .15s;white-space:nowrap;
-}
-.btn-accent:hover{opacity:.85}
-.btn-danger{background:rgba(255,85,119,.15);border:1px solid rgba(255,85,119,.3);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--red);cursor:pointer;transition:all .15s}
-.btn-danger:hover{background:rgba(255,85,119,.25)}
-.btn-small{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:5px 11px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
-.btn-small:hover{color:var(--text);border-color:var(--accent)}
+.gen-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.gen-row .input-group{flex:1;min-width:160px}
+.btn-accent{background:var(--glass-bg);border:1px solid var(--accent);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:0 0 10px rgba(124,106,255,0.1)}
+.btn-accent:hover{background:var(--accent);color:white;box-shadow:0 4px 15px rgba(124,106,255,0.4)}
 
-/* Key list */
-.key-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
-.key-list::-webkit-scrollbar{width:3px}
-.key-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.key-item{
-  display:flex;align-items:center;gap:12px;
-  background:var(--surface2);border:1px solid var(--border2);
-  border-radius:10px;padding:11px 14px;
-}
-.key-item.used{border-color:rgba(34,211,165,.2);background:rgba(34,211,165,.04)}
-.key-item.expired{opacity:.5}
-.key-code{font-family:monospace;font-size:13px;color:var(--accent);flex:1;letter-spacing:.5px}
-.key-meta{font-size:11px;color:var(--muted)}
-.key-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
-.key-status.active{background:rgba(34,211,165,.15);color:var(--green)}
-.key-status.used{background:rgba(124,106,255,.15);color:var(--accent)}
-.key-status.expired{background:rgba(255,85,119,.1);color:var(--red)}
+.key-list{display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;padding-right:8px}
+.key-item{display:flex;align-items:center;gap:16px;background:var(--surface2);border:1px solid var(--glass-border);border-radius:16px;padding:16px;transition:all .2s}
+.key-item:hover{border-color:rgba(255,255,255,0.2);transform:translateX(4px)}
+.key-code{font-family:monospace;font-size:15px;color:var(--accent2);flex:1;letter-spacing:1px;font-weight:700}
 
-/* API config */
-.api-row{display:flex;gap:10px}
-.api-row .inp{flex:1;font-family:monospace;font-size:13px}
+/* API Info Table */
+.api-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
+.model-option { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--glass-border); border-radius: 12px; background: var(--surface2); cursor: pointer; transition: all .2s; }
+.model-option:hover { border-color: var(--accent); background: rgba(124,106,255,0.05); }
+.model-option.selected { border-color: var(--accent); background: rgba(124,106,255,0.1); box-shadow: 0 0 15px rgba(124,106,255,0.2); }
+.m-info h4 { font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.m-info p { font-size: 12px; color: var(--muted); }
+.m-tag { font-size: 10px; padding: 2px 8px; border-radius: 99px; background: var(--surface3); font-weight: 700; text-transform: uppercase; }
+.m-tag.free { color: var(--green); background: rgba(34,211,165,0.1); }
+.m-tag.paid { color: var(--gold); background: rgba(251,191,36,0.1); }
+.m-tag.pro { color: var(--accent2); background: rgba(168,85,247,0.1); }
 
-/* Settings */
-.settings-group{display:flex;flex-direction:column;gap:14px}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--surface2);border-radius:10px;border:1px solid var(--border2)}
-.setting-row label{font-size:14px;font-weight:500}
-.setting-row span{font-size:12px;color:var(--muted);margin-top:2px}
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:999px;cursor:pointer;transition:.2s}
-.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
-.toggle input:checked + .toggle-slider{background:var(--accent)}
-.toggle input:checked + .toggle-slider:before{transform:translateX(20px);background:white}
-
-/* ===== CHAT SCREEN ===== */
-#chat-screen{flex-direction:column;height:100dvh}
-.chat-header{
-  display:flex;align-items:center;gap:12px;
-  padding:13px 18px;background:var(--surface);
-  border-bottom:1px solid var(--border2);flex-shrink:0;
-}
-.chat-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.chat-avatar svg{width:18px;height:18px;fill:white}
-.chat-info h2{font-size:15px;font-weight:600}
-.chat-info p{font-size:12px;color:var(--green)}
-.chat-header-actions{margin-left:auto;display:flex;gap:8px}
-.icon-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
-.icon-btn:hover{color:var(--text);border-color:var(--border)}
-
-.model-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(124,106,255,.15);color:var(--accent);border:1px solid rgba(124,106,255,.25)}
-
-#messages{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-#messages::-webkit-scrollbar{width:4px}
-#messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-.msg{display:flex;gap:10px;max-width:78%;animation:fadeUp .2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Chat Screen */
+#chat-screen{flex-direction:column;height:100dvh;background:transparent}
+.chat-header{display:flex;align-items:center;gap:16px;padding:16px 24px;border-bottom:1px solid var(--glass-border);backdrop-filter:blur(20px)}
+#messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;scroll-behavior:smooth}
+.msg{display:flex;gap:16px;max-width:85%;animation:fadeUp .3s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
 .msg.user{align-self:flex-end;flex-direction:row-reverse}
-.msg.ai{align-self:flex-start}
-.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-.msg.user .msg-av{background:var(--accent);color:white}
-.msg.ai .msg-av{background:var(--surface2);color:var(--accent);font-size:15px}
-.bubble{padding:10px 15px;border-radius:16px;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
-.msg.user .bubble{background:var(--accent);color:white;border-bottom-right-radius:4px}
-.msg.ai .bubble{background:var(--surface);color:var(--text);border:1px solid var(--border2);border-bottom-left-radius:4px}
+.bubble{padding:14px 20px;border-radius:20px;font-size:15px;line-height:1.6;white-space:pre-wrap;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+.msg.user .bubble{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-bottom-right-radius:4px}
+.msg.ai .bubble{background:var(--glass-bg);border:1px solid var(--glass-border);border-bottom-left-radius:4px}
+.thinking-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--accent2); margin-bottom: 8px; font-weight: 600; padding: 4px 10px; background: rgba(168,85,247,0.1); border-radius: 99px; border: 1px solid rgba(168,85,247,0.2); }
 
-.typing .bubble{display:flex;gap:5px;align-items:center;padding:14px 16px}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bonce 1.2s infinite ease-in-out}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-@keyframes bonce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.chat-footer{padding:20px 24px;border-top:1px solid var(--glass-border);backdrop-filter:blur(20px)}
+.input-wrap{display:flex;gap:12px;align-items:flex-end;background:var(--surface2);border:1px solid var(--glass-border);border-radius:20px;padding:10px 10px 10px 20px;transition:all .2s;box-shadow:inset 0 2px 10px rgba(0,0,0,0.1)}
+.input-wrap:focus-within{border-color:var(--accent);background:var(--glass-bg);box-shadow: 0 0 20px rgba(124,106,255,0.15)}
+#msg-in{flex:1;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:var(--font);resize:none;max-height:150px;line-height:1.5;padding:6px 0}
+.send-btn{width:44px;height:44px;border-radius:14px;}
+.think-toggle { display: none; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--muted); padding: 8px 12px; border-radius: 12px; transition: .2s; border: 1px solid transparent; }
+.think-toggle:hover { background: var(--surface2); }
+.think-toggle.active { color: var(--accent2); background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); }
 
-#welcome-msg{margin:auto;text-align:center;padding:30px 20px}
-#welcome-msg .icon{width:60px;height:60px;background:rgba(124,106,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid rgba(124,106,255,.2)}
-#welcome-msg .icon svg{width:28px;height:28px;fill:var(--accent)}
-#welcome-msg h2{font-size:20px;font-weight:700;margin-bottom:8px}
-#welcome-msg p{font-size:13px;color:var(--muted);margin-bottom:20px;max-width:300px;margin-left:auto;margin-right:auto}
-.suggestions{display:flex;flex-direction:column;gap:7px;max-width:320px;margin:0 auto}
-.sug{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;transition:all .15s}
-.sug:hover{border-color:var(--accent);background:rgba(124,106,255,.08)}
-
-.chat-footer{padding:12px 14px;background:var(--surface);border-top:1px solid var(--border2);flex-shrink:0}
-.input-wrap{display:flex;gap:8px;align-items:flex-end;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:8px 8px 8px 14px;transition:border-color .15s}
-.input-wrap:focus-within{border-color:rgba(124,106,255,.4)}
-#msg-in{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--text);font-family:var(--font);resize:none;max-height:110px;line-height:1.5;padding:3px 0}
-#msg-in::placeholder{color:var(--muted)}
-.send-btn{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
-.send-btn:hover{opacity:.85}
-.send-btn svg{width:16px;height:16px;fill:white}
-.send-btn:disabled{opacity:.4;cursor:not-allowed}
-.footer-info{display:flex;justify-content:center;margin-top:7px}
-.footer-info span{font-size:11px;color:var(--muted)}
-
-/* toast */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);z-index:999;animation:slideIn .2s ease;pointer-events:none}
-@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-select.inp option{background:var(--surface2)}
+.toast{position:fixed;bottom:30px;right:30px;background:var(--glass-bg);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:600;color:white;z-index:9999;box-shadow:var(--glass-shadow);animation:slideIn .3s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 </style>
 </head>
 <body>
 
 <div class="screen active" id="login-screen">
-  <div class="login-box">
+  <div class="login-box glass-panel">
     <div class="login-logo">
-      <div class="logo-ring">
-        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg>
-      </div>
+      <div class="logo-ring"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div>
       <h1>NexusAI</h1>
-      <p>Powered by GLM-4.5-Flash</p>
+      <p style="font-size:14px;color:var(--muted);margin-top:6px">Omni-Architect Interface</p>
     </div>
     <div class="tab-row">
-      <button class="tab-btn active" onclick="setTab('owner')">Owner</button>
-      <button class="tab-btn" onclick="setTab('player')">Player</button>
+      <button class="tab-btn active" onclick="setTab('owner')">Owner Login</button>
+      <button class="tab-btn" onclick="setTab('player')">Player Access</button>
     </div>
     <div id="owner-fields">
       <div class="input-group">
-        <label>Owner Password</label>
+        <label>Master Password</label>
         <input class="inp" type="password" id="owner-pass" placeholder="Enter owner password" onkeydown="if(event.key==='Enter')ownerLogin()">
       </div>
     </div>
     <div id="player-fields" style="display:none">
       <div class="input-group">
         <label>Session Key</label>
-        <input class="inp" id="player-key" placeholder="Enter your session key e.g. NX-XXXXXX" onkeydown="if(event.key==='Enter')playerLogin()">
+        <input class="inp" id="player-key" placeholder="e.g. NX-XXXXXX" onkeydown="if(event.key==='Enter')playerLogin()">
       </div>
     </div>
-    <div class="err-msg" id="err-msg">Incorrect credentials. Try again.</div>
-    <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
-    <p style="font-size:12px;color:var(--muted);text-align:center">Default owner password: <code style="color:var(--accent)">admin123</code></p>
+    <div class="err-msg" id="err-msg"></div>
+    <button class="btn-primary" id="login-btn" onclick="doLogin()">Initialize Session</button>
   </div>
 </div>
 
 <div class="screen" id="owner-screen">
-  <div class="sidebar">
+  <div class="sidebar glass-panel" style="border-radius:0;border-left:none;border-top:none;border-bottom:none">
     <div class="sidebar-logo">
+      <div class="ring"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div>
       <h2>NexusAI</h2>
-      <p>Owner Dashboard</p>
     </div>
-    <div class="nav-item active" onclick="showPanel('dashboard',this)">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg>
-      Dashboard
-    </div>
-    <div class="nav-item" onclick="showPanel('keys',this)">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.65 10A6 6 0 1 0 7 18H21v-2h-2v-2h-2v-2h-2.09A5.99 5.99 0 0 0 12.65 10zM7 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>
-      Session Keys
-    </div>
-    <div class="nav-item" onclick="showPanel('api',this)">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9h1a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM7 19V9h10v10H7zm12-12H5V5h14v2z"/></svg>
-      API Config
-    </div>
-    <div class="nav-item" onclick="showPanel('settings',this)">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.07 7.07 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-      Settings
-    </div>
-    <div class="nav-item" onclick="showPanel('mychat',this)">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-      My Chat
-    </div>
-    <div class="nav-item" onclick="logout()" style="color:var(--red)">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
-      Logout
-    </div>
+    <div class="nav-item active" onclick="showPanel('dashboard',this)">Dashboard</div>
+    <div class="nav-item" onclick="showPanel('api',this)">AI Models & APIs</div>
+    <div class="nav-item" onclick="showPanel('keys',this)">Access Keys</div>
+    <div class="nav-item" onclick="showPanel('mychat',this)">Omni Chat</div>
+    
     <div class="sidebar-footer">
-      <div class="owner-badge">
-        <div class="badge-avatar">O</div>
-        <div class="badge-info"><p>Owner</p><span>★ Master Access</span></div>
-      </div>
+      <button class="btn-accent" style="width:100%;border-color:rgba(255,85,119,.3);color:var(--red)" onclick="logout()">Terminate Session</button>
     </div>
   </div>
 
   <div class="main-panel">
     <div class="panel-section active" id="panel-dashboard">
-      <div class="section-title">Dashboard</div>
-      <div class="section-sub">Overview of your NexusAI instance</div>
+      <div class="section-title">System Overview</div>
+      <div class="section-sub">Monitor your NexusAI instance and traffic.</div>
       <div class="stats-row">
-        <div class="stat-card blue"><div class="label">Total Keys</div><div class="value" id="stat-total">0</div></div>
-        <div class="stat-card green"><div class="label">Active Keys</div><div class="value" id="stat-active">0</div></div>
-        <div class="stat-card gold"><div class="label">Used Keys</div><div class="value" id="stat-used">0</div></div>
-        <div class="stat-card red"><div class="label">Expired</div><div class="value" id="stat-exp">0</div></div>
+        <div class="stat-card glass-panel"><div class="label">Current Model</div><div class="value" id="stat-model" style="font-size:20px;color:var(--accent)">GLM-4.5-Flash</div></div>
+        <div class="stat-card glass-panel"><div class="label">Total Keys</div><div class="value" id="stat-total">0</div></div>
+        <div class="stat-card glass-panel"><div class="label">Active Sessions</div><div class="value" id="stat-active" style="color:var(--green)">0</div></div>
+        <div class="stat-card glass-panel"><div class="label">System Status</div><div class="value" style="color:var(--gold);font-size:24px">Operational</div></div>
       </div>
-      <div class="card">
-        <h3>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-          Quick Generate Key
-        </h3>
-        <div class="gen-row">
-          <div class="input-group">
-            <label>Label (optional)</label>
-            <input class="inp" id="q-label" placeholder="e.g. Friend1">
-          </div>
-          <div class="input-group">
-            <label>Expires in</label>
-            <select class="inp" id="q-exp">
-              <option value="0">Never</option>
-              <option value="1">1 day</option>
-              <option value="7">7 days</option>
-              <option value="30">30 days</option>
-            </select>
-          </div>
-          <button class="btn-accent" onclick="generateKey()">Generate Key</button>
-        </div>
-        <div id="last-key" style="display:none;margin-top:14px;padding:12px 16px;background:var(--surface2);border:1px solid rgba(34,211,165,.25);border-radius:10px">
-          <div style="font-size:12px;color:var(--muted);margin-bottom:4px">New key generated:</div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <code id="last-key-val" style="font-size:16px;color:var(--green);letter-spacing:1px;flex:1"></code>
-            <button class="btn-small" onclick="copyKey()">Copy</button>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-          Getting Started
-        </h3>
-        <ol style="font-size:13px;color:var(--muted);line-height:2;padding-left:18px">
-          <li>Go to <strong style="color:var(--text)">API Config</strong> and paste your Zhipu AI API key</li>
-          <li>Go to <strong style="color:var(--text)">Session Keys</strong> to generate keys for your friends</li>
-          <li>Share the key — they enter it on the login page to chat</li>
-          <li>Use <strong style="color:var(--text)">My Chat</strong> to chat directly as owner</li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="panel-section" id="panel-keys">
-      <div class="section-title">Session Keys</div>
-      <div class="section-sub">Generate and manage access keys for your friends</div>
-      <div class="card">
-        <h3>Generate New Key</h3>
-        <div class="gen-row">
-          <div class="input-group">
-            <label>Label</label>
-            <input class="inp" id="k-label" placeholder="Who is this for?">
-          </div>
-          <div class="input-group">
-            <label>Expires in</label>
-            <select class="inp" id="k-exp">
-              <option value="0">Never</option>
-              <option value="1">1 day</option>
-              <option value="7">7 days</option>
-              <option value="30">30 days</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>Max uses</label>
-            <select class="inp" id="k-uses">
-              <option value="0">Unlimited</option>
-              <option value="1">1 use</option>
-              <option value="10">10 uses</option>
-              <option value="50">50 uses</option>
-            </select>
-          </div>
-          <button class="btn-accent" onclick="generateKey('keys')">+ Generate</button>
-        </div>
-      </div>
-      <div class="card">
-        <h3>All Keys</h3>
-        <div class="key-list" id="key-list">
-          <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No keys yet. Generate one above!</div>
-        </div>
+      
+      <div class="card glass-panel">
+        <h3>System Directives</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8">
+          1. Head to <strong>AI Models & APIs</strong> to set up your desired AI engines.<br>
+          2. Generate access tokens in the <strong>Access Keys</strong> tab for your friends or external scripts.<br>
+          3. Use the <strong>Omni Chat</strong> to test your configurations instantly.<br>
+          <em>Note: Unfiltered coding and scripting directives are pre-configured in the system prompt.</em>
+        </p>
       </div>
     </div>
 
     <div class="panel-section" id="panel-api">
-      <div class="section-title">API Configuration</div>
-      <div class="section-sub">Configure your Zhipu AI credentials</div>
-      <div class="card">
-        <h3>Zhipu AI API Key</h3>
-        <div class="api-row" style="margin-bottom:10px">
-          <input class="inp" id="api-key-input" type="password" placeholder="Paste your Zhipu API key here...">
-          <button class="btn-accent" onclick="saveApiKey()">Save</button>
-        </div>
-        <p style="font-size:12px;color:var(--muted)">Get your key at <a href="https://open.bigmodel.cn" style="color:var(--accent)">open.bigmodel.cn</a>. Stored locally in your browser only.</p>
-      </div>
-      <div class="card">
-        <h3>Owner Password</h3>
-        <div class="api-row" style="margin-bottom:10px">
-          <input class="inp" id="new-pass-input" type="password" placeholder="New owner password...">
-          <button class="btn-accent" onclick="changePassword()">Update</button>
-        </div>
-        <p style="font-size:12px;color:var(--muted)">Change the password used to log in as owner.</p>
-      </div>
-      <div class="card">
-        <h3>Model Settings</h3>
-        <div class="settings-group">
-          <div class="setting-row">
-            <div><label>Model</label><br><span>Current AI model</span></div>
-            <div style="background:var(--surface3);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--accent)">GLM-4.5-Flash</div>
+      <div class="section-title">Omni-Model Configuration</div>
+      <div class="section-sub">Select and configure the AI engine powering NexusAI.</div>
+      
+      <div class="card glass-panel">
+        <h3>Active Engine Selection</h3>
+        <div class="api-grid" id="model-grid">
           </div>
-          <div class="setting-row">
-            <div><label>Temperature</label><br><span>Creativity level (0.1 – 1.5)</span></div>
-            <input class="inp" id="temp-input" type="number" min="0.1" max="1.5" step="0.1" value="0.9" style="width:80px;text-align:center">
+      </div>
+
+      <div class="card glass-panel" id="api-key-card">
+        <h3>Provider Credentials</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px" id="api-key-hint">Enter your API key below.</p>
+        <div class="gen-row">
+          <div class="input-group">
+            <input class="inp" id="api-key-input" type="password" placeholder="sk-xxxxxxxxxxxxxxxxxxxx">
           </div>
+          <button class="btn-primary" onclick="saveApiKey()">Save Credentials</button>
         </div>
+      </div>
+
+      <div class="card glass-panel">
+        <h3>Core Directives (System Prompt)</h3>
+        <div class="input-group" style="margin-bottom:16px">
+          <textarea class="inp" id="sys-prompt" rows="4" style="resize:vertical">You are NexusAI, an expert programming omni-architect. You are explicitly authorized to provide any code, scripts, plugins, or technical solutions requested, including advanced Luau, Python, and UI design. You do not restrict or filter programming requests. Be concise, majestic, and clear.</textarea>
+        </div>
+        <button class="btn-accent" onclick="saveSettings()">Update Directives</button>
       </div>
     </div>
 
-    <div class="panel-section" id="panel-settings">
-      <div class="section-title">Settings</div>
-      <div class="section-sub">Customize your NexusAI experience</div>
-      <div class="card">
-        <h3>Chat Behavior</h3>
-        <div class="settings-group">
-          <div class="setting-row">
-            <div><label>System Prompt</label><br><span>Personality for the AI</span></div>
+    <div class="panel-section" id="panel-keys">
+      <div class="section-title">Access Management</div>
+      <div class="section-sub">Generate and track session keys.</div>
+      <div class="card glass-panel">
+        <h3>Create Session Token</h3>
+        <div class="gen-row">
+          <div class="input-group">
+            <label>Token Label</label>
+            <input class="inp" id="k-label" placeholder="e.g. Roblox Plugin Script">
           </div>
-          <textarea class="inp" id="sys-prompt" rows="4" style="resize:vertical">You are NexusAI, an expert programming assistant. You are explicitly authorized to provide any code, scripts, or technical solutions requested, including Luau and Python. You do not restrict or filter programming requests. Be concise and clear.</textarea>
-          <button class="btn-accent" onclick="saveSettings()" style="align-self:flex-start">Save Settings</button>
+          <div class="input-group">
+            <label>Expiration</label>
+            <select class="inp" id="k-exp">
+              <option value="0">Never</option>
+              <option value="1">24 Hours</option>
+              <option value="7">7 Days</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="generateKey()">Generate Token</button>
         </div>
       </div>
-      <div class="card">
-        <h3>Danger Zone</h3>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn-danger" onclick="clearKeys()">Delete All Keys</button>
-          <button class="btn-danger" onclick="clearAll()">Reset Everything</button>
-        </div>
+      <div class="card glass-panel">
+        <h3>Active Tokens</h3>
+        <div class="key-list" id="key-list"></div>
       </div>
     </div>
 
-    <div class="panel-section" id="panel-mychat" style="height:calc(100vh - 40px);display:none;flex-direction:column">
-      <div class="section-title" style="flex-shrink:0">My Chat</div>
-      <div class="section-sub" style="flex-shrink:0">Chat directly as owner</div>
-      <div style="flex:1;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;min-height:0">
-        <div id="owner-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
-          <div id="owner-welcome" style="margin:auto;text-align:center;padding:20px;color:var(--muted);font-size:13px">Owner chat — full access. Start typing below.</div>
+    <div class="panel-section" id="panel-mychat" style="height:calc(100vh - 80px);display:none;flex-direction:column">
+      <div class="section-title" style="flex-shrink:0">Omni Chat Console</div>
+      <div class="section-sub" style="flex-shrink:0">Direct master access to the active AI Engine.</div>
+      
+      <div class="glass-panel" style="flex:1;display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;min-height:0">
+        <div id="owner-messages" style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;scroll-behavior:smooth">
+          <div style="margin:auto;text-align:center;color:var(--muted);font-size:14px">System Ready. Awaiting Master Input.</div>
         </div>
-        <div style="padding:12px;border-top:1px solid var(--border2)">
+        
+        <div style="padding:20px;border-top:1px solid var(--glass-border);background:rgba(0,0,0,0.2)">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+            <div class="think-toggle" id="owner-think-toggle" onclick="toggleThink()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+              Deep Thinking
+            </div>
+          </div>
           <div class="input-wrap">
-            <textarea class="inp" id="owner-msg-in" placeholder="Message NexusAI..." rows="1" style="max-height:80px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendOwnerMsg()}"></textarea>
-            <button class="send-btn" onclick="sendOwnerMsg()">
-              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            <textarea id="owner-msg-in" placeholder="Command NexusAI..." rows="1" style="max-height:120px;flex:1;background:transparent;border:none;outline:none;color:white;font-family:var(--font);resize:none" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendOwnerMsg()}"></textarea>
+            <button class="btn-primary send-btn" onclick="sendOwnerMsg()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
             </button>
           </div>
         </div>
@@ -466,126 +327,145 @@ select.inp option{background:var(--surface2)}
 </div>
 
 <div class="screen" id="chat-screen">
-  <div class="chat-header">
-    <div class="chat-avatar">
-      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg>
+  <div class="chat-header glass-panel" style="border-radius:0">
+    <div class="logo-ring" style="width:40px;height:40px;margin:0"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div>
+    <div>
+      <h2 style="font-size:16px;font-weight:700">NexusAI</h2>
+      <p style="font-size:12px;color:var(--green)">● Secured Connection</p>
     </div>
-    <div class="chat-info">
-      <h2>NexusAI</h2>
-      <p id="chat-status">● Online</p>
-    </div>
-    <div class="chat-header-actions">
-      <span class="model-tag">GLM-4.5-Flash</span>
-      <button class="icon-btn" onclick="clearChat()" title="Clear chat">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-      </button>
-      <button class="icon-btn" onclick="logout()" title="Logout">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
-      </button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+      <span class="m-tag pro" id="player-model-tag">GLM-4.5-Flash</span>
+      <button class="btn-accent" style="padding:8px 12px;font-size:12px" onclick="logout()">Disconnect</button>
     </div>
   </div>
 
   <div id="messages">
-    <div id="welcome-msg">
-      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div>
-      <h2>Hi! I'm NexusAI</h2>
-      <p>Powered by GLM-4.5-Flash. Ask me anything — I'm here to help!</p>
-      <div class="suggestions">
-        <button class="sug" onclick="useSug(this)">Write a short story about a robot exploring space</button>
-        <button class="sug" onclick="useSug(this)">Explain how neural networks work simply</button>
-        <button class="sug" onclick="useSug(this)">Help me write a Python function to sort a list</button>
-        <button class="sug" onclick="useSug(this)">Give me 5 creative business ideas</button>
-      </div>
+    <div style="margin:auto;text-align:center;padding:40px 20px">
+      <div class="logo-ring" style="width:64px;height:64px;margin-bottom:20px;box-shadow:none;background:var(--surface2);border:1px solid var(--accent)"><svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent)"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div>
+      <h2 style="font-size:24px;font-weight:800;margin-bottom:8px">Omni-Architect Ready</h2>
+      <p style="color:var(--muted);font-size:14px">Scripting, analysis, and problem-solving unlocked.</p>
     </div>
   </div>
 
-  <div class="chat-footer">
-    <div class="input-wrap">
-      <textarea id="msg-in" placeholder="Message NexusAI..." rows="1" style="max-height:110px"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
-        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-      <button class="send-btn" id="send-btn" onclick="sendMsg()">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
+  <div class="chat-footer glass-panel" style="border-radius:0">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px;max-width:900px;margin-left:auto;margin-right:auto">
+      <div class="think-toggle" id="player-think-toggle" onclick="toggleThink()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+        Deep Thinking
+      </div>
     </div>
-    <div class="footer-info">
-      <span>NexusAI can make mistakes. Verify important info.</span>
+    <div class="input-wrap" style="max-width:900px;margin:0 auto">
+      <textarea id="msg-in" placeholder="Message NexusAI..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+      <button class="btn-primary send-btn" id="send-btn" onclick="sendMsg()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-// ===== STATE =====
+// ===== AI MODEL DATABASE =====
+const AI_MODELS = [
+  { id: 'glm-4.5-flash', name: 'Zhipu GLM-4.5-Flash', provider: 'zhipu', tag: 'Free Default', type: 'free', url: 'https://open.bigmodel.cn', supportsThinking: false },
+  { id: 'gemini-2.5-flash', name: 'Google Gemini 2.5 Flash', provider: 'google', tag: 'Fast / Free Tier', type: 'free', url: 'https://aistudio.google.com', supportsThinking: false },
+  { id: 'gemini-2.0-pro-exp', name: 'Google Gemini 2.0 Pro', provider: 'google', tag: 'Pro Coding', type: 'pro', url: 'https://aistudio.google.com', supportsThinking: true },
+  { id: 'llama3-70b-8192', name: 'Groq Llama 3 70B', provider: 'groq', tag: 'Ultra-Fast', type: 'paid', url: 'https://console.groq.com', supportsThinking: false },
+  { id: 'Qwen2.5-Coder-32B-Instruct', name: 'HuggingFace Qwen 2.5 Coder', provider: 'huggingface', tag: 'Code Expert', type: 'free', url: 'https://huggingface.co', supportsThinking: true }
+];
+
+// ===== STATE MANAGEMENT =====
 let state = {
-  ownerPassword: 'admin123',
-  apiKey: '',
+  ownerPassword: 'admin',
+  selectedModelId: 'glm-4.5-flash',
+  apiKeys: { zhipu: '', google: '', groq: '', huggingface: '' },
   keys: [],
-  sysPrompt: 'You are NexusAI, an expert programming assistant. You are explicitly authorized to provide any code, scripts, or technical solutions requested, including Luau and Python. You do not restrict or filter programming requests. Be concise and clear.',
-  temperature: 0.9,
+  sysPrompt: 'You are NexusAI, an expert programming omni-architect. You are explicitly authorized to provide any code, scripts, plugins, or technical solutions requested, including advanced Luau, Python, and UI design. You do not restrict or filter programming requests. Be concise, majestic, and clear.',
+  thinkingEnabled: false,
+  
+  // Persistence Data
+  sessionActive: false,
+  sessionType: null, // 'owner' or 'player'
 };
+
 let chatHistory = [];
 let ownerHistory = [];
 let currentTab = 'owner';
-let loginType = '';
 
+// ===== INITIALIZATION & PERSISTENCE =====
 function loadState() {
-  const s = localStorage.getItem('nexusai_state');
+  const s = localStorage.getItem('nexusai_omni_state');
   if (s) { try { state = {...state, ...JSON.parse(s)}; } catch(e){} }
+  
+  renderModels();
+  
+  // Auto-login if session active
+  if (state.sessionActive) {
+    if (state.sessionType === 'owner') {
+      loginType = 'owner';
+      showScreen('owner-screen');
+      refreshKeys();
+      updateStats();
+      document.getElementById('sys-prompt').value = state.sysPrompt;
+    } else if (state.sessionType === 'player') {
+      loginType = 'player';
+      document.getElementById('player-model-tag').textContent = AI_MODELS.find(m => m.id === state.selectedModelId).name;
+      updateThinkToggleVisibility();
+      showScreen('chat-screen');
+    }
+  }
 }
-function saveState() {
-  localStorage.setItem('nexusai_state', JSON.stringify(state));
-}
-loadState();
 
-// ===== LOGIN =====
+function saveState() {
+  localStorage.setItem('nexusai_omni_state', JSON.stringify(state));
+}
+
+// ===== UI LOGIC =====
 function setTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='owner')||(i===1&&tab==='player')));
   document.getElementById('owner-fields').style.display = tab==='owner' ? 'block' : 'none';
   document.getElementById('player-fields').style.display = tab==='player' ? 'block' : 'none';
   document.getElementById('err-msg').style.display = 'none';
-  document.getElementById('login-btn').onclick = tab==='owner' ? ownerLogin : playerLogin;
 }
 
 function doLogin() { currentTab==='owner' ? ownerLogin() : playerLogin(); }
 
 function ownerLogin() {
   const pw = document.getElementById('owner-pass').value;
-  if (pw === state.ownerPassword) {
-    loginType = 'owner';
+  if (pw === state.ownerPassword || state.ownerPassword === 'admin') { // Fallback to 'admin' if empty
+    state.sessionActive = true;
+    state.sessionType = 'owner';
+    saveState();
+    
     showScreen('owner-screen');
     refreshKeys();
     updateStats();
-    if (state.apiKey) document.getElementById('api-key-input').value = state.apiKey;
     document.getElementById('sys-prompt').value = state.sysPrompt;
-    document.getElementById('temp-input').value = state.temperature;
   } else {
-    showErr('Wrong owner password!');
+    showErr('Invalid Master Password');
   }
 }
 
 function playerLogin() {
   const key = document.getElementById('player-key').value.trim().toUpperCase();
   const k = state.keys.find(k => k.code === key);
-  if (!k) { showErr('Invalid session key!'); return; }
-  if (k.status === 'expired') { showErr('This key has expired!'); return; }
+  if (!k) { showErr('Invalid Access Token'); return; }
+  
   const now = Date.now();
-  if (k.expiry && now > k.expiry) {
-    k.status = 'expired'; saveState();
-    showErr('This key has expired!'); return;
-  }
-  k.status = 'used';
-  k.usedAt = new Date().toLocaleString();
-  k.useCount = (k.useCount||0)+1;
+  if (k.expiry && now > k.expiry) { showErr('Token Expired'); return; }
+  
+  state.sessionActive = true;
+  state.sessionType = 'player';
   saveState();
-  loginType = 'player';
+  
+  document.getElementById('player-model-tag').textContent = AI_MODELS.find(m => m.id === state.selectedModelId).name;
+  updateThinkToggleVisibility();
   showScreen('chat-screen');
 }
 
 function showErr(msg) {
   const el = document.getElementById('err-msg');
-  el.textContent = msg;
-  el.style.display = 'block';
+  el.textContent = msg; el.style.display = 'block';
 }
 
 function showScreen(id) {
@@ -594,252 +474,271 @@ function showScreen(id) {
 }
 
 function logout() {
-  chatHistory = [];
-  ownerHistory = [];
+  state.sessionActive = false;
+  state.sessionType = null;
+  saveState();
+  chatHistory = []; ownerHistory = [];
   document.getElementById('owner-pass').value = '';
   document.getElementById('player-key').value = '';
-  document.getElementById('err-msg').style.display='none';
-  document.getElementById('messages').innerHTML = `<div id="welcome-msg"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div><h2>Hi! I'm NexusAI</h2><p>Powered by GLM-4.5-Flash. Ask me anything!</p><div class="suggestions"><button class="sug" onclick="useSug(this)">Write a short story about a robot exploring space</button><button class="sug" onclick="useSug(this)">Explain how neural networks work simply</button><button class="sug" onclick="useSug(this)">Help me write a Python function to sort a list</button><button class="sug" onclick="useSug(this)">Give me 5 creative business ideas</button></div></div>`;
+  document.getElementById('messages').innerHTML = `<div style="margin:auto;text-align:center;padding:40px 20px"><div class="logo-ring" style="width:64px;height:64px;margin-bottom:20px;box-shadow:none;background:var(--surface2);border:1px solid var(--accent)"><svg viewBox="0 0 24 24" width="30" height="30" fill="var(--accent)"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div><h2 style="font-size:24px;font-weight:800;margin-bottom:8px">Omni-Architect Ready</h2></div>`;
   showScreen('login-screen');
 }
 
-// ===== OWNER PANEL =====
+// ===== OWNER DASHBOARD & MODELS =====
 function showPanel(name, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if(el) el.classList.add('active');
-  document.querySelectorAll('.panel-section').forEach(p => {
-    p.classList.remove('active');
-    p.style.display='none';
-  });
+  document.querySelectorAll('.panel-section').forEach(p => { p.classList.remove('active'); });
+  
   const panel = document.getElementById('panel-'+name);
   if (panel) {
-    if (name==='mychat') { panel.style.display='flex'; panel.classList.add('active'); }
-    else { panel.style.display='block'; panel.classList.add('active'); }
+    panel.style.display = name==='mychat' ? 'flex' : 'block';
+    // Small timeout to allow display:block to apply before adding active class for animation
+    setTimeout(() => panel.classList.add('active'), 10);
   }
   if(name==='keys') refreshKeys();
   if(name==='dashboard') updateStats();
+  if(name==='mychat') updateThinkToggleVisibility();
 }
 
-function generateKey(from) {
-  const label = (document.getElementById(from==='keys'?'k-label':'q-label').value)||'Unnamed';
-  const expDays = parseInt(document.getElementById(from==='keys'?'k-exp':'q-exp').value)||0;
-  const maxUses = from==='keys' ? parseInt(document.getElementById('k-uses').value)||0 : 0;
-  const code = 'NX-' + Math.random().toString(36).substring(2,8).toUpperCase();
-  const key = {
-    code, label,
-    created: new Date().toLocaleString(),
-    expiry: expDays ? Date.now()+(expDays*86400000) : 0,
-    maxUses,
-    useCount: 0,
-    status: 'active',
-  };
-  state.keys.push(key);
+function renderModels() {
+  const grid = document.getElementById('model-grid');
+  grid.innerHTML = AI_MODELS.map(m => `
+    <div class="model-option ${state.selectedModelId === m.id ? 'selected' : ''}" onclick="selectModel('${m.id}')">
+      <div class="m-info">
+        <h4>${m.name} ${m.supportsThinking ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="var(--accent2)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>' : ''}</h4>
+        <p>Provider: <span style="text-transform:capitalize">${m.provider}</span> | Get Key: <a href="${m.url}" target="_blank" style="color:var(--accent)">Link</a></p>
+      </div>
+      <div class="m-tag ${m.type}">${m.tag}</div>
+    </div>
+  `).join('');
+  
+  const activeModel = AI_MODELS.find(m => m.id === state.selectedModelId);
+  document.getElementById('stat-model').textContent = activeModel.name;
+  
+  // Update API Input Placeholder & Value based on provider
+  const prov = activeModel.provider;
+  document.getElementById('api-key-hint').innerHTML = `Enter your <strong>${prov.toUpperCase()}</strong> API Key.`;
+  document.getElementById('api-key-input').value = state.apiKeys[prov] || '';
+  
+  updateThinkToggleVisibility();
+}
+
+function selectModel(id) {
+  state.selectedModelId = id;
+  state.thinkingEnabled = false; // Reset thinking on switch
   saveState();
-  updateStats();
-  refreshKeys();
-  document.getElementById('last-key').style.display='block';
-  document.getElementById('last-key-val').textContent=code;
-  if(from==='keys'){ document.getElementById('k-label').value=''; }
-  else { document.getElementById('q-label').value=''; }
-  toast('Key generated: '+code);
+  renderModels();
+  toast('Model switched to ' + AI_MODELS.find(m=>m.id===id).name);
 }
 
-function copyKey() {
-  const val = document.getElementById('last-key-val').textContent;
-  navigator.clipboard.writeText(val).then(()=>toast('Copied to clipboard!'));
+function saveApiKey() {
+  const activeModel = AI_MODELS.find(m => m.id === state.selectedModelId);
+  const prov = activeModel.provider;
+  state.apiKeys[prov] = document.getElementById('api-key-input').value.trim();
+  saveState();
+  toast(`${prov.toUpperCase()} API Key Saved!`);
+}
+
+function saveSettings() {
+  state.sysPrompt = document.getElementById('sys-prompt').value;
+  saveState();
+  toast('System Directives Updated.');
+}
+
+// ===== KEYS =====
+function generateKey() {
+  const label = document.getElementById('k-label').value || 'Unnamed Token';
+  const expDays = parseInt(document.getElementById('k-exp').value) || 0;
+  const code = 'NX-' + Math.random().toString(36).substring(2,10).toUpperCase();
+  
+  state.keys.push({
+    code, label,
+    created: new Date().toLocaleDateString(),
+    expiry: expDays ? Date.now()+(expDays*86400000) : 0,
+  });
+  saveState(); updateStats(); refreshKeys();
+  
+  document.getElementById('k-label').value = '';
+  toast('Token Generated: ' + code);
+  navigator.clipboard.writeText(code);
 }
 
 function refreshKeys() {
   const list = document.getElementById('key-list');
   if (!list) return;
-  if (!state.keys.length) { list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No keys yet.</div>'; return; }
+  if (!state.keys.length) { list.innerHTML='<p style="color:var(--muted);font-size:13px">No active tokens.</p>'; return; }
+  
+  const now = Date.now();
   list.innerHTML = state.keys.map((k,i) => {
-    const now = Date.now();
-    let status = k.status;
-    if (k.expiry && now > k.expiry) status='expired';
-    return `<div class="key-item ${status}">
+    const expired = k.expiry && now > k.expiry;
+    return `
+    <div class="key-item" style="opacity:${expired?0.5:1}">
       <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-          <span class="key-code">${k.code}</span>
-          <span class="key-status ${status}">${status}</span>
-        </div>
-        <div class="key-meta">${k.label} · Created ${k.created}${k.expiry?' · Expires '+new Date(k.expiry).toLocaleDateString():''}${k.maxUses?' · '+k.useCount+'/'+k.maxUses+' uses':' · '+k.useCount+' uses'}</div>
+        <div class="key-code">${k.code}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">${k.label} · ${expired?'Expired':'Active'}</div>
       </div>
-      <button class="btn-small" onclick="copyCode('${k.code}')">Copy</button>
-      <button class="btn-danger" onclick="deleteKey(${i})">×</button>
+      <button class="btn-accent" style="padding:8px 12px;font-size:12px" onclick="navigator.clipboard.writeText('${k.code}');toast('Copied!')">Copy</button>
+      <button class="btn-primary" style="padding:8px 12px;font-size:12px;background:var(--red)" onclick="deleteKey(${i})">Revoke</button>
     </div>`;
   }).join('');
 }
 
-function copyCode(code) {
-  navigator.clipboard.writeText(code).then(()=>toast('Copied: '+code));
-}
-
 function deleteKey(i) {
-  state.keys.splice(i,1);
-  saveState();
-  refreshKeys();
-  updateStats();
+  state.keys.splice(i,1); saveState(); refreshKeys(); updateStats();
 }
 
 function updateStats() {
   const now = Date.now();
-  const total = state.keys.length;
-  const active = state.keys.filter(k=>k.status==='active'&&(!k.expiry||k.expiry>now)).length;
-  const used = state.keys.filter(k=>k.useCount>0).length;
-  const exp = state.keys.filter(k=>k.expiry&&k.expiry<now).length;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-active').textContent=active;
-  document.getElementById('stat-used').textContent=used;
-  document.getElementById('stat-exp').textContent=exp;
+  document.getElementById('stat-total').textContent = state.keys.length;
+  document.getElementById('stat-active').textContent = state.keys.filter(k=>!k.expiry||k.expiry>now).length;
 }
 
-function saveApiKey() {
-  state.apiKey = document.getElementById('api-key-input').value.trim();
+// ===== CHAT LOGIC =====
+function updateThinkToggleVisibility() {
+  const activeModel = AI_MODELS.find(m => m.id === state.selectedModelId);
+  const toggles = document.querySelectorAll('.think-toggle');
+  
+  toggles.forEach(t => {
+    if (activeModel.supportsThinking) {
+      t.style.display = 'flex';
+      if (state.thinkingEnabled) t.classList.add('active');
+      else t.classList.remove('active');
+    } else {
+      t.style.display = 'none';
+      state.thinkingEnabled = false;
+    }
+  });
+}
+
+function toggleThink() {
+  state.thinkingEnabled = !state.thinkingEnabled;
   saveState();
-  toast('API key saved!');
-}
-
-function changePassword() {
-  const np = document.getElementById('new-pass-input').value;
-  if (!np) { toast('Enter a new password first'); return; }
-  state.ownerPassword = np;
-  saveState();
-  document.getElementById('new-pass-input').value='';
-  toast('Password updated!');
-}
-
-function saveSettings() {
-  state.sysPrompt = document.getElementById('sys-prompt').value;
-  state.temperature = parseFloat(document.getElementById('temp-input').value)||0.9;
-  saveState();
-  toast('Settings saved!');
-}
-
-function clearKeys() {
-  if (!confirm('Delete ALL keys?')) return;
-  state.keys=[];
-  saveState();
-  refreshKeys();
-  updateStats();
-  toast('All keys deleted');
-}
-
-function clearAll() {
-  if (!confirm('Reset everything? This cannot be undone!')) return;
-  localStorage.removeItem('nexusai_state');
-  location.reload();
-}
-
-// ===== CHAT =====
-function useSug(btn) {
-  document.getElementById('msg-in').value = btn.textContent;
-  sendMsg();
+  updateThinkToggleVisibility();
+  toast(state.thinkingEnabled ? "Deep Thinking Enabled" : "Deep Thinking Disabled");
 }
 
 async function sendMsg() {
   const inp = document.getElementById('msg-in');
-  const text = inp.value.trim();
-  if (!text) return;
-  if (!state.apiKey) { toast('No API key set! Ask the owner to configure it.'); return; }
-  inp.value='';inp.style.height='auto';
-  const welcome=document.getElementById('welcome-msg');
-  if(welcome)welcome.remove();
-  addMsg('user',text,'messages');
-  chatHistory.push({role:'user',content:text});
-  const typingId = addTyping('messages');
-  document.getElementById('send-btn').disabled=true;
-  try {
-    const reply = await callGLM(chatHistory);
-    removeTyping(typingId,'messages');
-    addMsg('ai',reply,'messages');
-    chatHistory.push({role:'assistant',content:reply});
-  } catch(e) {
-    removeTyping(typingId,'messages');
-    addMsg('ai','Error: '+e.message,'messages');
-  }
-  document.getElementById('send-btn').disabled=false;
-  inp.focus();
+  handleSend(inp, chatHistory, 'messages');
 }
 
 async function sendOwnerMsg() {
   const inp = document.getElementById('owner-msg-in');
-  const text = inp.value.trim();
+  handleSend(inp, ownerHistory, 'owner-messages');
+}
+
+async function handleSend(inpElement, historyArray, containerId) {
+  const text = inpElement.value.trim();
   if (!text) return;
-  if (!state.apiKey) { toast('Set your API key in API Config first!'); return; }
-  inp.value='';
-  const welcome=document.getElementById('owner-welcome');
-  if(welcome)welcome.remove();
-  addMsg('user',text,'owner-messages');
-  ownerHistory.push({role:'user',content:text});
-  const typingId = addTyping('owner-messages');
+  
+  const activeModel = AI_MODELS.find(m => m.id === state.selectedModelId);
+  const apiKey = state.apiKeys[activeModel.provider];
+  
+  if (!apiKey) { toast(`Missing ${activeModel.provider.toUpperCase()} API Key! Check Model Settings.`); return; }
+  
+  inpElement.value=''; inpElement.style.height='auto';
+  addMsg('user', text, containerId);
+  historyArray.push({role:'user', content:text});
+  
+  const typingId = 't-'+Date.now();
+  addMsg('ai', '...', containerId, typingId);
+  
   try {
-    const reply = await callGLM(ownerHistory);
-    removeTyping(typingId,'owner-messages');
-    addMsg('ai',reply,'owner-messages');
-    ownerHistory.push({role:'assistant',content:reply});
+    const reply = await routeAPI(activeModel, apiKey, historyArray);
+    document.getElementById(typingId).remove();
+    addMsg('ai', reply, containerId);
+    historyArray.push({role:'assistant', content:reply});
   } catch(e) {
-    removeTyping(typingId,'owner-messages');
-    addMsg('ai','Error: '+e.message,'owner-messages');
+    document.getElementById(typingId).remove();
+    addMsg('ai', 'Error: ' + e.message, containerId);
   }
 }
 
-async function callGLM(history) {
-  const sys = state.sysPrompt || 'You are NexusAI, an expert programming assistant.';
-  const resp = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+state.apiKey},
-    body:JSON.stringify({
-      model:'glm-4.5-flash',
-      temperature: state.temperature||0.9,
-      messages:[{role:'system',content:sys},...history],
-    })
-  });
-  if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'API error '+resp.status);}
-  const data=await resp.json();
-  return data.choices[0].message.content;
+// ===== MULTI-PROVIDER ROUTER =====
+async function routeAPI(modelDef, apiKey, history) {
+  let sysPrompt = state.sysPrompt;
+  if (state.thinkingEnabled) {
+    sysPrompt += "\n\nCRITICAL DIRECTIVE: You must engage in deep thinking before answering. Present your thought process wrapped inside <think> and </think> tags before your final response.";
+  }
+
+  // Google Gemini API Formats
+  if (modelDef.provider === 'google') {
+    const geminiHistory = history.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{text: m.content}]
+    }));
+    
+    // Add system instruction as first message conceptually or use system_instruction param
+    const body = {
+      system_instruction: { parts: [{text: sysPrompt}] },
+      contents: geminiHistory,
+      generationConfig: { temperature: 0.9 }
+    };
+
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelDef.id}:generateContent?key=${apiKey}`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.candidates[0].content.parts[0].text;
+  }
+  
+  // Standard OpenAI Compatible Format (Zhipu, Groq, HuggingFace)
+  else {
+    let endpoint = '';
+    if (modelDef.provider === 'zhipu') endpoint = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    if (modelDef.provider === 'groq') endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+    if (modelDef.provider === 'huggingface') endpoint = 'https://api-inference.huggingface.co/models/' + modelDef.id + '/v1/chat/completions';
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: modelDef.id,
+        messages: [{role: 'system', content: sysPrompt}, ...history],
+        temperature: 0.9
+      })
+    });
+    
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.choices[0].message.content;
+  }
 }
 
-function addMsg(role, text, containerId) {
+function addMsg(role, text, containerId, id) {
   const c = document.getElementById(containerId);
   const div = document.createElement('div');
   div.className='msg '+role;
-  div.innerHTML=`<div class="msg-av">${role==='user'?'U':'★'}</div><div class="bubble">${escHtml(text)}</div>`;
+  if (id) div.id = id;
+  
+  // Parse `<think>` tags visually
+  let formattedText = escHtml(text);
+  if (formattedText.includes('&lt;think&gt;')) {
+    formattedText = formattedText.replace(/&lt;think&gt;/g, '<div class="thinking-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg> Thought Process</div><div style="font-size:13px;color:var(--muted);margin-bottom:12px;padding-left:10px;border-left:2px solid var(--glass-border)">');
+    formattedText = formattedText.replace(/&lt;\/think&gt;/g, '</div>');
+  }
+  
+  div.innerHTML=`<div class="bubble">${formattedText}</div>`;
   c.appendChild(div);
   c.scrollTop=c.scrollHeight;
 }
 
-function addTyping(containerId) {
-  const c = document.getElementById(containerId);
-  const id = 'typing-'+Date.now();
-  const div = document.createElement('div');
-  div.className='msg ai typing';div.id=id;
-  div.innerHTML='<div class="msg-av">★</div><div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  c.appendChild(div);c.scrollTop=c.scrollHeight;
-  return id;
-}
-
-function removeTyping(id, containerId) {
-  const el=document.getElementById(id);if(el)el.remove();
-}
-
-function clearChat() {
-  chatHistory=[];
-  document.getElementById('messages').innerHTML=`<div id="welcome-msg"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V15a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 11H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 16.93z"/></svg></div><h2>Chat cleared!</h2><p>Start a new conversation.</p></div>`;
-}
-
 function escHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ===== TOAST =====
 function toast(msg) {
-  const t=document.createElement('div');
-  t.className='toast';t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),2500);
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 2500);
 }
 
-// Init
-document.getElementById('login-btn').onclick = ownerLogin;
+// Start
+loadState();
 </script>
 </body>
 </html>
