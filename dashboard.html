@@ -7,443 +7,166 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #060810;
-    --bg2: #0b0f1a;
-    --bg3: #111827;
-    --sidebar: #080c15;
-    --green: #00ff88;
-    --green2: #00cc6a;
-    --blue: #3b82f6;
-    --purple: #c084fc;
-    --red: #ff4444;
-    --yellow: #fbbf24;
-    --orange: #f97316;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --border: rgba(0,255,136,0.1);
-    --glow: 0 0 20px rgba(0,255,136,0.2);
+    --bg:#060810; --bg2:#0b0f1a; --bg3:#111827; --sidebar:#070b14;
+    --green:#00ff88; --green2:#00cc6a; --blue:#3b82f6; --purple:#c084fc;
+    --red:#ff4444; --yellow:#fbbf24; --orange:#f97316;
+    --text:#e2e8f0; --muted:#64748b;
+    --border:rgba(0,255,136,0.1); --glow:0 0 20px rgba(0,255,136,0.2);
+    --discord:#5865F2;
   }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;display:flex;height:100vh;overflow:hidden;}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Rajdhani',sans-serif;
-    display:flex; min-height:100vh;
-    overflow:hidden;
-  }
+  /* SIDEBAR */
+  .sidebar{width:230px;min-width:230px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+  .sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px;border-bottom:1px solid var(--border);text-decoration:none;}
+  .sb-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:#000;flex-shrink:0;}
+  .sb-name{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--green);letter-spacing:2px;}
+  .sb-sec{padding:14px 12px 4px;font-size:10px;letter-spacing:3px;color:rgba(100,116,139,0.5);text-transform:uppercase;}
+  .sb-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;margin:2px 8px;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;background:transparent;width:calc(100% - 16px);text-align:left;}
+  .sb-btn:hover,.sb-btn.on{background:rgba(0,255,136,0.08);color:var(--green);}
+  .sb-btn .ico{font-size:15px;width:18px;flex-shrink:0;}
+  .sb-spacer{flex:1;}
+  .sb-user{padding:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0;overflow:hidden;}
+  .sb-av img{width:100%;height:100%;object-fit:cover;}
+  .sb-uinfo{flex:1;overflow:hidden;}
+  .sb-uname{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sb-uplan{font-size:10px;letter-spacing:1px;font-family:'JetBrains Mono',monospace;color:var(--muted);}
+  .sb-uplan.pro{color:var(--green);}
+  .sb-out{cursor:pointer;color:var(--muted);font-size:18px;background:none;border:none;padding:4px;transition:color 0.2s;}
+  .sb-out:hover{color:var(--red);}
 
-  /* ===== SIDEBAR ===== */
-  .sidebar {
-    width:240px; min-width:240px;
-    background: var(--sidebar);
-    border-right:1px solid var(--border);
-    display:flex; flex-direction:column;
-    height:100vh;
-    position:sticky; top:0;
-    overflow-y:auto;
-  }
-  .sb-logo {
-    display:flex; align-items:center; gap:10px;
-    padding:20px 20px 16px;
-    border-bottom:1px solid var(--border);
-    text-decoration:none;
-  }
-  .sb-logo-mark {
-    width:32px; height:32px;
-    background:linear-gradient(135deg,var(--green),var(--blue));
-    border-radius:7px;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Orbitron',sans-serif;
-    font-size:15px; font-weight:900; color:#000;
-    flex-shrink:0;
-  }
-  .sb-logo-text {
-    font-family:'Orbitron',sans-serif;
-    font-size:14px; font-weight:700;
-    color:var(--green); letter-spacing:2px;
-  }
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(6,8,16,0.95);backdrop-filter:blur(20px);flex-shrink:0;}
+  .topbar-title{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;}
+  .btn-new{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--green),var(--green2));color:#000;border:none;padding:8px 16px;border-radius:7px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;}
+  .btn-new:hover{box-shadow:var(--glow);transform:translateY(-1px);}
 
-  .sb-section { padding:16px 12px 4px; font-size:10px; letter-spacing:3px; color:rgba(100,116,139,0.6); text-transform:uppercase; }
-  .sb-link {
-    display:flex; align-items:center; gap:10px;
-    padding:10px 12px;
-    border-radius:8px;
-    margin:2px 8px;
-    text-decoration:none;
-    color:var(--muted);
-    font-size:14px; font-weight:600; letter-spacing:0.5px;
-    cursor:pointer;
-    transition:all 0.2s;
-    border:none; background:transparent;
-    width:calc(100% - 16px); text-align:left;
-  }
-  .sb-link:hover, .sb-link.active {
-    background:rgba(0,255,136,0.08);
-    color:var(--green);
-  }
-  .sb-link .icon { font-size:16px; width:20px; flex-shrink:0; }
-  .sb-link .badge {
-    margin-left:auto;
-    background:rgba(0,255,136,0.15);
-    color:var(--green);
-    border-radius:4px;
-    padding:1px 7px;
-    font-size:11px; font-family:'JetBrains Mono',monospace;
-  }
+  .content{flex:1;overflow-y:auto;padding:22px 28px;}
 
-  .sb-spacer { flex:1; }
-  .sb-user {
-    padding:14px;
-    border-top:1px solid var(--border);
-    display:flex; align-items:center; gap:10px;
-  }
-  .sb-avatar {
-    width:34px; height:34px; border-radius:50%;
-    background:linear-gradient(135deg,var(--green),var(--blue));
-    display:flex; align-items:center; justify-content:center;
-    font-size:14px; font-weight:700; color:#000;
-    flex-shrink:0; overflow:hidden;
-  }
-  .sb-avatar img { width:100%; height:100%; object-fit:cover; }
-  .sb-user-info { overflow:hidden; flex:1; }
-  .sb-user-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .sb-plan {
-    font-size:10px; letter-spacing:1px; font-family:'JetBrains Mono',monospace;
-    color:var(--muted);
-  }
-  .sb-plan.pro-plan { color:var(--green); }
-  .sb-logout {
-    cursor:pointer; color:var(--muted); font-size:18px;
-    background:none; border:none; padding:4px;
-    transition:color 0.2s;
-  }
-  .sb-logout:hover { color:var(--red); }
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:18px;position:relative;overflow:hidden;}
+  .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .sc.g::before{background:linear-gradient(90deg,var(--green),transparent);}
+  .sc.b::before{background:linear-gradient(90deg,var(--blue),transparent);}
+  .sc.p::before{background:linear-gradient(90deg,var(--purple),transparent);}
+  .sc.y::before{background:linear-gradient(90deg,var(--yellow),transparent);}
+  .sc-lbl{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+  .sc-val{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;}
+  .sc-val.g{color:var(--green);} .sc-val.b{color:var(--blue);} .sc-val.p{color:var(--purple);} .sc-val.y{color:var(--yellow);}
+  .sc-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
 
-  /* ===== MAIN ===== */
-  .main {
-    flex:1; overflow-y:auto; overflow-x:hidden;
-    display:flex; flex-direction:column;
-  }
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:300px 1fr;gap:18px;height:calc(100vh - 260px);}
 
-  /* TOPBAR */
-  .topbar {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 32px;
-    border-bottom:1px solid var(--border);
-    background:rgba(6,8,16,0.9);
-    backdrop-filter:blur(20px);
-    position:sticky; top:0; z-index:50;
-    flex-shrink:0;
-  }
-  .topbar-title { font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700; }
-  .topbar-actions { display:flex; gap:12px; }
-  .btn-new {
-    display:flex; align-items:center; gap:8px;
-    background:linear-gradient(135deg,var(--green),var(--green2));
-    color:#000; border:none;
-    padding:8px 16px; border-radius:7px;
-    font-family:'Rajdhani',sans-serif;
-    font-size:14px; font-weight:700; letter-spacing:1px;
-    cursor:pointer; transition:all 0.2s;
-  }
-  .btn-new:hover { box-shadow:var(--glow); transform:translateY(-1px); }
-
-  /* CONTENT */
-  .content { padding:28px 32px; flex:1; }
-
-  /* STATS ROW */
-  .stats-row {
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:16px; margin-bottom:28px;
-  }
-  .stat-card {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:12px; padding:20px;
-    position:relative; overflow:hidden;
-  }
-  .stat-card::before {
-    content:'';
-    position:absolute; top:0; left:0; right:0;
-    height:2px;
-  }
-  .stat-card.g::before { background:linear-gradient(90deg,var(--green),transparent); }
-  .stat-card.b::before { background:linear-gradient(90deg,var(--blue),transparent); }
-  .stat-card.p::before { background:linear-gradient(90deg,var(--purple),transparent); }
-  .stat-card.y::before { background:linear-gradient(90deg,var(--yellow),transparent); }
-  .stat-label { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
-  .stat-value { font-family:'Orbitron',sans-serif; font-size:26px; font-weight:900; }
-  .stat-value.g { color:var(--green); }
-  .stat-value.b { color:var(--blue); }
-  .stat-value.p { color:var(--purple); }
-  .stat-value.y { color:var(--yellow); }
-  .stat-sub { font-size:12px; color:var(--muted); margin-top:4px; font-family:'JetBrains Mono',monospace; }
-
-  /* GRID 2COL */
-  .grid2 { display:grid; grid-template-columns:340px 1fr; gap:20px; }
-
-  /* SESSIONS LIST */
-  .panel {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:12px;
-    overflow:hidden;
-    height:fit-content;
-  }
-  .panel-header {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 20px;
-    border-bottom:1px solid var(--border);
-    background:rgba(255,255,255,0.02);
-  }
-  .panel-title {
-    font-size:13px; letter-spacing:2px; font-weight:700;
-    text-transform:uppercase; color:var(--text);
-    font-family:'JetBrains Mono',monospace;
-  }
-  .session-item {
-    padding:14px 20px;
-    border-bottom:1px solid rgba(0,255,136,0.06);
-    cursor:pointer;
-    transition:background 0.2s;
-    display:flex; align-items:center; gap:12px;
-  }
-  .session-item:last-child { border-bottom:none; }
-  .session-item:hover, .session-item.active { background:rgba(0,255,136,0.05); }
-  .session-item.active { border-left:2px solid var(--green); padding-left:18px; }
-  .sess-status {
-    width:10px; height:10px; border-radius:50%;
-    flex-shrink:0;
-  }
-  .sess-status.online { background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse 2s infinite; }
-  .sess-status.offline { background:var(--red); }
-  .sess-status.loading {
-    background:var(--yellow);
-    animation:spin-border 1s linear infinite;
-  }
-  @keyframes spin-border { to { box-shadow: 0 0 0 3px rgba(251,191,36,0.2); } }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
-  .sess-info { flex:1; overflow:hidden; }
-  .sess-name { font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .sess-file { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .sess-meta { text-align:right; flex-shrink:0; }
-  .sess-uptime { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .sess-plan-tag {
-    font-size:10px; letter-spacing:1px; font-weight:700;
-    padding:1px 6px; border-radius:3px; margin-top:2px;
-    display:inline-block;
-  }
-  .sess-plan-tag.free { background:rgba(100,116,139,0.2); color:var(--muted); }
-  .sess-plan-tag.pro { background:rgba(0,255,136,0.12); color:var(--green); }
-
-  /* ADD SESSION PANEL */
-  .add-session-panel {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:24px;
-    margin-bottom:20px;
-    display:none;
-  }
-  .add-session-panel.show { display:block; }
-  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
-  .form-group label { display:block; font-size:12px; letter-spacing:2px; color:var(--muted); margin-bottom:6px; }
-  .form-input, .form-select, .form-textarea {
-    width:100%;
-    background:rgba(255,255,255,0.04);
-    border:1px solid rgba(0,255,136,0.1);
-    border-radius:7px;
-    padding:10px 12px;
-    color:var(--text);
-    font-family:'JetBrains Mono',monospace;
-    font-size:13px;
-    transition:border-color 0.2s;
-    outline:none;
-  }
-  .form-input:focus,.form-select:focus,.form-textarea:focus { border-color:var(--green); }
-  .form-select { cursor:pointer; }
-  .form-select option { background:#111827; }
-  .form-textarea { resize:vertical; min-height:80px; }
-  .form-actions { display:flex; gap:10px; margin-top:4px; }
-  .btn-cancel {
-    padding:9px 18px; background:transparent;
-    border:1px solid var(--border); border-radius:7px;
-    color:var(--muted); cursor:pointer; font-family:'Rajdhani',sans-serif;
-    font-size:14px; font-weight:700;
-    transition:all 0.2s;
-  }
-  .btn-cancel:hover { border-color:var(--red); color:var(--red); }
-  .btn-deploy {
-    padding:9px 20px;
-    background:linear-gradient(135deg,var(--green),var(--green2));
-    border:none; border-radius:7px;
-    color:#000; cursor:pointer;
-    font-family:'Rajdhani',sans-serif;
-    font-size:14px; font-weight:700; letter-spacing:1px;
-    transition:all 0.2s;
-  }
-  .btn-deploy:hover { box-shadow:var(--glow); }
+  /* SESSION LIST */
+  .panel{background:var(--bg2);border:1px solid var(--border);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;}
+  .ph{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);flex-shrink:0;}
+  .pt{font-size:11px;letter-spacing:2px;font-weight:700;text-transform:uppercase;color:var(--text);font-family:'JetBrains Mono',monospace;}
+  .sess-list{flex:1;overflow-y:auto;}
+  .sess-item{padding:13px 16px;border-bottom:1px solid rgba(0,255,136,0.05);cursor:pointer;transition:background 0.15s;display:flex;align-items:center;gap:11px;}
+  .sess-item:hover,.sess-item.sel{background:rgba(0,255,136,0.05);}
+  .sess-item.sel{border-left:2px solid var(--green);padding-left:14px;}
+  .s-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .s-dot.running{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+  .s-dot.stopped{background:var(--muted);}
+  .s-dot.restarting{background:var(--yellow);animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+  .s-info{flex:1;overflow:hidden;}
+  .s-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .s-file{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .s-plan{font-size:10px;letter-spacing:1px;font-weight:700;padding:1px 6px;border-radius:3px;}
+  .s-plan.free{background:rgba(100,116,139,0.15);color:var(--muted);}
+  .s-plan.pro{background:rgba(0,255,136,0.1);color:var(--green);}
+  .sess-empty{padding:40px 20px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
 
   /* TERMINAL */
-  .terminal-panel {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:12px;
-    overflow:hidden;
-    display:flex; flex-direction:column;
-    height:520px;
-  }
-  .term-topbar {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:12px 16px;
-    background:rgba(255,255,255,0.03);
-    border-bottom:1px solid var(--border);
-    flex-shrink:0;
-  }
-  .term-info { display:flex; align-items:center; gap:10px; }
-  .term-dots { display:flex; gap:6px; }
-  .td { width:11px; height:11px; border-radius:50%; }
-  .td.r { background:#ff5f57; }
-  .td.y { background:#febc2e; }
-  .td.g { background:#28c840; }
-  .term-name { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); }
-  .term-status-badge {
-    display:flex; align-items:center; gap:6px;
-    padding:3px 10px; border-radius:5px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
-  }
-  .term-status-badge.online { background:rgba(0,255,136,0.1); color:var(--green); border:1px solid rgba(0,255,136,0.2); }
-  .term-status-badge.offline { background:rgba(255,68,68,0.1); color:var(--red); border:1px solid rgba(255,68,68,0.2); }
-  .term-status-badge.loading { background:rgba(251,191,36,0.1); color:var(--yellow); border:1px solid rgba(251,191,36,0.2); }
-  .term-status-dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
-  .term-status-badge.online .term-status-dot { animation:pulse 2s infinite; }
+  .term-wrap{display:flex;flex-direction:column;height:100%;}
+  .term-top{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);flex-shrink:0;}
+  .term-dots{display:flex;gap:5px;align-items:center;}
+  .td{width:11px;height:11px;border-radius:50%;}
+  .td.r{background:#ff5f57;} .td.y{background:#febc2e;} .td.g{background:#28c840;}
+  .term-sess-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-left:10px;}
+  .status-pill{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;}
+  .status-pill.running{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+  .status-pill.stopped{background:rgba(100,116,139,0.1);color:var(--muted);border:1px solid rgba(100,116,139,0.2);}
+  .status-pill.restarting{background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.2);}
+  .status-pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+  .status-pill.running .status-pill-dot{animation:pulse 2s infinite;}
+  .ctrl-row{display:flex;gap:6px;align-items:center;}
+  .cb{padding:5px 11px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;letter-spacing:1px;}
+  .cb.start{background:rgba(0,255,136,0.12);color:var(--green);}
+  .cb.start:hover{background:rgba(0,255,136,0.25);}
+  .cb.stop{background:rgba(255,68,68,0.12);color:var(--red);}
+  .cb.stop:hover{background:rgba(255,68,68,0.25);}
+  .cb.restart{background:rgba(251,191,36,0.12);color:var(--yellow);}
+  .cb.restart:hover{background:rgba(251,191,36,0.2);}
+  .cb.clr{background:rgba(100,116,139,0.12);color:var(--muted);}
+  .cb.clr:hover{background:rgba(100,116,139,0.2);color:var(--text);}
+  .cb.del{background:rgba(255,68,68,0.07);color:var(--red);}
+  .cb.del:hover{background:rgba(255,68,68,0.2);}
 
-  .term-controls { display:flex; gap:8px; align-items:center; }
-  .ctrl-btn {
-    padding:5px 12px; border-radius:5px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
-    cursor:pointer; border:none; transition:all 0.2s;
-    letter-spacing:1px;
-  }
-  .ctrl-btn.start { background:rgba(0,255,136,0.12); color:var(--green); }
-  .ctrl-btn.start:hover { background:rgba(0,255,136,0.25); }
-  .ctrl-btn.stop { background:rgba(255,68,68,0.12); color:var(--red); }
-  .ctrl-btn.stop:hover { background:rgba(255,68,68,0.25); }
-  .ctrl-btn.clear { background:rgba(100,116,139,0.12); color:var(--muted); }
-  .ctrl-btn.clear:hover { background:rgba(100,116,139,0.25); color:var(--text); }
+  .term-body{flex:1;overflow-y:auto;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.9;}
+  .term-body::-webkit-scrollbar{width:4px;}
+  .term-body::-webkit-scrollbar-thumb{background:rgba(0,255,136,0.2);border-radius:2px;}
+  .log-line{display:flex;gap:10px;word-break:break-all;}
+  .log-ts{color:rgba(100,116,139,0.55);flex-shrink:0;font-size:11px;padding-top:1px;}
+  .log-lvl{flex-shrink:0;width:40px;text-align:right;font-size:11px;padding-top:1px;}
+  .log-lvl.OUT{color:var(--text);}
+  .log-lvl.ERR{color:var(--red);}
+  .log-lvl.SYS{color:var(--blue);}
+  .log-msg.err{color:var(--red);}
+  .log-msg.sys{color:rgba(59,130,246,0.8);}
+  .cursor-blink{display:inline-block;width:7px;height:13px;background:var(--green);margin-left:2px;animation:blink 1s infinite;vertical-align:middle;}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  .term-stdin{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--border);background:rgba(255,255,255,0.02);flex-shrink:0;}
+  .term-prompt{color:var(--green);font-family:'JetBrains Mono',monospace;font-size:13px;flex-shrink:0;}
+  .term-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;}
+  .term-input::placeholder{color:var(--muted);}
+  .no-sess{display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;}
 
-  .term-body {
-    flex:1; overflow-y:auto; padding:16px 20px;
-    font-family:'JetBrains Mono',monospace;
-    font-size:12.5px; line-height:1.9;
-    scroll-behavior:smooth;
-  }
-  .term-body::-webkit-scrollbar { width:4px; }
-  .term-body::-webkit-scrollbar-track { background:transparent; }
-  .term-body::-webkit-scrollbar-thumb { background:rgba(0,255,136,0.2); border-radius:2px; }
+  /* UPLOAD MODAL */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:32px;width:100%;max-width:480px;animation:mIn 0.25s ease;}
+  @keyframes mIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+  .modal-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;margin-bottom:6px;}
+  .modal-sub{color:var(--muted);font-size:14px;margin-bottom:22px;}
+  .fi{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,136,0.1);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color 0.2s;margin-bottom:12px;}
+  .fi:focus{border-color:var(--green);}
+  select.fi option{background:#111827;}
+  .drop-zone{width:100%;border:2px dashed rgba(0,255,136,0.2);border-radius:8px;padding:28px 20px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;transition:all 0.2s;margin-bottom:12px;position:relative;}
+  .drop-zone:hover,.drop-zone.drag{border-color:var(--green);background:rgba(0,255,136,0.03);color:var(--green);}
+  .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .modal-actions{display:flex;gap:10px;margin-top:4px;}
+  .btn-cancel{padding:10px 18px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;transition:all 0.2s;}
+  .btn-cancel:hover{border-color:var(--red);color:var(--red);}
+  .btn-submit{padding:10px 22px;background:linear-gradient(135deg,var(--green),var(--green2));border:none;border-radius:7px;color:#000;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;transition:all 0.2s;}
+  .btn-submit:hover{box-shadow:var(--glow);}
 
-  .log-line { display:flex; gap:12px; }
-  .log-ts { color:rgba(100,116,139,0.6); flex-shrink:0; font-size:11px; padding-top:1px; }
-  .log-level { flex-shrink:0; width:48px; text-align:right; font-size:11px; padding-top:1px; }
-  .log-level.INFO { color:var(--green); }
-  .log-level.WARN { color:var(--yellow); }
-  .log-level.ERROR { color:var(--red); }
-  .log-level.SYS { color:var(--blue); }
-  .log-level.DEBUG { color:var(--muted); }
-  .log-msg { flex:1; word-break:break-all; }
-  .log-msg .hl-user { color:var(--purple); }
-  .log-msg .hl-num { color:var(--yellow); }
-  .log-msg .hl-ok { color:var(--green); }
-  .log-msg .hl-err { color:var(--red); }
-  .cursor {
-    display:inline-block; width:7px; height:13px;
-    background:var(--green); margin-left:2px;
-    animation:blink 1s infinite; vertical-align:middle;
-  }
-  @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-
-  .term-input-row {
-    display:flex; align-items:center; gap:10px;
-    padding:10px 16px;
-    border-top:1px solid var(--border);
-    background:rgba(255,255,255,0.02);
-    flex-shrink:0;
-  }
-  .term-prompt { color:var(--green); font-family:'JetBrains Mono',monospace; font-size:13px; flex-shrink:0; }
-  .term-input {
-    flex:1; background:transparent; border:none; outline:none;
-    color:var(--text); font-family:'JetBrains Mono',monospace; font-size:13px;
-  }
-  .term-input::placeholder { color:var(--muted); }
-
-  /* RESOURCES */
-  .resources-row {
-    display:grid; grid-template-columns:1fr 1fr 1fr;
-    gap:12px; margin-top:20px;
-  }
-  .res-card {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:10px; padding:16px;
-  }
-  .res-label { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
-  .res-bar-bg {
-    height:6px; background:rgba(255,255,255,0.06);
-    border-radius:3px; overflow:hidden; margin-bottom:6px;
-  }
-  .res-bar-fill { height:100%; border-radius:3px; transition:width 1s ease; }
-  .res-bar-fill.cpu { background:linear-gradient(90deg,var(--blue),var(--purple)); }
-  .res-bar-fill.ram { background:linear-gradient(90deg,var(--green),var(--green2)); }
-  .res-bar-fill.disk { background:linear-gradient(90deg,var(--yellow),var(--orange)); }
-  .res-vals { display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .res-vals .cur { color:var(--text); font-weight:700; }
-
-  /* MODAL */
-  .modal-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,0.7);
-    backdrop-filter:blur(8px);
-    z-index:200; display:none;
-    align-items:center; justify-content:center;
-  }
-  .modal-overlay.show { display:flex; }
-  .modal {
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:16px; padding:32px;
-    width:100%; max-width:500px;
-    animation:modalIn 0.3s ease;
-  }
-  @keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
-  .modal-title { font-family:'Orbitron',sans-serif; font-size:18px; font-weight:900; margin-bottom:6px; }
-  .modal-sub { color:var(--muted); font-size:14px; margin-bottom:24px; }
+  /* INVOICES VIEW */
+  .inv-table{width:100%;border-collapse:collapse;}
+  .inv-table th{padding:10px 16px;text-align:left;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);}
+  .inv-table td{padding:13px 16px;border-bottom:1px solid rgba(0,255,136,0.04);font-size:14px;font-weight:600;}
+  .inv-table tr:hover td{background:rgba(255,255,255,0.02);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:1px;}
+  .badge.paid{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+  .badge.pending{background:rgba(249,115,22,0.1);color:var(--orange);border:1px solid rgba(249,115,22,0.2);}
+  .badge.overdue{background:rgba(255,68,68,0.1);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+  .pdf-btn{padding:4px 12px;background:rgba(59,130,246,0.12);color:var(--blue);border:none;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+  .pdf-btn:hover{background:rgba(59,130,246,0.25);}
 
   /* TOAST */
-  #toast {
-    position:fixed; bottom:24px; right:24px; z-index:9999;
-    background:var(--bg2); border:1px solid var(--green);
-    border-radius:10px; padding:12px 18px;
-    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--green);
-    display:none; box-shadow:var(--glow);
-    animation:slideIn 0.3s ease;
-    max-width:340px;
-  }
-  @keyframes slideIn { from{transform:translateX(40px);opacity:0} to{transform:translateX(0);opacity:1} }
-  #toast.err { border-color:var(--red); color:var(--red); }
+  #toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--bg2);border:1px solid var(--green);border-radius:9px;padding:11px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green);display:none;box-shadow:var(--glow);max-width:320px;animation:toastIn 0.3s ease;}
+  #toast.err{border-color:var(--red);color:var(--red);}
+  @keyframes toastIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-  /* Scrollbar global */
-  ::-webkit-scrollbar { width:5px; height:5px; }
-  ::-webkit-scrollbar-track { background:transparent; }
-  ::-webkit-scrollbar-thumb { background:rgba(0,255,136,0.15); border-radius:3px; }
-
-  /* Responsive */
-  @media(max-width:900px){
-    .grid2{ grid-template-columns:1fr; }
-    .stats-row{ grid-template-columns:repeat(2,1fr); }
-    .sidebar{ display:none; }
-    .resources-row{ grid-template-columns:1fr; }
-  }
+  ::-webkit-scrollbar{width:4px;height:4px;}
+  ::-webkit-scrollbar-thumb{background:rgba(0,255,136,0.15);border-radius:2px;}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;height:auto;}.stats{grid-template-columns:repeat(2,1fr);}.sidebar{display:none;}}
 </style>
 </head>
 <body>
@@ -451,217 +174,128 @@
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <a href="index.html" class="sb-logo">
-    <div class="sb-logo-mark">C</div>
-    <span class="sb-logo-text">CLOUDPY</span>
+    <div class="sb-mark">C</div>
+    <span class="sb-name">CLOUDPY</span>
   </a>
-
-  <div class="sb-section">MAIN</div>
-  <button class="sb-link active" onclick="switchView('dashboard')">
-    <span class="icon">⚡</span> Dashboard
-  </button>
-  <button class="sb-link" onclick="switchView('sessions')">
-    <span class="icon">🖥️</span> Sessions
-    <span class="badge" id="sessCount">0</span>
-  </button>
-  <button class="sb-link" onclick="switchView('logs')">
-    <span class="icon">📋</span> Logs
-  </button>
-
-  <div class="sb-section">ACCOUNT</div>
-  <button class="sb-link" onclick="switchView('env')">
-    <span class="icon">🔒</span> Env Variables
-  </button>
-  <button class="sb-link" onclick="switchView('billing')">
-    <span class="icon">💳</span> Billing
-  </button>
-  <button class="sb-link" onclick="switchView('settings')">
-    <span class="icon">⚙️</span> Settings
-  </button>
-
+  <div class="sb-sec">MAIN</div>
+  <button class="sb-btn on" onclick="showView('sessions',this)"><span class="ico">⚡</span> Sessions</button>
+  <button class="sb-btn" onclick="showView('invoices',this)"><span class="ico">🧾</span> Invoices</button>
   <div class="sb-spacer"></div>
-
   <div class="sb-user">
-    <div class="sb-avatar" id="sbAvatar">?</div>
-    <div class="sb-user-info">
-      <div class="sb-user-name" id="sbName">Loading...</div>
-      <div class="sb-plan free-plan" id="sbPlan">FREE TIER</div>
+    <div class="sb-av" id="sbAv">?</div>
+    <div class="sb-uinfo">
+      <div class="sb-uname" id="sbName">...</div>
+      <div class="sb-uplan" id="sbPlan">FREE</div>
     </div>
-    <button class="sb-logout" onclick="logout()" title="Sign out">⏻</button>
+    <button class="sb-out" onclick="logout()" title="Sign out">⏻</button>
   </div>
 </aside>
 
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
-    <div class="topbar-actions">
-      <button class="btn-new" onclick="toggleNewSession()">+ NEW SESSION</button>
+    <span class="topbar-title" id="viewTitle">SESSIONS</span>
+    <div style="display:flex;gap:10px;">
+      <span id="wsIndicator" style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">
+        <span id="wsDot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);"></span> CONNECTING
+      </span>
+      <button class="btn-new" onclick="openNewSession()">+ NEW SESSION</button>
     </div>
   </div>
 
-  <div class="content">
-
-    <!-- NEW SESSION FORM -->
-    <div class="add-session-panel" id="newSessionPanel">
-      <div class="panel-header" style="margin:-24px -24px 20px; padding:14px 20px; background:rgba(0,255,136,0.04); border-bottom:1px solid var(--border); border-radius:12px 12px 0 0;">
-        <span class="panel-title">DEPLOY NEW SESSION</span>
-        <button class="ctrl-btn clear" onclick="toggleNewSession()">✕ CANCEL</button>
+  <div class="content" id="mainContent">
+    <!-- Sessions view -->
+    <div id="viewSessions">
+      <div class="stats">
+        <div class="sc g"><div class="sc-lbl">Running</div><div class="sc-val g" id="stRunning">0</div><div class="sc-sub">sessions</div></div>
+        <div class="sc b"><div class="sc-lbl">Total</div><div class="sc-val b" id="stTotal">0</div><div class="sc-sub">sessions</div></div>
+        <div class="sc p"><div class="sc-lbl">Log Lines</div><div class="sc-val p" id="stLogs">0</div><div class="sc-sub">today</div></div>
+        <div class="sc y"><div class="sc-lbl">Plan</div><div class="sc-val y" id="stPlan">FREE</div><div class="sc-sub"><a href="index.html#pricing" style="color:var(--green);text-decoration:none;font-size:11px;">upgrade →</a></div></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>SESSION NAME</label>
-          <input class="form-input" id="newSessName" placeholder="my-discord-bot" type="text">
-        </div>
-        <div class="form-group">
-          <label>PLAN</label>
-          <select class="form-select" id="newSessPlan">
-            <option value="free">Free (Throttled)</option>
-            <option value="pro">Pro (Fast)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>PYTHON FILE NAME</label>
-          <input class="form-input" id="newSessFile" placeholder="bot.py" type="text">
-        </div>
-        <div class="form-group">
-          <label>PYTHON VERSION</label>
-          <select class="form-select" id="newSessVer">
-            <option>Python 3.11</option>
-            <option>Python 3.10</option>
-            <option>Python 3.9</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group" style="margin-bottom:16px;">
-        <label>PASTE YOUR PYTHON SCRIPT</label>
-        <textarea class="form-textarea" id="newSessCode" placeholder="# paste your code here&#10;import discord&#10;bot = discord.Client()&#10;..."></textarea>
-      </div>
-      <div class="form-actions">
-        <button class="btn-cancel" onclick="toggleNewSession()">CANCEL</button>
-        <button class="btn-deploy" onclick="deploySession()">🚀 DEPLOY SESSION</button>
-      </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="stats-row">
-      <div class="stat-card g">
-        <div class="stat-label">Active Sessions</div>
-        <div class="stat-value g" id="statActive">0</div>
-        <div class="stat-sub">of 1 max (free)</div>
-      </div>
-      <div class="stat-card b">
-        <div class="stat-label">Total Uptime</div>
-        <div class="stat-value b" id="statUptime">00:00:00</div>
-        <div class="stat-sub">this session</div>
-      </div>
-      <div class="stat-card p">
-        <div class="stat-label">Log Lines</div>
-        <div class="stat-value p" id="statLogs">0</div>
-        <div class="stat-sub">today</div>
-      </div>
-      <div class="stat-card y">
-        <div class="stat-label">Plan</div>
-        <div class="stat-value y" id="statPlan">FREE</div>
-        <div class="stat-sub"><a href="index.html#pricing" style="color:var(--green);text-decoration:none;">upgrade →</a></div>
-      </div>
-    </div>
-
-    <!-- MAIN GRID -->
-    <div class="grid2">
-
-      <!-- SESSION LIST -->
-      <div>
-        <div class="panel" id="sessionListPanel">
-          <div class="panel-header">
-            <span class="panel-title">YOUR SESSIONS</span>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);" id="sessListCount">0 sessions</span>
+      <div class="grid2">
+        <!-- Session list -->
+        <div class="panel">
+          <div class="ph">
+            <span class="pt">YOUR SESSIONS</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);" id="sessCountLabel">0</span>
           </div>
-          <div id="sessionList">
-            <div style="padding:40px 20px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;">
-              No sessions yet.<br>Click <strong style="color:var(--green)">+ NEW SESSION</strong> to deploy your first script.
-            </div>
+          <div class="sess-list" id="sessList">
+            <div class="sess-empty">No sessions yet.<br>Click <strong style="color:var(--green)">+ NEW SESSION</strong><br>to upload & run your script.</div>
           </div>
         </div>
-      </div>
-
-      <!-- TERMINAL -->
-      <div>
-        <div class="terminal-panel">
-          <div class="term-topbar">
-            <div class="term-info">
-              <div class="term-dots">
-                <div class="td r"></div>
-                <div class="td y"></div>
-                <div class="td g"></div>
+        <!-- Terminal -->
+        <div class="panel">
+          <div id="noSessPane" class="no-sess">
+            <div style="font-size:32px;">🖥️</div>
+            Select a session to view its terminal
+          </div>
+          <div id="termPane" class="term-wrap" style="display:none;">
+            <div class="term-top">
+              <div style="display:flex;align-items:center;">
+                <div class="term-dots"><div class="td r"></div><div class="td y"></div><div class="td g"></div></div>
+                <span class="term-sess-name" id="termName">—</span>
               </div>
-              <span class="term-name" id="termTitle">No session selected</span>
+              <div id="statusPill" class="status-pill stopped"><div class="status-pill-dot"></div> STOPPED</div>
+              <div class="ctrl-row">
+                <button class="cb start" onclick="ctrlStart()">▶ START</button>
+                <button class="cb stop" onclick="ctrlStop()">■ STOP</button>
+                <button class="cb restart" onclick="ctrlRestart()">↺</button>
+                <button class="cb clr" onclick="ctrlClear()">CLR</button>
+                <button class="cb del" onclick="ctrlDelete()">✕</button>
+              </div>
             </div>
-            <div id="termStatusBadge" class="term-status-badge offline">
-              <div class="term-status-dot"></div>
-              OFFLINE
+            <div class="term-body" id="termBody"></div>
+            <div class="term-stdin">
+              <span class="term-prompt">$</span>
+              <input class="term-input" id="stdinInput" placeholder="Send stdin to your process..." onkeydown="handleStdin(event)">
             </div>
-            <div class="term-controls">
-              <button class="ctrl-btn start" onclick="startSession()">▶ START</button>
-              <button class="ctrl-btn stop" onclick="stopSession()">■ STOP</button>
-              <button class="ctrl-btn clear" onclick="clearLogs()">CLR</button>
-            </div>
-          </div>
-          <div class="term-body" id="termBody">
-            <div style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;padding:20px 0;">
-              Select a session or create a new one to view logs.<br><br>
-              <span style="color:rgba(100,116,139,0.5)">$ _</span>
-            </div>
-          </div>
-          <div class="term-input-row">
-            <span class="term-prompt">$</span>
-            <input class="term-input" id="termInput" placeholder="Send stdin to your process..." onkeydown="handleTermInput(event)">
-          </div>
-        </div>
-
-        <!-- RESOURCE BARS -->
-        <div class="resources-row">
-          <div class="res-card">
-            <div class="res-label">CPU Usage</div>
-            <div class="res-bar-bg"><div class="res-bar-fill cpu" id="cpuBar" style="width:0%"></div></div>
-            <div class="res-vals"><span id="cpuPct" class="cur">0%</span><span>shared</span></div>
-          </div>
-          <div class="res-card">
-            <div class="res-label">RAM Usage</div>
-            <div class="res-bar-bg"><div class="res-bar-fill ram" id="ramBar" style="width:0%"></div></div>
-            <div class="res-vals"><span id="ramMb" class="cur">0 MB</span><span>/ 256 MB</span></div>
-          </div>
-          <div class="res-card">
-            <div class="res-label">Disk</div>
-            <div class="res-bar-bg"><div class="res-bar-fill disk" id="diskBar" style="width:0%"></div></div>
-            <div class="res-vals"><span id="diskMb" class="cur">0 MB</span><span>/ 100 MB</span></div>
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- Invoices view -->
+    <div id="viewInvoices" style="display:none;">
+      <div class="panel" style="height:auto;">
+        <div class="ph"><span class="pt">INVOICES</span></div>
+        <div style="overflow-x:auto;">
+          <table class="inv-table" id="invTable">
+            <thead><tr>
+              <th>INVOICE #</th><th>DESCRIPTION</th><th>AMOUNT</th><th>STATUS</th><th>ISSUED</th><th>DUE</th><th>PDF</th>
+            </tr></thead>
+            <tbody id="invBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;">No invoices yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </main>
 
-<!-- MODAL: Upgrade -->
-<div class="modal-overlay" id="upgradeModal">
+<!-- NEW SESSION MODAL -->
+<div class="overlay" id="newSessOverlay">
   <div class="modal">
-    <div class="modal-title">UPGRADE TO PRO</div>
-    <div class="modal-sub">Unlock faster hosting, 5 sessions, 2GB RAM, and more.</div>
-    <a href="index.html#pricing" style="
-      display:block; text-align:center;
-      background:linear-gradient(135deg,var(--green),var(--green2));
-      color:#000; padding:14px; border-radius:8px;
-      font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; letter-spacing:2px;
-      text-decoration:none; margin-top:16px;
-    ">VIEW PLANS →</a>
-    <button onclick="document.getElementById('upgradeModal').classList.remove('show')" style="
-      width:100%; margin-top:10px; padding:10px;
-      background:transparent; border:1px solid var(--border);
-      border-radius:8px; color:var(--muted); cursor:pointer;
-      font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600;
-    ">MAYBE LATER</button>
+    <div class="modal-title">DEPLOY SESSION</div>
+    <div class="modal-sub">Upload your .py file and configure the session</div>
+    <label style="font-size:11px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:6px;">SESSION NAME</label>
+    <input class="fi" type="text" id="nsName" placeholder="my-discord-bot">
+    <label style="font-size:11px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:6px;">UPLOAD PYTHON SCRIPT (.py)</label>
+    <div class="drop-zone" id="dropZone">
+      <div id="dropLabel">📂 Click or drag & drop your .py file</div>
+      <input type="file" accept=".py" id="fileInput" onchange="fileSelected(event)">
+    </div>
+    <div id="autoRestartRow" style="display:none;margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <input type="checkbox" id="nsAutoRestart" style="accent-color:var(--green);width:14px;height:14px;">
+        <span style="font-size:14px;font-weight:600;color:var(--text);">Auto-restart on crash</span>
+        <span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace;">(PRO)</span>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeNewSession()">CANCEL</button>
+      <button class="btn-submit" onclick="deploySession()">🚀 DEPLOY</button>
+    </div>
   </div>
 </div>
 
@@ -669,348 +303,388 @@
 
 <script>
 // ============================================================
-//  STATE
+//  CONFIG — change BACKEND_URL to your deployed backend URL
 // ============================================================
-let sessions = JSON.parse(localStorage.getItem('cloudpy_sessions') || '[]');
-let activeSessionId = null;
-let logIntervals = {};
-let uptimeStart = null;
-let uptimeInterval = null;
-let resourceInterval = null;
+const BACKEND_URL = localStorage.getItem('cloudpy_backend') || 'http://localhost:3000';
+const WS_URL      = BACKEND_URL.replace('http', 'ws');
+
+let token     = sessionStorage.getItem('cloudpy_token');
+let userData  = JSON.parse(sessionStorage.getItem('cloudpy_user') || 'null');
+let sessions  = [];
+let activeId  = null;
+let ws        = null;
+let logCount  = 0;
+let uploadedFile = null;
+
+if (!token || !userData) { window.location.href = 'index.html'; }
 
 // ============================================================
-//  USER INFO
+//  UI INIT
 // ============================================================
-const userRaw = sessionStorage.getItem('cloudpy_user');
-if (!userRaw) { window.location.href = 'index.html'; }
-const user = JSON.parse(userRaw || '{}');
-
-document.getElementById('sbName').textContent = user.name || user.email || 'User';
-if (user.photo) {
-  document.getElementById('sbAvatar').innerHTML = `<img src="${user.photo}" alt="">`;
+document.getElementById('sbName').textContent = userData.username || 'User';
+document.getElementById('sbPlan').textContent  = (userData.plan || 'free').toUpperCase();
+if (userData.plan === 'pro') document.getElementById('sbPlan').classList.add('pro');
+document.getElementById('stPlan').textContent  = (userData.plan || 'FREE').toUpperCase();
+if (userData.avatar) {
+  document.getElementById('sbAv').innerHTML = `<img src="${userData.avatar}" alt="">`;
 } else {
-  document.getElementById('sbAvatar').textContent = (user.name || user.email || 'U')[0].toUpperCase();
+  document.getElementById('sbAv').textContent = (userData.username || 'U')[0].toUpperCase();
+}
+if (userData.plan === 'pro') document.getElementById('autoRestartRow').style.display = 'block';
+
+// ============================================================
+//  WEBSOCKET
+// ============================================================
+function connectWS() {
+  ws = new WebSocket(WS_URL);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ type: 'auth', token }));
+    setWsStatus(true);
+  };
+
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    switch (msg.type) {
+      case 'auth_ok':   break;
+      case 'auth_fail': logout(); break;
+      case 'log':
+        if (msg.sessionId === activeId || !msg.sessionId) appendLog(msg.level, msg.message, msg.ts);
+        logCount++;
+        document.getElementById('stLogs').textContent = logCount;
+        break;
+      case 'history':
+        document.getElementById('termBody').innerHTML = '';
+        logCount = 0;
+        msg.logs.forEach(l => appendLog(l.level, l.message, l.ts));
+        logCount = msg.logs.length;
+        document.getElementById('stLogs').textContent = logCount;
+        break;
+      case 'status':
+        updateSessionStatus(activeId, msg.status);
+        break;
+      case 'announcement':
+        toast(`📢 ${msg.title}: ${msg.body}`);
+        break;
+    }
+  };
+
+  ws.onclose = () => {
+    setWsStatus(false);
+    setTimeout(connectWS, 3000); // reconnect
+  };
+
+  ws.onerror = () => { setWsStatus(false); };
 }
 
-function logout() {
-  sessionStorage.removeItem('cloudpy_user');
-  localStorage.removeItem('cloudpy_sessions');
-  window.location.href = 'index.html';
+function setWsStatus(ok) {
+  const dot = document.getElementById('wsDot');
+  const lbl = document.getElementById('wsIndicator');
+  dot.style.background = ok ? 'var(--green)' : 'var(--red)';
+  dot.style.boxShadow  = ok ? '0 0 6px var(--green)' : 'none';
+  lbl.childNodes[1].textContent = ok ? ' LIVE' : ' OFFLINE';
+}
+
+function subscribeSession(id) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ type: 'subscribe', sessionId: id }));
+  }
+}
+
+// ============================================================
+//  API HELPERS
+// ============================================================
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(BACKEND_URL + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
 }
 
 // ============================================================
 //  SESSIONS
 // ============================================================
-function saveSessions() { localStorage.setItem('cloudpy_sessions', JSON.stringify(sessions)); }
+async function loadSessions() {
+  try {
+    sessions = await api('GET', '/api/sessions');
+    renderSessions();
+    document.getElementById('stTotal').textContent = sessions.length;
+    document.getElementById('stRunning').textContent = sessions.filter(s => s.status === 'running').length;
+    document.getElementById('sessCountLabel').textContent = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
+  } catch (e) {
+    toast('Failed to load sessions: ' + e.message, true);
+  }
+}
 
 function renderSessions() {
-  const list = document.getElementById('sessionList');
-  document.getElementById('sessCount').textContent = sessions.length;
-  document.getElementById('sessListCount').textContent = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
-  document.getElementById('statActive').textContent = sessions.filter(s=>s.status==='online').length;
-
+  const list = document.getElementById('sessList');
   if (!sessions.length) {
-    list.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;">
-      No sessions yet.<br>Click <strong style="color:var(--green)">+ NEW SESSION</strong> to deploy your first script.
-    </div>`;
+    list.innerHTML = '<div class="sess-empty">No sessions yet.<br>Click <strong style="color:var(--green)">+ NEW SESSION</strong><br>to upload & run your script.</div>';
     return;
   }
-
   list.innerHTML = sessions.map(s => `
-    <div class="session-item ${s.id===activeSessionId?'active':''}" onclick="selectSession('${s.id}')">
-      <div class="sess-status ${s.status}"></div>
-      <div class="sess-info">
-        <div class="sess-name">${s.name}</div>
-        <div class="sess-file">${s.file}</div>
+    <div class="sess-item ${s.id === activeId ? 'sel' : ''}" onclick="selectSession('${s.id}')">
+      <div class="s-dot ${s.status}"></div>
+      <div class="s-info">
+        <div class="s-name">${s.name}</div>
+        <div class="s-file">${s.file_name}</div>
       </div>
-      <div class="sess-meta">
-        <div class="sess-uptime">${s.uptime||'--:--:--'}</div>
-        <span class="sess-plan-tag ${s.plan}">${s.plan.toUpperCase()}</span>
-      </div>
+      <span class="s-plan ${s.plan}">${s.plan.toUpperCase()}</span>
     </div>
   `).join('');
 }
 
-function toggleNewSession() {
-  const p = document.getElementById('newSessionPanel');
-  p.classList.toggle('show');
-}
-
-function deploySession() {
-  const name = document.getElementById('newSessName').value.trim() || 'session_' + Math.random().toString(36).slice(2,6);
-  const plan = document.getElementById('newSessPlan').value;
-  const file = document.getElementById('newSessFile').value.trim() || 'script.py';
-  const code = document.getElementById('newSessCode').value.trim();
-  const ver  = document.getElementById('newSessVer').value;
-
-  if (!code) { toast('Paste your Python script first!', true); return; }
-
-  // Free plan: max 1 session
-  if (plan === 'free' && sessions.filter(s=>s.plan==='free').length >= 1) {
-    document.getElementById('upgradeModal').classList.add('show');
-    return;
-  }
-
-  const sess = {
-    id: 'sess_' + Math.random().toString(36).slice(2,8),
-    name, plan, file, ver, code,
-    status: 'loading',
-    uptime: '00:00:00',
-    uptimeSeconds: 0,
-    logs: [],
-    created: Date.now()
-  };
-
-  sessions.unshift(sess);
-  saveSessions();
+function selectSession(id) {
+  activeId = id;
+  const sess = sessions.find(s => s.id === id);
+  if (!sess) return;
   renderSessions();
-  selectSession(sess.id);
-  toggleNewSession();
-  toast('Session deploying...');
-
-  // Simulate boot sequence
-  simulateBoot(sess.id);
+  document.getElementById('noSessPane').style.display = 'none';
+  document.getElementById('termPane').style.display   = 'flex';
+  document.getElementById('termBody').innerHTML = '';
+  document.getElementById('termName').textContent = sess.name + ' — ' + sess.file_name;
+  updateSessionStatus(id, sess.status);
+  subscribeSession(id);
 }
 
-function simulateBoot(id) {
-  const sess = sessions.find(s=>s.id===id);
-  if (!sess) return;
-  const now = () => new Date().toISOString().replace('T',' ').slice(0,19);
-
-  const bootLines = [
-    { delay:200,  cls:'SYS',   msg:'Initializing CloudPy runtime...' },
-    { delay:600,  cls:'SYS',   msg:`Starting ${sess.ver} (${sess.plan === 'pro' ? 'dedicated' : 'shared'} CPU)` },
-    { delay:1100, cls:'INFO',  msg:'Installing dependencies from requirements.txt...' },
-    { delay:2200, cls:'INFO',  msg:'discord.py 2.3.2 ✓ | python-dotenv 1.0.0 ✓' },
-    { delay:2800, cls:'SYS',   msg:`Running: python ${sess.file}` },
-    { delay:3200, cls:'INFO',  msg:'Connecting to Discord gateway...' },
-    { delay:3800, cls:'INFO',  msg:'Token has been <span class="hl-ok">successfully authenticated</span>' },
-    { delay:4200, cls:'INFO',  msg:'Bot is now <span class="hl-ok">ONLINE</span> and ready' },
-  ];
-
-  bootLines.forEach(({delay, cls, msg}) => {
-    setTimeout(() => {
-      pushLog(id, cls, msg);
-      if (msg.includes('ONLINE')) {
-        setSessStatus(id, 'online');
-        startUptimeTick(id);
-        startFakeLogs(id);
-      }
-    }, delay);
-  });
-}
-
-function setSessStatus(id, status) {
-  const sess = sessions.find(s=>s.id===id);
-  if (!sess) return;
-  sess.status = status;
-  saveSessions();
+function updateSessionStatus(id, status) {
+  const sess = sessions.find(s => s.id === id);
+  if (sess) sess.status = status;
   renderSessions();
-  if (activeSessionId === id) updateTermStatus(status);
+  document.getElementById('stRunning').textContent = sessions.filter(s => s.status === 'running').length;
+
+  const pill = document.getElementById('statusPill');
+  if (!pill) return;
+  pill.className = 'status-pill ' + (status || 'stopped');
+  pill.innerHTML = `<div class="status-pill-dot"></div> ${(status || 'stopped').toUpperCase()}`;
 }
 
-function pushLog(id, level, msg) {
-  const sess = sessions.find(s=>s.id===id);
-  if (!sess) return;
-  const ts = new Date().toISOString().replace('T',' ').slice(0,19);
-  const line = { ts, level, msg };
-  sess.logs.push(line);
-  // Keep last 500 lines
-  if (sess.logs.length > 500) sess.logs.splice(0, sess.logs.length - 500);
-  saveSessions();
-
-  // Update stats
-  document.getElementById('statLogs').textContent = sess.logs.length;
-
-  if (activeSessionId === id) appendLogLine(line);
-}
-
-function appendLogLine({ts, level, msg}) {
+// TERMINAL LOG
+function appendLog(level, message, ts) {
   const body = document.getElementById('termBody');
-  // Remove empty placeholder
-  const placeholder = body.querySelector('div[style]');
-  if (placeholder) placeholder.remove();
-  const cursor = body.querySelector('.cursor');
-  if (cursor) cursor.remove();
+  const cur  = body.querySelector('.cursor-blink');
+  if (cur) cur.remove();
 
-  const div = document.createElement('div');
+  const date  = new Date((ts || Date.now() / 1000) * 1000);
+  const hh    = String(date.getHours()).padStart(2, '0');
+  const mm    = String(date.getMinutes()).padStart(2, '0');
+  const ss    = String(date.getSeconds()).padStart(2, '0');
+  const timeStr = `${hh}:${mm}:${ss}`;
+
+  const div  = document.createElement('div');
   div.className = 'log-line';
+  const msgClass = level === 'ERR' ? 'err' : level === 'SYS' ? 'sys' : '';
   div.innerHTML = `
-    <span class="log-ts">${ts}</span>
-    <span class="log-level ${level}">${level}</span>
-    <span class="log-msg">${msg}</span>
+    <span class="log-ts">${timeStr}</span>
+    <span class="log-lvl ${level}">${level}</span>
+    <span class="log-msg ${msgClass}">${escHtml(message)}</span>
   `;
   body.appendChild(div);
 
-  const cur = document.createElement('span');
-  cur.className = 'cursor';
-  body.appendChild(cur);
-
+  const blink = document.createElement('span');
+  blink.className = 'cursor-blink';
+  body.appendChild(blink);
   body.scrollTop = body.scrollHeight;
 }
 
-function startFakeLogs(id) {
-  if (logIntervals[id]) return;
-  const sess = sessions.find(s=>s.id===id);
-  if (!sess) return;
-
-  const fakeLogs = [
-    () => ({ cls:'INFO', msg:`Command received: <span class="hl-ok">!ping</span> from <span class="hl-user">user#${Math.floor(Math.random()*9000+1000)}</span>` }),
-    () => ({ cls:'INFO', msg:`Heartbeat ACK (latency: <span class="hl-num">${Math.floor(Math.random()*80+20)}ms</span>)` }),
-    () => ({ cls:'INFO', msg:`Message in #general from <span class="hl-user">user#${Math.floor(Math.random()*9000+1000)}</span>` }),
-    () => ({ cls:'DEBUG', msg:`Cache updated — <span class="hl-num">${Math.floor(Math.random()*5000+1000)}</span> members` }),
-    () => ({ cls:'INFO', msg:`Command received: <span class="hl-ok">!help</span> from <span class="hl-user">admin#0001</span>` }),
-    () => ({ cls:'WARN', msg:`Rate limit hit — backing off <span class="hl-num">${(Math.random()*2+0.5).toFixed(1)}s</span>` }),
-    () => ({ cls:'INFO', msg:`Voice state update for <span class="hl-user">user#${Math.floor(Math.random()*9000+1000)}</span>` }),
-    () => ({ cls:'INFO', msg:`Guild member joined: <span class="hl-user">newmember#${Math.floor(Math.random()*9000+1000)}</span>` }),
-    () => ({ cls:'DEBUG', msg:`Event dispatched: on_message (${Math.floor(Math.random()*500+50)} chars)` }),
-  ];
-
-  logIntervals[id] = setInterval(() => {
-    const s = sessions.find(x=>x.id===id);
-    if (!s || s.status !== 'online') return;
-    const {cls, msg} = fakeLogs[Math.floor(Math.random()*fakeLogs.length)]();
-    pushLog(id, cls, msg);
-  }, sess.plan==='free' ? 4000 : 2000);
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function startUptimeTick(id) {
-  const sess = sessions.find(s=>s.id===id);
-  if (!sess) return;
-  sess._startedAt = Date.now();
-
-  const tick = setInterval(() => {
-    const s = sessions.find(x=>x.id===id);
-    if (!s || s.status !== 'online') { clearInterval(tick); return; }
-    s.uptimeSeconds = Math.floor((Date.now() - s._startedAt) / 1000);
-    const h = String(Math.floor(s.uptimeSeconds/3600)).padStart(2,'0');
-    const m = String(Math.floor((s.uptimeSeconds%3600)/60)).padStart(2,'0');
-    const sc = String(s.uptimeSeconds%60).padStart(2,'0');
-    s.uptime = `${h}:${m}:${sc}`;
-    if (activeSessionId === id) {
-      document.getElementById('statUptime').textContent = s.uptime;
-    }
-    renderSessions();
-  }, 1000);
+// CONTROLS
+async function ctrlStart() {
+  if (!activeId) return;
+  try {
+    await api('POST', `/api/sessions/${activeId}/start`);
+  } catch (e) { toast(e.message, true); }
 }
 
-function startResourceSim() {
-  if (resourceInterval) return;
-  resourceInterval = setInterval(() => {
-    const sess = sessions.find(s=>s.id===activeSessionId);
-    if (!sess || sess.status !== 'online') {
-      document.getElementById('cpuBar').style.width='0%';
-      document.getElementById('cpuPct').textContent='0%';
-      document.getElementById('ramBar').style.width='0%';
-      document.getElementById('ramMb').textContent='0 MB';
-      document.getElementById('diskBar').style.width='0%';
-      document.getElementById('diskMb').textContent='0 MB';
-      return;
-    }
-    const cpu = Math.floor(Math.random()*30+5);
-    const ram = Math.floor(Math.random()*80+40);
-    const disk = Math.floor(Math.random()*10+2);
-    const maxRam = sess.plan==='pro' ? 2048 : 256;
-    const maxDisk = sess.plan==='pro' ? 5120 : 100;
-    document.getElementById('cpuBar').style.width=cpu+'%';
-    document.getElementById('cpuPct').textContent=cpu+'%';
-    document.getElementById('ramBar').style.width=(ram/maxRam*100)+'%';
-    document.getElementById('ramMb').textContent=ram+' MB';
-    document.getElementById('diskBar').style.width=(disk/maxDisk*100)+'%';
-    document.getElementById('diskMb').textContent=disk+' MB';
-  }, 2000);
+async function ctrlStop() {
+  if (!activeId) return;
+  try { await api('POST', `/api/sessions/${activeId}/stop`); } catch (e) { toast(e.message, true); }
 }
 
-// ============================================================
-//  SELECT SESSION
-// ============================================================
-function selectSession(id) {
-  activeSessionId = id;
-  const sess = sessions.find(s=>s.id===id);
-  if (!sess) return;
-  renderSessions();
-
-  document.getElementById('termTitle').textContent = sess.name + ' — ' + sess.file;
-  updateTermStatus(sess.status);
-
-  // Fill logs
-  const body = document.getElementById('termBody');
-  body.innerHTML = '';
-  if (sess.logs.length) {
-    sess.logs.forEach(l => appendLogLine(l));
-  } else {
-    body.innerHTML = `<div style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;padding:20px 0;">
-      Session created. Click <span style="color:var(--green)">▶ START</span> to run your script.
-    </div>`;
-  }
-  document.getElementById('statUptime').textContent = sess.uptime;
-  document.getElementById('statLogs').textContent = sess.logs.length;
-  startResourceSim();
+async function ctrlRestart() {
+  if (!activeId) return;
+  try { await api('POST', `/api/sessions/${activeId}/restart`); } catch (e) { toast(e.message, true); }
 }
 
-function updateTermStatus(status) {
-  const badge = document.getElementById('termStatusBadge');
-  badge.className = 'term-status-badge ' + status;
-  badge.innerHTML = `<div class="term-status-dot"></div>${status.toUpperCase()}`;
-}
-
-function startSession() {
-  if (!activeSessionId) { toast('Select a session first'); return; }
-  const sess = sessions.find(s=>s.id===activeSessionId);
-  if (!sess) return;
-  if (sess.status === 'online') { toast('Session is already running'); return; }
-  sess.logs = [];
-  setSessStatus(activeSessionId, 'loading');
+async function ctrlClear() {
+  if (!activeId) return;
   document.getElementById('termBody').innerHTML = '';
-  simulateBoot(activeSessionId);
-  toast('Starting session...');
+  logCount = 0;
+  document.getElementById('stLogs').textContent = 0;
+  try { await api('DELETE', `/api/sessions/${activeId}/logs`); } catch {}
 }
 
-function stopSession() {
-  if (!activeSessionId) { toast('Select a session first'); return; }
-  const sess = sessions.find(s=>s.id===activeSessionId);
-  if (!sess) return;
-  if (logIntervals[activeSessionId]) { clearInterval(logIntervals[activeSessionId]); delete logIntervals[activeSessionId]; }
-  setSessStatus(activeSessionId, 'offline');
-  pushLog(activeSessionId, 'SYS', '<span class="hl-err">Process terminated by user</span>');
-  toast('Session stopped', true);
+async function ctrlDelete() {
+  if (!activeId) return;
+  if (!confirm('Delete this session and all its logs? This cannot be undone.')) return;
+  try {
+    await api('DELETE', `/api/sessions/${activeId}`);
+    activeId = null;
+    document.getElementById('noSessPane').style.display = '';
+    document.getElementById('termPane').style.display   = 'none';
+    await loadSessions();
+    toast('Session deleted');
+  } catch (e) { toast(e.message, true); }
 }
 
-function clearLogs() {
-  const body = document.getElementById('termBody');
-  body.innerHTML = '';
-  if (activeSessionId) {
-    const sess = sessions.find(s=>s.id===activeSessionId);
-    if (sess) { sess.logs = []; saveSessions(); }
-  }
-}
-
-function handleTermInput(e) {
-  if (e.key === 'Enter') {
+function handleStdin(e) {
+  if (e.key === 'Enter' && ws && ws.readyState === WebSocket.OPEN) {
     const val = e.target.value.trim();
-    if (!val || !activeSessionId) return;
-    pushLog(activeSessionId, 'SYS', '> ' + val);
+    if (!val || !activeId) return;
+    ws.send(JSON.stringify({ type: 'stdin', data: val }));
     e.target.value = '';
   }
 }
 
-function switchView(v) {
-  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  document.getElementById('topbarTitle').textContent = v.toUpperCase();
+// ============================================================
+//  NEW SESSION MODAL
+// ============================================================
+function openNewSession() { document.getElementById('newSessOverlay').classList.add('show'); }
+function closeNewSession() {
+  document.getElementById('newSessOverlay').classList.remove('show');
+  uploadedFile = null;
+  document.getElementById('dropLabel').textContent = '📂 Click or drag & drop your .py file';
+  document.getElementById('nsName').value = '';
 }
 
-// Init
-renderSessions();
-startResourceSim();
+function fileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  document.getElementById('dropLabel').textContent = `✓ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+}
 
-function toast(msg, isErr=false) {
+async function deploySession() {
+  const name = document.getElementById('nsName').value.trim();
+  const autoRestart = document.getElementById('nsAutoRestart').checked;
+
+  if (!name)         { toast('Enter a session name', true); return; }
+  if (!uploadedFile) { toast('Upload a .py file first', true); return; }
+
+  try {
+    // 1. Upload file
+    const fd = new FormData();
+    fd.append('script', uploadedFile);
+    const upRes = await fetch(BACKEND_URL + '/api/sessions/upload', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: fd
+    });
+    const upData = await upRes.json();
+    if (!upRes.ok) throw new Error(upData.error || 'Upload failed');
+
+    // 2. Create session
+    const sess = await api('POST', '/api/sessions', {
+      name,
+      fileName: upData.fileName,
+      plan: userData.plan,
+      autoRestart
+    });
+
+    closeNewSession();
+    await loadSessions();
+    selectSession(sess.id);
+    toast('Session created! Click ▶ START to run it.');
+  } catch (e) {
+    toast(e.message, true);
+  }
+}
+
+// Drag-drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    uploadedFile = file;
+    document.getElementById('dropLabel').textContent = `✓ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  }
+});
+
+// ============================================================
+//  INVOICES
+// ============================================================
+async function loadInvoices() {
+  try {
+    const invs = await api('GET', '/api/invoices');
+    const tbody = document.getElementById('invBody');
+    if (!invs.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:12px;">No invoices yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = invs.map(inv => `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">#${inv.id.slice(0,8).toUpperCase()}</td>
+        <td>${inv.description || 'CloudPy Hosting'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:700;">$${Number(inv.amount).toFixed(2)}</td>
+        <td><span class="badge ${inv.status}">${inv.status.toUpperCase()}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">${new Date(inv.issued_at*1000).toLocaleDateString()}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">${inv.due_date ? new Date(inv.due_date*1000).toLocaleDateString() : '—'}</td>
+        <td><button class="pdf-btn" onclick="downloadPdf('${inv.id}')">↓ PDF</button></td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    toast('Failed to load invoices: ' + e.message, true);
+  }
+}
+
+async function downloadPdf(invId) {
+  const res = await fetch(BACKEND_URL + `/api/invoices/${invId}/pdf`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) { toast('Failed to generate PDF', true); return; }
+  const blob = await res.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `CloudPy-Invoice-${invId.slice(0,8).toUpperCase()}.pdf`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ============================================================
+//  VIEW SWITCHING
+// ============================================================
+function showView(view, btn) {
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  document.getElementById('viewTitle').textContent = view.toUpperCase();
+
+  document.getElementById('viewSessions').style.display = view === 'sessions' ? '' : 'none';
+  document.getElementById('viewInvoices').style.display = view === 'invoices' ? '' : 'none';
+
+  if (view === 'invoices') loadInvoices();
+}
+
+function logout() {
+  sessionStorage.removeItem('cloudpy_token');
+  sessionStorage.removeItem('cloudpy_user');
+  window.location.href = 'index.html';
+}
+
+function toast(msg, err = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = isErr ? 'err' : '';
+  t.className = err ? 'err' : '';
   t.style.display = 'block';
-  setTimeout(()=>{ t.style.display='none'; }, 3000);
+  setTimeout(() => t.style.display = 'none', 4000);
 }
+
+// ============================================================
+//  INIT
+// ============================================================
+connectWS();
+loadSessions();
+setInterval(loadSessions, 10000); // poll every 10s for session list updates
 </script>
 </body>
 </html>
