@@ -4,675 +4,363 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CloudPy — Owner Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#060810; --bg2:#0b0f1a; --bg3:#111827;
-    --sidebar:#080c15;
-    --green:#00ff88; --green2:#00cc6a;
-    --blue:#3b82f6; --purple:#c084fc;
-    --red:#ff4444; --yellow:#fbbf24; --orange:#f97316;
-    --text:#e2e8f0; --muted:#64748b;
-    --border:rgba(0,255,136,0.1);
-    --glow:0 0 20px rgba(0,255,136,0.2);
-    --owner:#f97316;
-    --owner-glow:0 0 20px rgba(249,115,22,0.3);
-  }
+  :root{--bg:#060810;--bg2:#0b0f1a;--sidebar:#07090f;--o:#f97316;--o2:#ea580c;--green:#00ff88;--blue:#3b82f6;--red:#ff4444;--yellow:#fbbf24;--purple:#c084fc;--text:#e2e8f0;--muted:#64748b;--border:rgba(249,115,22,0.1);--og:0 0 20px rgba(249,115,22,0.25);}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(249,115,22,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 
-  /* LOGIN SCREEN */
-  .login-screen {
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    position:relative;
-  }
-  .login-screen::before {
-    content:'';position:fixed;inset:0;
-    background-image:linear-gradient(rgba(249,115,22,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.03) 1px,transparent 1px);
-    background-size:40px 40px;pointer-events:none;
-  }
-  .login-card {
-    background:var(--bg2); border:1px solid rgba(249,115,22,0.2);
-    border-radius:16px; padding:48px 40px;
-    width:100%; max-width:400px;
-    text-align:center;
-    box-shadow:0 0 60px rgba(249,115,22,0.06);
-    position:relative;z-index:1;
-  }
-  .owner-badge {
-    display:inline-flex;align-items:center;gap:8px;
-    background:rgba(249,115,22,0.1);
-    border:1px solid rgba(249,115,22,0.2);
-    border-radius:50px;padding:4px 14px;
-    font-size:11px;letter-spacing:3px;color:var(--owner);
-    margin-bottom:24px;
-  }
-  .login-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;margin-bottom:6px;}
-  .login-sub{color:var(--muted);font-size:14px;margin-bottom:28px;}
-  .pw-input{
-    width:100%;background:rgba(255,255,255,0.04);
-    border:1px solid rgba(249,115,22,0.15);
-    border-radius:8px;padding:13px 16px;
-    color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;
-    outline:none;transition:border-color 0.2s;text-align:center;letter-spacing:4px;
-  }
-  .pw-input:focus{border-color:var(--owner);}
-  .pw-btn{
-    width:100%;margin-top:14px;
-    background:linear-gradient(135deg,var(--owner),#ea580c);
-    color:#fff;border:none;border-radius:8px;padding:14px;
-    font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;
-    cursor:pointer;transition:all 0.2s;
-  }
-  .pw-btn:hover{box-shadow:var(--owner-glow);}
-  .pw-err{color:var(--red);font-size:13px;margin-top:10px;font-family:'JetBrains Mono',monospace;display:none;}
+  /* LOGIN */
+  .login{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;}
+  .lcard{background:var(--bg2);border:1px solid rgba(249,115,22,0.2);border-radius:16px;padding:44px 38px;width:100%;max-width:380px;text-align:center;box-shadow:0 0 60px rgba(249,115,22,0.05);}
+  .ob{display:inline-flex;align-items:center;gap:7px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);border-radius:50px;padding:4px 13px;font-size:10px;letter-spacing:3px;color:var(--o);margin-bottom:20px;}
+  .lt{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;margin-bottom:5px;}
+  .ls{color:var(--muted);font-size:13px;margin-bottom:24px;}
+  .pinput{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(249,115,22,0.15);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;transition:border-color 0.2s;text-align:center;letter-spacing:4px;margin-bottom:12px;}
+  .pinput:focus{border-color:var(--o);}
+  .pbtn{width:100%;background:linear-gradient(135deg,var(--o),var(--o2));color:#fff;border:none;border-radius:8px;padding:13px;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
+  .pbtn:hover{box-shadow:var(--og);}
+  .perr{color:var(--red);font-size:12px;margin-top:8px;font-family:'JetBrains Mono',monospace;display:none;}
 
-  /* ADMIN PANEL */
-  .admin-wrap{display:flex;min-height:100vh;}
+  /* PANEL */
+  .wrap{display:flex;min-height:100vh;}
 
   /* SIDEBAR */
-  .sidebar{
-    width:240px;min-width:240px;
-    background:var(--sidebar);
-    border-right:1px solid rgba(249,115,22,0.1);
-    display:flex;flex-direction:column;
-    height:100vh;position:sticky;top:0;overflow-y:auto;
-  }
-  .sb-logo{
-    display:flex;align-items:center;gap:10px;
-    padding:20px;border-bottom:1px solid rgba(249,115,22,0.1);
-    text-decoration:none;
-  }
-  .sb-logo-mark{
-    width:32px;height:32px;
-    background:linear-gradient(135deg,var(--owner),#ea580c);
-    border-radius:7px;display:flex;align-items:center;justify-content:center;
-    font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:#fff;
-    flex-shrink:0;
-  }
-  .sb-logo-text{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--owner);letter-spacing:2px;}
-  .sb-badge{
-    font-size:9px;letter-spacing:2px;color:rgba(249,115,22,0.6);
-    padding:2px 8px;background:rgba(249,115,22,0.08);border-radius:3px;
-    font-family:'JetBrains Mono',monospace;
-  }
-
-  .sb-section{padding:16px 12px 4px;font-size:10px;letter-spacing:3px;color:rgba(100,116,139,0.5);text-transform:uppercase;}
-  .sb-link{
-    display:flex;align-items:center;gap:10px;
-    padding:10px 12px;border-radius:8px;margin:2px 8px;
-    text-decoration:none;color:var(--muted);
-    font-size:14px;font-weight:600;letter-spacing:0.5px;
-    cursor:pointer;transition:all 0.2s;border:none;background:transparent;
-    width:calc(100% - 16px);text-align:left;
-  }
-  .sb-link:hover,.sb-link.active{background:rgba(249,115,22,0.08);color:var(--owner);}
-  .sb-link .icon{font-size:16px;width:20px;flex-shrink:0;}
-  .sb-link .badge{margin-left:auto;background:rgba(249,115,22,0.12);color:var(--owner);border-radius:4px;padding:1px 7px;font-size:11px;font-family:'JetBrains Mono',monospace;}
-  .sb-spacer{flex:1;}
-  .sb-footer{padding:14px 16px;border-top:1px solid rgba(249,115,22,0.1);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
-  .sb-footer strong{color:var(--owner);}
+  .sidebar{width:230px;min-width:230px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;}
+  .sbl{display:flex;align-items:center;gap:9px;padding:18px 16px;border-bottom:1px solid var(--border);}
+  .slm{width:30px;height:30px;background:linear-gradient(135deg,var(--o),var(--o2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;}
+  .slt{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--o);letter-spacing:2px;}
+  .slb{font-size:9px;letter-spacing:2px;color:rgba(249,115,22,0.5);padding:2px 6px;background:rgba(249,115,22,0.07);border-radius:3px;font-family:'JetBrains Mono',monospace;display:block;margin-top:2px;}
+  .ss{padding:13px 12px 3px;font-size:10px;letter-spacing:3px;color:rgba(100,116,139,0.5);text-transform:uppercase;}
+  .sb{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:7px;margin:2px 8px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;background:transparent;width:calc(100% - 16px);text-align:left;}
+  .sb:hover,.sb.on{background:rgba(249,115,22,0.08);color:var(--o);}
+  .sb .i{font-size:14px;width:17px;flex-shrink:0;}
+  .spacer{flex:1;}
+  .sfooter{padding:12px 14px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .sfooter strong{color:var(--o);}
 
   /* MAIN */
   .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-  .topbar{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 32px;border-bottom:1px solid rgba(249,115,22,0.1);
-    background:rgba(6,8,16,0.9);backdrop-filter:blur(20px);
-    position:sticky;top:0;z-index:50;flex-shrink:0;
-  }
-  .topbar-left{display:flex;align-items:center;gap:12px;}
-  .owner-pill{
-    background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);
-    border-radius:50px;padding:3px 12px;
-    font-size:10px;letter-spacing:2px;color:var(--owner);
-    font-family:'JetBrains Mono',monospace;font-weight:700;
-  }
-  .topbar-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;}
-  .sys-status{
-    display:flex;align-items:center;gap:8px;
-    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
-  }
-  .sys-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-
-  /* CONTENT */
-  .content{padding:28px 32px;flex:1;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(6,8,16,0.92);backdrop-filter:blur(20px);position:sticky;top:0;z-index:50;flex-shrink:0;}
+  .tl{display:flex;align-items:center;gap:10px;}
+  .ttitle{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;}
+  .opill{background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);border-radius:50px;padding:2px 11px;font-size:9px;letter-spacing:2px;color:var(--o);font-family:'JetBrains Mono',monospace;font-weight:700;}
+  .content{padding:24px 28px;flex:1;}
 
   /* STATS */
-  .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px;}
-  .stat-card{
-    background:var(--bg2);border:1px solid var(--border);
-    border-radius:12px;padding:18px;position:relative;overflow:hidden;
-  }
-  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-  .stat-card.o::before{background:linear-gradient(90deg,var(--owner),transparent);}
-  .stat-card.g::before{background:linear-gradient(90deg,var(--green),transparent);}
-  .stat-card.b::before{background:linear-gradient(90deg,var(--blue),transparent);}
-  .stat-card.p::before{background:linear-gradient(90deg,var(--purple),transparent);}
-  .stat-card.r::before{background:linear-gradient(90deg,var(--red),transparent);}
-  .stat-label{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
-  .stat-value{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;}
-  .stat-value.o{color:var(--owner);}
-  .stat-value.g{color:var(--green);}
-  .stat-value.b{color:var(--blue);}
-  .stat-value.p{color:var(--purple);}
-  .stat-value.r{color:var(--red);}
-  .stat-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:22px;}
+  .sc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .sc.o::before{background:linear-gradient(90deg,var(--o),transparent);}
+  .sc.g::before{background:linear-gradient(90deg,var(--green),transparent);}
+  .sc.b::before{background:linear-gradient(90deg,var(--blue),transparent);}
+  .sc.p::before{background:linear-gradient(90deg,var(--purple),transparent);}
+  .sc.r::before{background:linear-gradient(90deg,var(--red),transparent);}
+  .sl{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+  .sv{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;}
+  .sv.o{color:var(--o);}.sv.g{color:var(--green);}.sv.b{color:var(--blue);}.sv.p{color:var(--purple);}.sv.r{color:var(--red);}
+  .sub2{font-size:11px;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
 
-  /* PANEL */
-  .panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
-  .panel-header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:14px 20px;border-bottom:1px solid var(--border);
-    background:rgba(255,255,255,0.02);
-  }
-  .panel-title{font-size:12px;letter-spacing:2px;font-weight:700;text-transform:uppercase;color:var(--text);font-family:'JetBrains Mono',monospace;}
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:18px;}
+  .ph{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);}
+  .pt{font-size:11px;letter-spacing:2px;font-weight:700;text-transform:uppercase;color:var(--text);font-family:'JetBrains Mono',monospace;}
 
   /* TABLE */
-  .admin-table{width:100%;border-collapse:collapse;}
-  .admin-table th{
-    padding:10px 20px;text-align:left;
-    font-size:10px;letter-spacing:2px;color:var(--muted);
-    text-transform:uppercase;font-family:'JetBrains Mono',monospace;
-    border-bottom:1px solid var(--border);
-    background:rgba(255,255,255,0.02);
-  }
-  .admin-table td{
-    padding:14px 20px;
-    border-bottom:1px solid rgba(0,255,136,0.04);
-    font-size:14px;font-weight:600;
-  }
-  .admin-table tr:last-child td{border-bottom:none;}
-  .admin-table tr:hover td{background:rgba(255,255,255,0.02);}
-
-  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:1px;}
-  .tag.online{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
-  .tag.offline{background:rgba(255,68,68,0.1);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
-  .tag.free{background:rgba(100,116,139,0.15);color:var(--muted);border:1px solid rgba(100,116,139,0.2);}
+  .tbl{width:100%;border-collapse:collapse;}
+  .tbl th{padding:9px 16px;text-align:left;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.015);}
+  .tbl td{padding:12px 16px;border-bottom:1px solid rgba(249,115,22,0.04);font-size:13px;font-weight:600;}
+  .tbl tr:hover td{background:rgba(255,255,255,0.015);}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;}
+  .tag.online,.tag.running{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+  .tag.offline,.tag.stopped{background:rgba(100,116,139,0.15);color:var(--muted);border:1px solid rgba(100,116,139,0.2);}
+  .tag.free{background:rgba(100,116,139,0.12);color:var(--muted);}
   .tag.pro{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
-  .tag.loading{background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.2);}
-  .tag.banned{background:rgba(255,68,68,0.15);color:var(--red);border:1px solid rgba(255,68,68,0.3);}
+  .tag.paid{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+  .tag.pending{background:rgba(249,115,22,0.1);color:var(--o);border:1px solid rgba(249,115,22,0.2);}
+  .tag.banned{background:rgba(255,68,68,0.12);color:var(--red);border:1px solid rgba(255,68,68,0.3);}
+  .ab{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin:1px;}
+  .ab.ok{background:rgba(0,255,136,0.08);color:var(--green);}
+  .ab.ok:hover{background:rgba(0,255,136,0.2);}
+  .ab.warn{background:rgba(249,115,22,0.08);color:var(--o);}
+  .ab.warn:hover{background:rgba(249,115,22,0.2);}
+  .ab.danger{background:rgba(255,68,68,0.08);color:var(--red);}
+  .ab.danger:hover{background:rgba(255,68,68,0.2);}
 
-  .action-btn{
-    padding:5px 12px;border-radius:5px;font-size:12px;font-weight:700;
-    cursor:pointer;border:none;transition:all 0.2s;font-family:'JetBrains Mono',monospace;
-    letter-spacing:1px;margin:2px;
-  }
-  .action-btn.danger{background:rgba(255,68,68,0.1);color:var(--red);}
-  .action-btn.danger:hover{background:rgba(255,68,68,0.25);}
-  .action-btn.warn{background:rgba(251,191,36,0.1);color:var(--yellow);}
-  .action-btn.warn:hover{background:rgba(251,191,36,0.2);}
-  .action-btn.ok{background:rgba(0,255,136,0.1);color:var(--green);}
-  .action-btn.ok:hover{background:rgba(0,255,136,0.2);}
+  /* INVOICE FORM */
+  .irow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;padding:0 20px;}
+  .fg label{display:block;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:5px;}
+  .fi{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(249,115,22,0.1);border-radius:7px;padding:9px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color 0.2s;}
+  .fi:focus{border-color:var(--o);}
+  .send-btn{padding:9px 20px;background:linear-gradient(135deg,var(--o),var(--o2));color:#fff;border:none;border-radius:7px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;margin:0 20px 16px;}
+  .send-btn:hover{box-shadow:var(--og);}
 
-  /* GRID */
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-
-  /* SERVER LOG */
-  .server-log{
-    background:var(--bg);border-radius:0;
-    padding:16px 20px;
-    font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;
-    max-height:300px;overflow-y:auto;
-  }
-  .server-log::-webkit-scrollbar{width:4px;}
-  .server-log::-webkit-scrollbar-thumb{background:rgba(249,115,22,0.2);border-radius:2px;}
-  .sl-ts{color:rgba(100,116,139,0.5);}
-  .sl-i{color:var(--owner);}
-  .sl-w{color:var(--yellow);}
-  .sl-e{color:var(--red);}
-  .sl-s{color:var(--green);}
-
-  /* NOTICE / ANNOUNCEMENT */
-  .announce-form{padding:20px;}
-  .ann-input{
-    width:100%;background:rgba(255,255,255,0.04);
-    border:1px solid var(--border);border-radius:8px;padding:10px 14px;
-    color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;
-    outline:none;transition:border-color 0.2s;margin-bottom:12px;
-    resize:none;min-height:70px;
-  }
-  .ann-input:focus{border-color:var(--owner);}
-  .ann-btns{display:flex;gap:10px;}
-  .send-btn{
-    padding:8px 20px;
-    background:linear-gradient(135deg,var(--owner),#ea580c);
-    color:#fff;border:none;border-radius:7px;
-    font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;
-    cursor:pointer;transition:all 0.2s;
-  }
-  .send-btn:hover{box-shadow:var(--owner-glow);}
-
-  /* RESOURCE OVERVIEW */
-  .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px;}
-  .res-item{text-align:center;}
-  .res-ring{
-    width:80px;height:80px;margin:0 auto 10px;
-    position:relative;
-  }
-  .res-ring svg{transform:rotate(-90deg);}
-  .res-ring-label{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;
-  }
-  .res-name{font-size:12px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+  /* ANNOUNCE */
+  .aform{padding:20px;}
+  .ai{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;outline:none;transition:border-color 0.2s;margin-bottom:10px;}
+  .ai:focus{border-color:var(--o);}
+  textarea.ai{resize:vertical;min-height:70px;}
 
   /* TOAST */
-  #toast{
-    position:fixed;bottom:24px;right:24px;z-index:9999;
-    background:var(--bg2);border:1px solid var(--owner);
-    border-radius:10px;padding:12px 18px;
-    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--owner);
-    display:none;box-shadow:var(--owner-glow);
-    animation:slideIn 0.3s ease;
-  }
-  @keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-  ::-webkit-scrollbar{width:5px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:rgba(249,115,22,0.15);border-radius:3px;}
-
-  @media(max-width:900px){
-    .stats-row{grid-template-columns:repeat(2,1fr);}
-    .grid2{grid-template-columns:1fr;}
-    .sidebar{display:none;}
-  }
+  #toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--bg2);border:1px solid var(--o);border-radius:9px;padding:11px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--o);display:none;box-shadow:var(--og);animation:ti 0.3s ease;max-width:320px;}
+  #toast.err{border-color:var(--red);color:var(--red);}
+  @keyframes ti{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+  ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:rgba(249,115,22,0.15);border-radius:2px;}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr);}.sidebar{display:none;}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="owner-badge">⚡ OWNER ACCESS</div>
-    <div class="login-title">ADMIN PANEL</div>
-    <div class="login-sub">Enter the owner password to continue</div>
-    <input class="pw-input" type="password" id="pwInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()">
-    <button class="pw-btn" onclick="checkPw()">UNLOCK PANEL →</button>
-    <div class="pw-err" id="pwErr">Incorrect password. Try again.</div>
-    <div style="margin-top:20px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;">
-      Default: <span style="color:var(--owner)">cloudpy_owner</span> — change in script
+<!-- LOGIN -->
+<div class="login" id="loginScreen">
+  <div class="lcard">
+    <div class="ob">⚡ OWNER ACCESS</div>
+    <div class="lt">OWNER PANEL</div>
+    <div class="ls">Enter your owner secret key</div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:10px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:5px;">BACKEND URL</label>
+      <input class="pinput" type="text" id="backendUrlInput" placeholder="https://your-server.railway.app" style="letter-spacing:normal;text-align:left;font-size:12px;">
     </div>
+    <input class="pinput" type="password" id="keyInput" placeholder="Owner secret key" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="pbtn" onclick="doLogin()">UNLOCK →</button>
+    <div class="perr" id="loginErr">Wrong key or cannot reach backend.</div>
   </div>
 </div>
 
-<!-- ADMIN PANEL (hidden until login) -->
-<div class="admin-wrap" id="adminPanel" style="display:none;">
-
-  <!-- SIDEBAR -->
+<!-- PANEL -->
+<div class="wrap" id="panelWrap" style="display:none;">
   <aside class="sidebar">
-    <a href="index.html" class="sb-logo">
-      <div class="sb-logo-mark">C</div>
-      <div>
-        <div class="sb-logo-text">CLOUDPY</div>
-        <div class="sb-badge">OWNER PANEL</div>
-      </div>
-    </a>
-
-    <div class="sb-section">OVERVIEW</div>
-    <button class="sb-link active" onclick="setView('overview',this)"><span class="icon">📊</span> Overview</button>
-    <button class="sb-link" onclick="setView('users',this)"><span class="icon">👥</span> Users <span class="badge" id="sbUserCount">0</span></button>
-    <button class="sb-link" onclick="setView('sessions',this)"><span class="icon">🖥️</span> Sessions <span class="badge" id="sbSessCount">0</span></button>
-    <button class="sb-link" onclick="setView('logs',this)"><span class="icon">📋</span> Server Logs</button>
-
-    <div class="sb-section">MANAGEMENT</div>
-    <button class="sb-link" onclick="setView('announce',this)"><span class="icon">📢</span> Announcements</button>
-    <button class="sb-link" onclick="setView('plans',this)"><span class="icon">💳</span> Plans & Billing</button>
-    <button class="sb-link" onclick="setView('settings',this)"><span class="icon">⚙️</span> Server Config</button>
-
-    <div class="sb-spacer"></div>
-    <div class="sb-footer">
-      Made by <strong>.yurix_</strong><br>
-      <span style="color:rgba(100,116,139,0.5);font-size:10px;">CloudPy v1.0.0</span>
+    <div class="sbl">
+      <div class="slm">C</div>
+      <div><div class="slt">CLOUDPY</div><span class="slb">OWNER PANEL</span></div>
     </div>
+    <div class="ss">OVERVIEW</div>
+    <button class="sb on" onclick="sv('stats',this)"><span class="i">📊</span> Stats</button>
+    <button class="sb" onclick="sv('users',this)"><span class="i">👥</span> Users</button>
+    <button class="sb" onclick="sv('sessions',this)"><span class="i">🖥️</span> Sessions</button>
+    <button class="sb" onclick="sv('invoices',this)"><span class="i">🧾</span> Invoices</button>
+    <div class="ss">ACTIONS</div>
+    <button class="sb" onclick="sv('new-invoice',this)"><span class="i">➕</span> Issue Invoice</button>
+    <button class="sb" onclick="sv('announce',this)"><span class="i">📢</span> Announce</button>
+    <div class="spacer"></div>
+    <div class="sfooter">Made by <strong>.yurix_</strong></div>
   </aside>
-
-  <!-- MAIN -->
   <main class="main">
     <div class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-title" id="viewTitle">OVERVIEW</span>
-        <span class="owner-pill">OWNER</span>
-      </div>
-      <div class="sys-status">
-        <div class="sys-dot"></div>
-        All systems operational
-      </div>
+      <div class="tl"><span class="ttitle" id="vtitle">STATS</span><span class="opill">OWNER</span></div>
     </div>
-
-    <div class="content" id="viewContent">
-      <!-- Rendered by JS -->
-    </div>
+    <div class="content" id="vc"></div>
   </main>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ============================================================
-//  OWNER PASSWORD (change this!)
-// ============================================================
-const OWNER_PASSWORD = 'cloudpy_owner';
+let BACKEND = '';
+let OWNER_KEY = '';
 
-function checkPw() {
-  const val = document.getElementById('pwInput').value;
-  if (val === OWNER_PASSWORD) {
+// Load saved backend
+document.getElementById('backendUrlInput').value = localStorage.getItem('cloudpy_backend') || '';
+
+async function doLogin() {
+  BACKEND   = document.getElementById('backendUrlInput').value.trim().replace(/\/$/,'');
+  OWNER_KEY = document.getElementById('keyInput').value.trim();
+  if (!BACKEND || !OWNER_KEY) { showLoginErr('Fill in both fields'); return; }
+  localStorage.setItem('cloudpy_backend', BACKEND);
+  try {
+    const res = await ownerApi('GET', '/api/owner/stats');
     document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'flex';
-    initAdmin();
-  } else {
-    document.getElementById('pwErr').style.display = 'block';
-    document.getElementById('pwInput').value = '';
-    document.getElementById('pwInput').focus();
+    document.getElementById('panelWrap').style.display = 'flex';
+    renderStats(res);
+  } catch (e) { showLoginErr(e.message); }
+}
+
+function showLoginErr(msg) {
+  const el = document.getElementById('loginErr');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+async function ownerApi(method, path, body) {
+  const opts = { method, headers: { 'x-owner-key': OWNER_KEY, 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res  = await fetch(BACKEND + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+function sv(view, el) {
+  document.querySelectorAll('.sb').forEach(b => b.classList.remove('on'));
+  if (el) el.classList.add('on');
+  document.getElementById('vtitle').textContent = view.replace('-',' ').toUpperCase();
+  switch(view) {
+    case 'stats':      ownerApi('GET','/api/owner/stats').then(renderStats); break;
+    case 'users':      ownerApi('GET','/api/owner/users').then(renderUsers); break;
+    case 'sessions':   ownerApi('GET','/api/owner/sessions').then(renderSessions); break;
+    case 'invoices':   ownerApi('GET','/api/owner/invoices').then(renderInvoices); break;
+    case 'new-invoice':renderNewInvoice(); break;
+    case 'announce':   renderAnnounce(); break;
   }
 }
 
-// ============================================================
-//  FAKE DATA
-// ============================================================
-const mockUsers = [
-  { id:'u1', name:'Alex Rivera', email:'alex@example.com', plan:'pro',   sessions:3, status:'active',  joined:'2025-01-02', revenue:7.00 },
-  { id:'u2', name:'Maya Chen',   email:'maya@example.com', plan:'free',  sessions:1, status:'active',  joined:'2025-01-05', revenue:0 },
-  { id:'u3', name:'Dev User',    email:'dev@test.com',     plan:'pro',   sessions:5, status:'active',  joined:'2025-01-08', revenue:7.00 },
-  { id:'u4', name:'Bot Master',  email:'bots@bots.io',     plan:'pro',   sessions:4, status:'active',  joined:'2025-01-10', revenue:7.00 },
-  { id:'u5', name:'Jess Smith',  email:'jess@gmail.com',   plan:'free',  sessions:1, status:'banned',  joined:'2025-01-11', revenue:0 },
-  { id:'u6', name:'Ray Kim',     email:'ray@discord.gg',   plan:'free',  sessions:0, status:'inactive',joined:'2025-01-14', revenue:0 },
-];
+function vc(html) { document.getElementById('vc').innerHTML = html; }
 
-const mockSessions = [
-  { id:'s1', owner:'Alex Rivera', name:'music-bot',     file:'bot.py',    plan:'pro',  status:'online',  uptime:'12:34:21', cpu:'18%', ram:'142MB' },
-  { id:'s2', owner:'Alex Rivera', name:'modbot',        file:'mod.py',    plan:'pro',  status:'online',  uptime:'08:12:05', cpu:'6%',  ram:'89MB'  },
-  { id:'s3', owner:'Maya Chen',   name:'my-bot',        file:'main.py',   plan:'free', status:'online',  uptime:'02:11:44', cpu:'4%',  ram:'61MB'  },
-  { id:'s4', owner:'Dev User',    name:'api-server',    file:'server.py', plan:'pro',  status:'online',  uptime:'24:00:00', cpu:'32%', ram:'340MB' },
-  { id:'s5', owner:'Bot Master',  name:'game-bot',      file:'game.py',   plan:'pro',  status:'loading', uptime:'00:00:12', cpu:'2%',  ram:'12MB'  },
-  { id:'s6', owner:'Ray Kim',     name:'test-script',   file:'test.py',   plan:'free', status:'offline', uptime:'00:00:00', cpu:'0%',  ram:'0MB'   },
-];
-
-const mockLogs = [
-  { ts:'14:23:01', cls:'sl-s', txt:'[RUNTIME] session s1 started by alex@example.com' },
-  { ts:'14:23:04', cls:'sl-i', txt:'[AUTH] Google login: maya@example.com (new user)' },
-  { ts:'14:23:09', cls:'sl-s', txt:'[RUNTIME] session s2 started by alex@example.com' },
-  { ts:'14:24:33', cls:'sl-w', txt:'[RATE-LIMIT] Free user maya@example.com — throttling applied' },
-  { ts:'14:25:01', cls:'sl-i', txt:'[BILLING] Pro upgrade: dev@test.com — $7.00 received' },
-  { ts:'14:26:12', cls:'sl-e', txt:'[SECURITY] Failed login attempt from 192.168.x.x' },
-  { ts:'14:27:44', cls:'sl-s', txt:'[RUNTIME] session s4 uptime: 24:00:00 — stable' },
-  { ts:'14:28:00', cls:'sl-i', txt:'[SYSTEM] Memory usage: 1.2GB / 8GB' },
-  { ts:'14:29:15', cls:'sl-i', txt:'[AUTH] Email login: bots@bots.io — success' },
-  { ts:'14:30:02', cls:'sl-w', txt:'[RUNTIME] session s5 crash detected — auto-restarting' },
-  { ts:'14:30:05', cls:'sl-s', txt:'[RUNTIME] session s5 restarted successfully' },
-  { ts:'14:31:00', cls:'sl-i', txt:'[SYSTEM] CPU usage: 28% | Active sessions: 5' },
-];
-
-// ============================================================
-//  VIEWS
-// ============================================================
-let currentView = 'overview';
-
-function initAdmin() {
-  document.getElementById('sbUserCount').textContent = mockUsers.length;
-  document.getElementById('sbSessCount').textContent = mockSessions.filter(s=>s.status==='online').length;
-  renderView('overview');
-}
-
-function setView(v, el) {
-  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
-  if (el) el.classList.add('active');
-  document.getElementById('viewTitle').textContent = v.toUpperCase();
-  currentView = v;
-  renderView(v);
-}
-
-function renderView(v) {
-  const c = document.getElementById('viewContent');
-  switch(v) {
-    case 'overview': c.innerHTML = renderOverview(); break;
-    case 'users':    c.innerHTML = renderUsers(); break;
-    case 'sessions': c.innerHTML = renderSessions(); break;
-    case 'logs':     c.innerHTML = renderLogs(); break;
-    case 'announce': c.innerHTML = renderAnnounce(); break;
-    case 'plans':    c.innerHTML = renderPlans(); break;
-    case 'settings': c.innerHTML = renderSettings(); break;
-    default: c.innerHTML = `<div style="color:var(--muted);font-size:14px;padding:40px;font-family:'JetBrains Mono',monospace;">Coming soon...</div>`;
-  }
-}
-
-function renderOverview() {
-  const onlineSess = mockSessions.filter(s=>s.status==='online').length;
-  const activeUsers = mockUsers.filter(u=>u.status==='active').length;
-  const proUsers = mockUsers.filter(u=>u.plan==='pro').length;
-  const mrr = proUsers * 7;
-
-  return `
-  <div class="stats-row">
-    <div class="stat-card o"><div class="stat-label">MRR</div><div class="stat-value o">$${mrr}</div><div class="stat-sub">${proUsers} pro users</div></div>
-    <div class="stat-card g"><div class="stat-label">Active Sessions</div><div class="stat-value g">${onlineSess}</div><div class="stat-sub">${mockSessions.length} total</div></div>
-    <div class="stat-card b"><div class="stat-label">Total Users</div><div class="stat-value b">${mockUsers.length}</div><div class="stat-sub">${activeUsers} active</div></div>
-    <div class="stat-card p"><div class="stat-label">Pro Users</div><div class="stat-value p">${proUsers}</div><div class="stat-sub">of ${mockUsers.length}</div></div>
-    <div class="stat-card r"><div class="stat-label">Banned</div><div class="stat-value r">${mockUsers.filter(u=>u.status==='banned').length}</div><div class="stat-sub">accounts</div></div>
+function renderStats(d) {
+  vc(`
+  <div class="stats">
+    <div class="sc o"><div class="sl">MRR</div><div class="sv o">$${(d.revenue||0).toFixed(2)}</div><div class="sub2">monthly revenue</div></div>
+    <div class="sc g"><div class="sl">Running</div><div class="sv g">${d.runningSessions||0}</div><div class="sub2">live sessions</div></div>
+    <div class="sc b"><div class="sl">Users</div><div class="sv b">${d.users||0}</div><div class="sub2">${d.proUsers||0} pro</div></div>
+    <div class="sc p"><div class="sl">Total Sessions</div><div class="sv p">${d.totalSessions||0}</div><div class="sub2">all time</div></div>
+    <div class="sc r"><div class="sl">Banned</div><div class="sv r">${d.banned||0}</div><div class="sub2">accounts</div></div>
   </div>
+  <div class="panel">
+    <div class="ph"><span class="pt">QUICK STATS</span></div>
+    <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);">
+      <div>Total Log Lines<br><strong style="color:var(--text);font-size:18px;">${(d.totalLogs||0).toLocaleString()}</strong></div>
+      <div>Pro Conversion<br><strong style="color:var(--green);font-size:18px;">${d.users ? Math.round((d.proUsers/d.users)*100) : 0}%</strong></div>
+      <div>Avg Sessions/User<br><strong style="color:var(--blue);font-size:18px;">${d.users ? (d.totalSessions/d.users).toFixed(1) : 0}</strong></div>
+    </div>
+  </div>`);
+}
 
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">SERVER RESOURCES</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">● HEALTHY</span></div>
-      <div class="res-grid">
-        ${resRing('CPU', 28, '#3b82f6')}
-        ${resRing('RAM', 51, '#00ff88')}
-        ${resRing('DISK', 14, '#f97316')}
+function renderUsers(users) {
+  vc(`<div class="panel">
+    <div class="ph"><span class="pt">ALL USERS (${users.length})</span></div>
+    <table class="tbl"><thead><tr>
+      <th>USER</th><th>PLAN</th><th>STATUS</th><th>JOINED</th><th>ACTIONS</th>
+    </tr></thead><tbody>
+    ${users.map(u=>`<tr>
+      <td><div style="font-weight:700;">${u.username}</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">#${u.discord_id}</div></td>
+      <td><span class="tag ${u.plan}">${u.plan.toUpperCase()}</span></td>
+      <td><span class="tag ${u.banned?'banned':'online'}">${u.banned?'BANNED':'ACTIVE'}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${new Date(u.created_at*1000).toLocaleDateString()}</td>
+      <td>
+        <button class="ab ok" onclick="upgradeUser('${u.id}','pro')">↑ PRO</button>
+        <button class="ab warn" onclick="upgradeUser('${u.id}','free')">↓ FREE</button>
+        <button class="ab danger" onclick="banUser('${u.id}',${u.banned?0:1})">${u.banned?'UNBAN':'BAN'}</button>
+      </td>
+    </tr>`).join('')}
+    </tbody></table></div>`);
+}
+
+function renderSessions(sessions) {
+  vc(`<div class="panel">
+    <div class="ph"><span class="pt">ALL SESSIONS (${sessions.length})</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">${sessions.filter(s=>s.live).length} running</span></div>
+    <table class="tbl"><thead><tr>
+      <th>SESSION</th><th>OWNER</th><th>PLAN</th><th>STATUS</th><th>RESTARTS</th><th>ACTIONS</th>
+    </tr></thead><tbody>
+    ${sessions.map(s=>`<tr>
+      <td><div style="font-weight:700;">${s.name}</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${s.file_name}</div></td>
+      <td style="color:var(--muted);font-size:13px;">${s.username}</td>
+      <td><span class="tag ${s.plan}">${s.plan.toUpperCase()}</span></td>
+      <td><span class="tag ${s.live?'running':'stopped'}">${s.live?'RUNNING':'STOPPED'}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--muted);">${s.restart_count||0}×</td>
+      <td><button class="ab danger" onclick="killSession('${s.id}')">KILL</button></td>
+    </tr>`).join('')}
+    </tbody></table></div>`);
+}
+
+function renderInvoices(invs) {
+  vc(`<div class="panel">
+    <div class="ph"><span class="pt">ALL INVOICES (${invs.length})</span></div>
+    <table class="tbl"><thead><tr>
+      <th>#</th><th>USER</th><th>AMOUNT</th><th>STATUS</th><th>ISSUED</th><th>ACTIONS</th>
+    </tr></thead><tbody>
+    ${invs.map(i=>`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">#${i.id.slice(0,8).toUpperCase()}</td>
+      <td>${i.username}</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:700;">$${Number(i.amount).toFixed(2)}</td>
+      <td><span class="tag ${i.status}">${i.status.toUpperCase()}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${new Date(i.issued_at*1000).toLocaleDateString()}</td>
+      <td>
+        <button class="ab ok" onclick="markPaid('${i.id}')">MARK PAID</button>
+        <button class="ab warn" onclick="markStatus('${i.id}','overdue')">OVERDUE</button>
+      </td>
+    </tr>`).join('')}
+    </tbody></table></div>`);
+}
+
+function renderNewInvoice() {
+  ownerApi('GET','/api/owner/users').then(users => {
+    vc(`<div class="panel" style="max-width:560px;">
+      <div class="ph"><span class="pt">ISSUE INVOICE</span></div>
+      <div style="padding:20px;">
+        <div class="irow" style="padding:0;margin-bottom:12px;">
+          <div class="fg"><label>USER</label>
+            <select class="fi" id="invUser">
+              ${users.map(u=>`<option value="${u.id}">${u.username}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg"><label>AMOUNT (USD)</label><input class="fi" type="number" id="invAmt" placeholder="7.00" step="0.01"></div>
+        </div>
+        <div class="irow" style="padding:0;margin-bottom:12px;">
+          <div class="fg"><label>DESCRIPTION</label><input class="fi" id="invDesc" placeholder="CloudPy Pro — January 2025"></div>
+          <div class="fg"><label>DUE DATE</label><input class="fi" type="date" id="invDue"></div>
+        </div>
+        <button class="send-btn" style="margin:0;" onclick="issueInvoice()">ISSUE INVOICE →</button>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">RECENT ACTIVITY</span></div>
-      <div class="server-log">
-        ${mockLogs.slice(-8).map(l=>`<div><span class="sl-ts">[${l.ts}]</span> <span class="${l.cls}">${l.txt}</span></div>`).join('')}
-      </div>
-    </div>
-  </div>
-  `;
-}
-
-function resRing(label, pct, color) {
-  const r=30, circ=2*Math.PI*r;
-  const fill=circ*(1-pct/100);
-  return `
-  <div class="res-item">
-    <div class="res-ring">
-      <svg width="80" height="80" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
-        <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="6"
-          stroke-dasharray="${circ}" stroke-dashoffset="${fill}" stroke-linecap="round"/>
-      </svg>
-      <div class="res-ring-label" style="color:${color}">${pct}%</div>
-    </div>
-    <div class="res-name">${label}</div>
-  </div>`;
-}
-
-function renderUsers() {
-  return `
-  <div class="panel">
-    <div class="panel-header">
-      <span class="panel-title">ALL USERS (${mockUsers.length})</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">click actions to manage</span>
-    </div>
-    <table class="admin-table">
-      <thead><tr>
-        <th>USER</th><th>PLAN</th><th>SESSIONS</th><th>STATUS</th><th>JOINED</th><th>REVENUE</th><th>ACTIONS</th>
-      </tr></thead>
-      <tbody>
-        ${mockUsers.map(u=>`
-        <tr>
-          <td>
-            <div style="font-weight:700;">${u.name}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${u.email}</div>
-          </td>
-          <td><span class="tag ${u.plan}">${u.plan.toUpperCase()}</span></td>
-          <td style="font-family:'JetBrains Mono',monospace;">${u.sessions}</td>
-          <td><span class="tag ${u.status==='active'?'online':u.status==='banned'?'banned':'offline'}">${u.status.toUpperCase()}</span></td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">${u.joined}</td>
-          <td style="font-family:'JetBrains Mono',monospace;color:${u.revenue>0?'var(--green)':'var(--muted)'}">$${u.revenue.toFixed(2)}</td>
-          <td>
-            <button class="action-btn ok" onclick="toast('Upgraded ${u.name} to Pro')">↑ PRO</button>
-            <button class="action-btn warn" onclick="toast('Reset sessions for ${u.name}')">RESET</button>
-            <button class="action-btn danger" onclick="toast('Banned ${u.name}')">BAN</button>
-          </td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  </div>`;
-}
-
-function renderSessions() {
-  return `
-  <div class="panel">
-    <div class="panel-header">
-      <span class="panel-title">ALL SESSIONS (${mockSessions.length})</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">${mockSessions.filter(s=>s.status==='online').length} online</span>
-    </div>
-    <table class="admin-table">
-      <thead><tr>
-        <th>SESSION</th><th>OWNER</th><th>PLAN</th><th>STATUS</th><th>UPTIME</th><th>CPU</th><th>RAM</th><th>ACTIONS</th>
-      </tr></thead>
-      <tbody>
-        ${mockSessions.map(s=>`
-        <tr>
-          <td>
-            <div style="font-weight:700;color:var(--text);">${s.name}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${s.file}</div>
-          </td>
-          <td style="color:var(--muted);font-size:13px;">${s.owner}</td>
-          <td><span class="tag ${s.plan}">${s.plan.toUpperCase()}</span></td>
-          <td><span class="tag ${s.status}">${s.status.toUpperCase()}</span></td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">${s.uptime}</td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);">${s.cpu}</td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);">${s.ram}</td>
-          <td>
-            <button class="action-btn ok" onclick="toast('Viewing logs for ${s.name}')">LOGS</button>
-            <button class="action-btn danger" onclick="toast('Killed session ${s.name}')">KILL</button>
-          </td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  </div>`;
-}
-
-function renderLogs() {
-  return `
-  <div class="panel">
-    <div class="panel-header">
-      <span class="panel-title">SERVER LOGS</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">live stream</span>
-    </div>
-    <div class="server-log" style="max-height:500px;">
-      ${mockLogs.map(l=>`<div><span class="sl-ts">[${l.ts}]</span> <span class="${l.cls}">${l.txt}</span></div>`).join('')}
-    </div>
-  </div>`;
+    </div>`);
+  });
 }
 
 function renderAnnounce() {
-  return `
-  <div class="panel" style="max-width:600px;">
-    <div class="panel-header"><span class="panel-title">SEND ANNOUNCEMENT</span></div>
-    <div class="announce-form">
-      <label style="font-size:11px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:8px;">TITLE</label>
-      <input class="ann-input" style="min-height:auto;resize:none;height:auto;padding:10px 14px;" type="text" placeholder="Scheduled Maintenance...">
-      <label style="font-size:11px;letter-spacing:2px;color:var(--muted);display:block;margin:12px 0 8px;">MESSAGE</label>
-      <textarea class="ann-input" id="annMsg" placeholder="We will be performing scheduled maintenance on Jan 20 from 2am–4am UTC. All sessions will be paused during this window."></textarea>
-      <label style="font-size:11px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:8px;">TARGET</label>
-      <select style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;margin-bottom:16px;">
-        <option>All Users</option>
-        <option>Pro Users Only</option>
-        <option>Free Users Only</option>
+  vc(`<div class="panel" style="max-width:560px;">
+    <div class="ph"><span class="pt">BROADCAST ANNOUNCEMENT</span></div>
+    <div class="aform">
+      <label style="font-size:10px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:6px;">TITLE</label>
+      <input class="ai" type="text" id="annTitle" placeholder="Scheduled Maintenance">
+      <label style="font-size:10px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:6px;">MESSAGE</label>
+      <textarea class="ai" id="annBody" placeholder="We will perform maintenance on Jan 20 from 2am-4am UTC..."></textarea>
+      <label style="font-size:10px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:6px;">TARGET</label>
+      <select class="ai" id="annTarget" style="margin-bottom:14px;">
+        <option value="all">All Users</option>
+        <option value="pro">Pro Users</option>
+        <option value="free">Free Users</option>
       </select>
-      <div class="ann-btns">
-        <button class="send-btn" onclick="toast('Announcement sent to all users!')">📢 BROADCAST →</button>
-      </div>
+      <button class="send-btn" style="margin:0;" onclick="sendAnnouncement()">📢 BROADCAST →</button>
     </div>
-  </div>
-
-  <div class="panel" style="max-width:600px;margin-top:20px;">
-    <div class="panel-header"><span class="panel-title">PAST ANNOUNCEMENTS</span></div>
-    <table class="admin-table">
-      <thead><tr><th>DATE</th><th>TITLE</th><th>TARGET</th></tr></thead>
-      <tbody>
-        <tr><td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">2025-01-10</td><td>Welcome to CloudPy Beta!</td><td><span class="tag online">ALL</span></td></tr>
-        <tr><td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">2025-01-08</td><td>Pro plan now available</td><td><span class="tag free">FREE USERS</span></td></tr>
-      </tbody>
-    </table>
-  </div>`;
+  </div>`);
 }
 
-function renderPlans() {
-  return `
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">FREE TIER CONFIG</span></div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-        ${configRow('Max Sessions', '1')}
-        ${configRow('RAM Limit', '256 MB')}
-        ${configRow('CPU Type', 'Shared (Throttled)')}
-        ${configRow('Disk Limit', '100 MB')}
-        ${configRow('Log History', '50 lines')}
-        ${configRow('Auto-Restart', 'Disabled')}
-        <button class="send-btn" style="margin-top:8px;" onclick="toast('Free plan config saved!')">SAVE CHANGES</button>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">PRO TIER CONFIG</span></div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-        ${configRow('Max Sessions', '5')}
-        ${configRow('RAM Limit', '2 GB')}
-        ${configRow('CPU Type', 'Dedicated (Fast)')}
-        ${configRow('Disk Limit', '5 GB')}
-        ${configRow('Log History', 'Unlimited')}
-        ${configRow('Auto-Restart', 'Enabled')}
-        <button class="send-btn" style="margin-top:8px;" onclick="toast('Pro plan config saved!')">SAVE CHANGES</button>
-      </div>
-    </div>
-  </div>
-  <div class="panel" style="margin-top:20px;">
-    <div class="panel-header"><span class="panel-title">REVENUE (${new Date().toLocaleString('en',{month:'long',year:'numeric'})})</span></div>
-    <table class="admin-table">
-      <thead><tr><th>DATE</th><th>USER</th><th>PLAN</th><th>AMOUNT</th><th>STATUS</th></tr></thead>
-      <tbody>
-        ${mockUsers.filter(u=>u.revenue>0).map(u=>`
-        <tr>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">2025-01-${String(Math.floor(Math.random()*28)+1).padStart(2,'0')}</td>
-          <td>${u.name}</td><td><span class="tag pro">PRO</span></td>
-          <td style="font-family:'JetBrains Mono',monospace;color:var(--green);">$${u.revenue.toFixed(2)}</td>
-          <td><span class="tag online">PAID</span></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  </div>`;
+// Actions
+async function upgradeUser(id, plan) {
+  try { await ownerApi('PATCH',`/api/owner/users/${id}`,{plan}); toast(`Plan updated to ${plan}`); } catch(e){toast(e.message,true);}
+}
+async function banUser(id, banned) {
+  try { await ownerApi('PATCH',`/api/owner/users/${id}`,{banned:!!banned}); toast(banned?'User banned':'User unbanned'); ownerApi('GET','/api/owner/users').then(renderUsers); } catch(e){toast(e.message,true);}
+}
+async function killSession(id) {
+  try { await ownerApi('POST',`/api/owner/sessions/${id}/kill`); toast('Session killed'); ownerApi('GET','/api/owner/sessions').then(renderSessions); } catch(e){toast(e.message,true);}
+}
+async function markPaid(id) {
+  try { await ownerApi('PATCH',`/api/owner/invoices/${id}`,{status:'paid'}); toast('Marked as paid'); ownerApi('GET','/api/owner/invoices').then(renderInvoices); } catch(e){toast(e.message,true);}
+}
+async function markStatus(id, status) {
+  try { await ownerApi('PATCH',`/api/owner/invoices/${id}`,{status}); toast('Status updated'); ownerApi('GET','/api/owner/invoices').then(renderInvoices); } catch(e){toast(e.message,true);}
+}
+async function issueInvoice() {
+  const userId = document.getElementById('invUser').value;
+  const amount = parseFloat(document.getElementById('invAmt').value);
+  const desc   = document.getElementById('invDesc').value.trim();
+  const due    = document.getElementById('invDue').value;
+  if (!amount) { toast('Enter an amount', true); return; }
+  try { await ownerApi('POST','/api/owner/invoices',{userId,amount,description:desc,dueDate:due||null}); toast('Invoice issued!'); } catch(e){toast(e.message,true);}
+}
+async function sendAnnouncement() {
+  const title  = document.getElementById('annTitle').value.trim();
+  const body   = document.getElementById('annBody').value.trim();
+  const target = document.getElementById('annTarget').value;
+  if (!title||!body) { toast('Fill in title and message', true); return; }
+  try { await ownerApi('POST','/api/owner/announce',{title,body,target}); toast('Announcement broadcast!'); } catch(e){toast(e.message,true);}
 }
 
-function configRow(label, val) {
-  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
-    <span style="font-size:14px;font-weight:600;color:var(--muted);">${label}</span>
-    <input style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:5px;padding:5px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;width:160px;text-align:right;" value="${val}">
-  </div>`;
-}
-
-function renderSettings() {
-  return `
-  <div class="panel" style="max-width:600px;">
-    <div class="panel-header"><span class="panel-title">SERVER SETTINGS</span></div>
-    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-      ${configRow('Site Name', 'CloudPy')}
-      ${configRow('Owner Password', '••••••••')}
-      ${configRow('Max Free Users', '1000')}
-      ${configRow('Max Pro Users', 'Unlimited')}
-      ${configRow('Maintenance Mode', 'OFF')}
-      <button class="send-btn" style="margin-top:8px;" onclick="toast('Settings saved!')">SAVE SETTINGS</button>
-    </div>
-  </div>`;
-}
-
-function toast(msg) {
+function toast(msg, err=false) {
   const t=document.getElementById('toast');
-  t.textContent=msg;t.style.display='block';
-  setTimeout(()=>{t.style.display='none';},3000);
+  t.textContent=msg; t.className=err?'err':''; t.style.display='block';
+  setTimeout(()=>t.style.display='none',3500);
 }
 </script>
 </body>
