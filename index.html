@@ -1,296 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CloudPy — Real Python Hosting</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:#060810; --bg2:#0b0f1a; --green:#00ff88; --green2:#00cc6a;
-    --blue:#3b82f6; --red:#ff4444; --yellow:#fbbf24;
-    --text:#e2e8f0; --muted:#64748b;
-    --border:rgba(0,255,136,0.1); --glow:0 0 20px rgba(0,255,136,0.2);
-    --discord:#5865F2;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
-  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,136,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-  .blob{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
-  .b1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,255,136,0.05) 0%,transparent 70%);top:-200px;left:-200px;animation:f1 8s ease-in-out infinite;}
-  .b2{width:500px;height:500px;background:radial-gradient(circle,rgba(88,101,242,0.04) 0%,transparent 70%);bottom:-100px;right:-100px;animation:f2 10s ease-in-out infinite;}
-  @keyframes f1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,30px)}}
-  @keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,-20px)}}
-
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:62px;background:rgba(6,8,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
-  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
-  .logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#000;box-shadow:0 0 14px rgba(0,255,136,0.4);}
-  .logo-text{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;color:var(--green);letter-spacing:2px;}
-  .nav-links{display:flex;align-items:center;gap:28px;}
-  .nav-links a{text-decoration:none;color:var(--muted);font-size:15px;font-weight:600;letter-spacing:1px;transition:color 0.2s;}
-  .nav-links a:hover{color:var(--green);}
-  .nav-cta{background:linear-gradient(135deg,var(--green),var(--green2));color:#000 !important;padding:7px 18px;border-radius:6px;font-weight:700 !important;}
-  .nav-cta:hover{box-shadow:var(--glow) !important;}
-
-  .hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 40px 60px;text-align:center;}
-  .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:50px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--green);letter-spacing:2px;margin-bottom:28px;animation:fadeUp 0.5s ease both;}
-  .badge-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
-  h1{font-family:'Orbitron',sans-serif;font-size:clamp(40px,7vw,84px);font-weight:900;line-height:1.05;animation:fadeUp 0.5s 0.1s ease both;}
-  h1 .l1{display:block;color:var(--text);}
-  h1 .l2{display:block;background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-  .sub{margin-top:18px;font-size:18px;color:var(--muted);max-width:520px;line-height:1.7;font-weight:500;animation:fadeUp 0.5s 0.2s ease both;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-
-  /* TERMINAL */
-  .term-demo{margin-top:44px;width:100%;max-width:680px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 0 40px rgba(0,255,136,0.06),0 40px 80px rgba(0,0,0,0.5);animation:fadeUp 0.5s 0.3s ease both;}
-  .t-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);}
-  .tdot{width:11px;height:11px;border-radius:50%;}
-  .tdot.r{background:#ff5f57;} .tdot.y{background:#febc2e;} .tdot.g{background:#28c840;}
-  .t-title{margin-left:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
-  .t-badge{margin-left:auto;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.25);border-radius:4px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);}
-  .t-body{padding:18px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;text-align:left;min-height:180px;}
-  .ti{color:var(--green);} .tw{color:var(--yellow);} .te{color:var(--red);} .ts{color:var(--blue);} .tm{color:var(--muted);}
-  .cur{display:inline-block;width:7px;height:13px;background:var(--green);margin-left:2px;animation:blink 1s infinite;vertical-align:middle;}
-  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
-
-  /* FEATURES */
-  section{position:relative;z-index:1;padding:80px 40px;max-width:1200px;margin:0 auto;}
-  .sec-lbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--green);text-transform:uppercase;margin-bottom:10px;}
-  .sec-title{font-family:'Orbitron',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.1;}
-  .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:44px;}
-  .fc{background:rgba(11,15,26,0.8);border:1px solid var(--border);border-radius:12px;padding:26px;transition:transform 0.3s,border-color 0.3s,box-shadow 0.3s;cursor:default;}
-  .fc:hover{transform:translateY(-4px);border-color:rgba(0,255,136,0.28);box-shadow:var(--glow);}
-  .fc-ico{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;}
-  .fc-ico.g{background:rgba(0,255,136,0.1);} .fc-ico.b{background:rgba(59,130,246,0.1);} .fc-ico.p{background:rgba(192,132,252,0.1);} .fc-ico.y{background:rgba(251,191,36,0.1);}
-  .fc-title{font-size:17px;font-weight:700;margin-bottom:7px;}
-  .fc-desc{font-size:14px;color:var(--muted);line-height:1.6;font-weight:500;}
-
-  /* PLANS */
-  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px;margin-top:44px;max-width:860px;margin-left:auto;margin-right:auto;}
-  .pc{background:rgba(11,15,26,0.8);border:1px solid var(--border);border-radius:14px;padding:34px 30px;position:relative;overflow:hidden;transition:transform 0.3s;}
-  .pc.pro{border-color:rgba(0,255,136,0.35);background:linear-gradient(160deg,rgba(0,255,136,0.05) 0%,rgba(11,15,26,0.8) 40%);}
-  .pc.pro::after{content:'POPULAR';position:absolute;top:0;right:0;background:linear-gradient(135deg,var(--green),var(--green2));color:#000;font-size:9px;font-weight:700;letter-spacing:2px;padding:5px 14px;border-radius:0 14px 0 9px;}
-  .pc:hover{transform:translateY(-5px);}
-  .pn{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:3px;color:var(--muted);}
-  .pp{margin-top:10px;font-family:'Orbitron',sans-serif;font-size:50px;font-weight:900;line-height:1;}
-  .pp span{font-size:18px;color:var(--muted);vertical-align:top;padding-top:10px;display:inline-block;}
-  .pp .per{font-size:14px;color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:500;}
-  .pd{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.6;}
-  .pdiv{height:1px;background:var(--border);margin:22px 0;}
-  .pf{list-style:none;display:flex;flex-direction:column;gap:11px;}
-  .pf li{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;}
-  .pf li .ck{color:var(--green);}
-  .pf li .cx{color:var(--red);}
-  .pf li.dim{color:var(--muted);}
-  .pbtn{width:100%;margin-top:26px;padding:13px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.2s;border:none;text-decoration:none;display:block;text-align:center;}
-  .pbtn.free{background:transparent;border:1px solid var(--border);color:var(--text);}
-  .pbtn.free:hover{border-color:var(--green);color:var(--green);}
-  .pbtn.probtn{background:linear-gradient(135deg,var(--green),var(--green2));color:#000;box-shadow:0 4px 18px rgba(0,255,136,0.25);}
-  .pbtn.probtn:hover{box-shadow:0 4px 28px rgba(0,255,136,0.45);transform:scale(1.02);}
-
-  /* AUTH */
-  .auth-section{position:relative;z-index:1;text-align:center;padding:80px 40px;}
-  .auth-card{max-width:420px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:44px 36px;box-shadow:0 0 60px rgba(0,255,136,0.05);}
-  .auth-logo{width:60px;height:60px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:#000;margin:0 auto 22px;box-shadow:0 0 28px rgba(0,255,136,0.4);}
-  .auth-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;margin-bottom:6px;}
-  .auth-sub{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.6;}
-  .disc-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#5865F2;color:#fff;border:none;border-radius:9px;padding:15px 20px;font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(88,101,242,0.3);}
-  .disc-btn:hover{background:#4752c4;transform:translateY(-2px);box-shadow:0 6px 28px rgba(88,101,242,0.5);}
-  .server-note{margin-top:20px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.12);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);text-align:left;line-height:1.8;}
-  .server-note strong{color:var(--green);}
-  .server-input{width:100%;margin-top:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,136,0.1);border-radius:7px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color 0.2s;}
-  .server-input:focus{border-color:var(--green);}
-  .server-save{margin-top:8px;padding:7px 14px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);border-radius:6px;color:var(--green);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
-  .server-save:hover{background:rgba(0,255,136,0.2);}
-
-  footer{position:relative;z-index:1;text-align:center;padding:36px 40px;border-top:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:500;}
-  .disc-tag{background:rgba(88,101,242,0.12);border:1px solid rgba(88,101,242,0.25);color:#818cf8;padding:2px 10px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;}
-  #toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg2);border:1px solid var(--green);border-radius:9px;padding:11px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green);display:none;box-shadow:var(--glow);animation:toastIn 0.3s ease;}
-  #toast.err{border-color:var(--red);color:var(--red);}
-  @keyframes toastIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
-  @media(max-width:600px){nav{padding:0 16px;}.nav-links{display:none;}section{padding:60px 20px;}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dummy - Physics Sandbox</title>
+    <!-- Importing Matter.js for advanced physics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #121212; /* Dark majestic background */
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        h1 { margin: 0 0 10px 0; font-size: 24px; }
+        p { margin: 0; font-size: 14px; color: #aaa; }
+    </style>
 </head>
 <body>
 
-<div class="blob b1"></div>
-<div class="blob b2"></div>
-
-<nav>
-  <a href="#" class="nav-logo">
-    <div class="logo-mark">C</div>
-    <span class="logo-text">CLOUDPY</span>
-  </a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#login" class="nav-cta">LOGIN →</a>
-  </div>
-</nav>
-
-<div class="hero">
-  <div class="badge"><div class="badge-dot"></div>REAL PYTHON HOSTING — 24/7</div>
-  <h1><span class="l1">YOUR BOTS. ALWAYS</span><span class="l2">RUNNING.</span></h1>
-  <p class="sub">Upload your .py file, hit Start. Real Python processes. Real terminal logs streaming live. Even when your PC is off.</p>
-
-  <div class="term-demo">
-    <div class="t-bar">
-      <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
-      <span class="t-title">discord_bot.py — session_a3f9</span>
-      <span class="t-badge">● RUNNING</span>
+    <div id="ui">
+        <h1>Test Dummy Beta</h1>
+        <p>Left Click & Drag to move dummy.</p>
+        <p>Right Click to shoot a heavy weapon ball.</p>
     </div>
-    <div class="t-body" id="demoTerm">
-      <div><span class="tm">[14:23:01]</span> <span class="ts">SYS</span> [CloudPy] Starting session "my-discord-bot"...</div>
-      <div><span class="tm">[14:23:01]</span> <span class="ts">SYS</span> [CloudPy] Runtime: python3 | Plan: FREE</div>
-      <div><span class="tm">[14:23:02]</span> <span class="ti">OUT</span> discord.py 2.3.2 ready</div>
-      <div><span class="tm">[14:23:03]</span> <span class="ti">OUT</span> Token has been successfully authenticated</div>
-      <div><span class="tm">[14:23:03]</span> <span class="ti">OUT</span> Logged in as MyBot#0001 (ID: 1234567890)</div>
-      <div><span class="tm">[14:23:03]</span> <span class="ti">OUT</span> Serving 12 guilds, 4,821 members</div>
-      <div id="demoLive"></div>
-    </div>
-  </div>
-</div>
 
-<section id="features">
-  <div class="sec-lbl">// FEATURES</div>
-  <div class="sec-title">REAL HOSTING.<br>NOT SIMULATED.</div>
-  <div class="feat-grid">
-    <div class="fc"><div class="fc-ico g">🐍</div><div class="fc-title">Real Python Processes</div><div class="fc-desc">Your script runs as an actual Python child process on our server. stdout and stderr stream directly to your browser in real-time.</div></div>
-    <div class="fc"><div class="fc-ico b">🔌</div><div class="fc-title">WebSocket Log Stream</div><div class="fc-desc">Logs arrive instantly via WebSocket — no polling. Every print(), error, and warning shows up the moment it happens.</div></div>
-    <div class="fc"><div class="fc-ico p">🌐</div><div class="fc-title">Always-On Sessions</div><div class="fc-desc">Sessions keep running server-side. Turn off your PC — your bot stays online. Persistent until you click Stop.</div></div>
-    <div class="fc"><div class="fc-ico y">🔄</div><div class="fc-title">Auto-Restart on Crash</div><div class="fc-desc">Pro plan: if your script crashes, it automatically restarts after 5 seconds. Never miss a beat.</div></div>
-    <div class="fc"><div class="fc-ico g">📤</div><div class="fc-title">File Upload & Deploy</div><div class="fc-desc">Upload your .py file from the dashboard. No git, no CLI. Just drag-drop and click Start.</div></div>
-    <div class="fc"><div class="fc-ico b">🧾</div><div class="fc-title">Invoices & Billing</div><div class="fc-desc">View, download, and print PDF invoices directly from your dashboard. Pro invoices generated automatically each month.</div></div>
-  </div>
-</section>
+    <script>
+        // --- Setup Matter.js ---
+        const Engine = Matter.Engine,
+              Render = Matter.Render,
+              Runner = Matter.Runner,
+              Composites = Matter.Composites,
+              MouseConstraint = Matter.MouseConstraint,
+              Mouse = Matter.Mouse,
+              Composite = Matter.Composite,
+              Constraint = Matter.Constraint,
+              Bodies = Matter.Bodies,
+              Events = Matter.Events,
+              Vector = Matter.Vector;
 
-<section id="pricing">
-  <div class="sec-lbl">// PRICING</div>
-  <div class="sec-title">PICK YOUR PLAN</div>
-  <div class="plans">
-    <div class="pc">
-      <div class="pn">FREE TIER</div>
-      <div class="pp"><span>$</span>0<span class="per">/mo</span></div>
-      <div class="pd">Perfect for testing. Limited but real.</div>
-      <div class="pdiv"></div>
-      <ul class="pf">
-        <li><span class="ck">✓</span> 1 Active Session</li>
-        <li><span class="ck">✓</span> 256 MB RAM</li>
-        <li><span class="ck">✓</span> Real Python execution</li>
-        <li><span class="ck">✓</span> Live log streaming</li>
-        <li class="dim"><span class="cx">✗</span> Auto-Restart</li>
-        <li class="dim"><span class="cx">✗</span> Priority queue</li>
-      </ul>
-      <a href="#login" class="pbtn free">START FOR FREE</a>
-    </div>
-    <div class="pc pro">
-      <div class="pn">PRO</div>
-      <div class="pp"><span>$</span>7<span class="per">/mo</span></div>
-      <div class="pd">For serious bots and production scripts.</div>
-      <div class="pdiv"></div>
-      <ul class="pf">
-        <li><span class="ck">✓</span> 5 Concurrent Sessions</li>
-        <li><span class="ck">✓</span> 2 GB RAM</li>
-        <li><span class="ck">✓</span> Real Python execution</li>
-        <li><span class="ck">✓</span> Live log streaming</li>
-        <li><span class="ck">✓</span> Auto-Restart on crash</li>
-        <li><span class="ck">✓</span> PDF Invoice download</li>
-      </ul>
-      <a href="#login" class="pbtn probtn">GET PRO →</a>
-    </div>
-  </div>
-</section>
+        const engine = Engine.create();
+        const world = engine.world;
 
-<div class="auth-section" id="login">
-  <div class="auth-card">
-    <div class="auth-logo">C</div>
-    <div class="auth-title">GET STARTED</div>
-    <div class="auth-sub">Sign in with your Discord account to deploy your first Python session.</div>
-    <button class="disc-btn" onclick="discordLogin()">
-      <svg width="22" height="17" viewBox="0 0 71 55" fill="none"><path d="M60.1 4.9A58.6 58.6 0 0 0 45.7.4a.2.2 0 0 0-.3.1 40.8 40.8 0 0 0-1.8 3.7 54.1 54.1 0 0 0-16.2 0A37.8 37.8 0 0 0 25.6.5a.2.2 0 0 0-.3-.1A58.5 58.5 0 0 0 10.9 4.9a.2.2 0 0 0-.1.1C1.6 18.7-.9 32.1.3 45.3c0 .1.1.1.1.2a58.9 58.9 0 0 0 17.8 9 .2.2 0 0 0 .3-.1 42 42 0 0 0 3.6-5.9.2.2 0 0 0-.1-.3 38.7 38.7 0 0 1-5.5-2.6.2.2 0 0 1 0-.4l1.1-.8a.2.2 0 0 1 .2 0c11.6 5.3 24.1 5.3 35.5 0a.2.2 0 0 1 .3 0l1.1.8a.2.2 0 0 1 0 .4 36.3 36.3 0 0 1-5.5 2.6.2.2 0 0 0-.1.3 47.1 47.1 0 0 0 3.6 5.9.2.2 0 0 0 .3.1 58.7 58.7 0 0 0 17.8-9 .2.2 0 0 0 .1-.2c1.5-15.3-2.5-28.6-10.6-40.4a.2.2 0 0 0-.1-.1ZM23.7 37.3c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1c3.6 0 6.5 3.2 6.4 7.1 0 3.9-2.8 7.1-6.4 7.1Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1c3.6 0 6.5 3.2 6.4 7.1 0 3.9-2.8 7.1-6.4 7.1Z" fill="#fff"/></svg>
-      Login with Discord
-    </button>
-    <div class="server-note">
-      <strong>⚙️ Backend URL</strong> — Point to your deployed server:<br>
-      <input class="server-input" id="backendInput" placeholder="https://your-backend.railway.app" value="">
-      <button class="server-save" onclick="saveBackend()">SAVE & TEST</button>
-    </div>
-  </div>
-</div>
+        const render = Render.create({
+            element: document.body,
+            engine: engine,
+            options: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                wireframes: false,
+                background: '#121212'
+            }
+        });
 
-<footer>
-  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px;">
-    Made by <span class="disc-tag">.yurix_</span> on Discord
-  </div>
-  <div style="font-size:12px;color:rgba(100,116,139,0.5);">CloudPy © 2025 — Real Python Hosting</div>
-</footer>
+        Render.run(render);
+        const runner = Runner.create();
+        Runner.run(runner, engine);
 
-<div id="toast"></div>
+        // --- Build Boundaries ---
+        const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 50, { isStatic: true, render: { fillStyle: '#333' } });
+        const wallLeft = Bodies.rectangle(0, window.innerHeight / 2, 50, window.innerHeight, { isStatic: true, render: { fillStyle: '#333' } });
+        const wallRight = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 50, window.innerHeight, { isStatic: true, render: { fillStyle: '#333' } });
+        Composite.add(world, [ground, wallLeft, wallRight]);
 
-<script>
-// ============================================================
-//  CONFIG
-// ============================================================
-const DISCORD_CLIENT_ID  = 'YOUR_CLIENT_ID_HERE'; // ← paste your Discord app Client ID
-const REDIRECT_URI_ENCODED = encodeURIComponent(window.location.origin + window.location.pathname.replace('index.html','') + 'callback.html');
-const DISCORD_OAUTH_URL    = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI_ENCODED}&response_type=code&scope=identify`;
+        // --- Create "Test Dummy" Ragdoll ---
+        function createDummy(x, y) {
+            const headOptions = { friction: 0.8, restitution: 0.2, render: { fillStyle: '#e0e0e0' } };
+            const torsoOptions = { friction: 0.8, restitution: 0.2, render: { fillStyle: '#c0c0c0' } };
+            const limbOptions = { friction: 0.8, restitution: 0.2, render: { fillStyle: '#a0a0a0' } };
 
-// Load saved backend URL
-const savedBackend = localStorage.getItem('cloudpy_backend') || '';
-document.getElementById('backendInput').value = savedBackend;
+            const head = Bodies.circle(x, y - 60, 20, headOptions);
+            const torso = Bodies.rectangle(x, y, 40, 80, torsoOptions);
+            const leftArm = Bodies.rectangle(x - 35, y, 20, 60, limbOptions);
+            const rightArm = Bodies.rectangle(x + 35, y, 20, 60, limbOptions);
+            const leftLeg = Bodies.rectangle(x - 15, y + 70, 20, 60, limbOptions);
+            const rightLeg = Bodies.rectangle(x + 15, y + 70, 20, 60, limbOptions);
 
-function saveBackend() {
-  let url = document.getElementById('backendInput').value.trim().replace(/\/$/, '');
-  if (!url) { toast('Enter your backend URL', true); return; }
-  localStorage.setItem('cloudpy_backend', url);
-  // Test health
-  fetch(url + '/health').then(r => r.json()).then(d => {
-    toast('✓ Backend connected! Active sessions: ' + d.activeSessions);
-  }).catch(() => toast('Cannot reach backend — check URL or CORS', true));
-}
+            const dummyParts = [head, torso, leftArm, rightArm, leftLeg, rightLeg];
+            dummyParts.forEach(part => part.isDummy = true); // Tag parts for collision detection
 
-function discordLogin() {
-  if (DISCORD_CLIENT_ID === '1496238462528000241') {
-    toast('⚠️ Set your Discord Client ID in index.html first!', true);
-    return;
-  }
-  const backend = localStorage.getItem('cloudpy_backend');
-  if (!backend) { toast('Set your backend URL first (above)', true); return; }
-  window.location.href = DISCORD_OAUTH_URL;
-}
+            const neck = Constraint.create({ bodyA: head, bodyB: torso, pointA: { x: 0, y: 20 }, pointB: { x: 0, y: -40 }, stiffness: 0.8, render: { visible: false }});
+            const leftShoulder = Constraint.create({ bodyA: torso, bodyB: leftArm, pointA: { x: -20, y: -30 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
+            const rightShoulder = Constraint.create({ bodyA: torso, bodyB: rightArm, pointA: { x: 20, y: -30 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
+            const leftHip = Constraint.create({ bodyA: torso, bodyB: leftLeg, pointA: { x: -10, y: 40 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
+            const rightHip = Constraint.create({ bodyA: torso, bodyB: rightLeg, pointA: { x: 10, y: 40 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
 
-// Check if already logged in
-if (sessionStorage.getItem('cloudpy_token')) {
-  window.location.href = 'dashboard.html';
-}
+            Composite.add(world, [...dummyParts, neck, leftShoulder, rightShoulder, leftHip, rightHip]);
+        }
 
-// Demo terminal animation
-const lines = [
-  { d:2200, c:'tw', lv:'OUT', t:'WARNING: asyncio detected, using uvloop' },
-  { d:4500, c:'ti', lv:'OUT', t:'Command !ping from user#4821' },
-  { d:7000, c:'ti', lv:'OUT', t:'Heartbeat ACK (latency: 38ms)' },
-  { d:9500, c:'tw', lv:'OUT', t:'Rate limit hit — backing off 1.1s' },
-  { d:12000,c:'ti', lv:'OUT', t:'Reconnected to Discord gateway' },
-];
-lines.forEach(({d,c,lv,t}) => {
-  setTimeout(() => {
-    const el  = document.getElementById('demoLive');
-    const now = new Date().toISOString().replace('T',' ').slice(11,19);
-    const div = document.createElement('div');
-    div.innerHTML = `<span class="tm">[${now}]</span> <span class="${c}">${lv}</span> ${t}`;
-    el.appendChild(div);
-    const cur = el.querySelector('.cur'); if (cur) cur.remove();
-    const c2 = document.createElement('span'); c2.className='cur'; el.appendChild(c2);
-    document.getElementById('demoTerm').scrollTop = 9999;
-  }, d);
-});
+        createDummy(window.innerWidth / 2, window.innerHeight / 2);
 
-function toast(msg, err=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = err ? 'err' : ''; t.style.display = 'block';
-  setTimeout(()=>t.style.display='none', 4500);
-}
-</script>
+        // --- Mouse Interaction ---
+        const mouse = Mouse.create(render.canvas);
+        const mouseConstraint = MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: { stiffness: 0.2, render: { visible: false } }
+        });
+        Composite.add(world, mouseConstraint);
+        render.mouse = mouse;
+
+        // --- Weapon System & Gore Physics ---
+        // Right click to shoot a weapon
+        window.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const startX = 0;
+            const startY = e.clientY;
+            const bullet = Bodies.circle(startX, startY, 15, {
+                density: 0.05, // Heavy impact
+                frictionAir: 0.01,
+                restitution: 0.5,
+                render: { fillStyle: '#ffcc00' }
+            });
+            
+            // Calculate velocity towards mouse
+            const forceX = (e.clientX - startX) * 0.05;
+            const forceY = (e.clientY - startY) * 0.05;
+            
+            Matter.Body.setVelocity(bullet, { x: forceX, y: forceY });
+            Composite.add(world, bullet);
+        });
+
+        // Custom Particle System for "Blood/Gore"
+        let particles = [];
+        
+        function spawnGore(x, y, intensity) {
+            const particleCount = Math.min(Math.floor(intensity * 2), 30); // Cap particles to prevent lag
+            for (let i = 0; i < particleCount; i++) {
+                const particle = Bodies.circle(x, y, Math.random() * 4 + 2, {
+                    friction: 0.1,
+                    restitution: 0.1,
+                    isSensor: true, // Don't collide with other particles heavily
+                    render: { fillStyle: '#8a0303' } // Dark blood red
+                });
+                
+                // Explode outward
+                const velocity = {
+                    x: (Math.random() - 0.5) * intensity,
+                    y: (Math.random() - 0.5) * intensity
+                };
+                Matter.Body.setVelocity(particle, velocity);
+                
+                Composite.add(world, particle);
+                
+                // Remove particle after a few seconds to save memory
+                setTimeout(() => {
+                    Composite.remove(world, particle);
+                }, 3000 + Math.random() * 2000);
+            }
+        }
+
+        // Listen for impacts
+        Events.on(engine, 'collisionStart', function(event) {
+            const pairs = event.pairs;
+            
+            for (let i = 0; i < pairs.length; i++) {
+                const bodyA = pairs[i].bodyA;
+                const bodyB = pairs[i].bodyB;
+
+                // Check if dummy was hit
+                if (bodyA.isDummy || bodyB.isDummy) {
+                    // Calculate impact speed based on velocity difference
+                    const velocityA = bodyA.velocity;
+                    const velocityB = bodyB.velocity;
+                    const relativeVelocity = Vector.magnitude(Vector.sub(velocityA, velocityB));
+                    
+                    // If the impact is hard enough, spawn gore particles
+                    if (relativeVelocity > 5) {
+                        const collisionPoint = pairs[i].collision.supports[0] || bodyA.position;
+                        spawnGore(collisionPoint.x, collisionPoint.y, relativeVelocity);
+                    }
+                }
+            }
+        });
+
+        // --- Window Resize Handling ---
+        window.addEventListener('resize', () => {
+            render.canvas.width = window.innerWidth;
+            render.canvas.height = window.innerHeight;
+            Matter.Body.setPosition(ground, { x: window.innerWidth / 2, y: window.innerHeight });
+            Matter.Body.setPosition(wallRight, { x: window.innerWidth, y: window.innerHeight / 2 });
+        });
+    </script>
 </body>
 </html>
