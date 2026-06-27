@@ -3,196 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Dummy - Physics Sandbox</title>
-    <!-- Importing Matter.js for advanced physics -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <title>3D Test Dummy - Gore Physics</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
             overflow: hidden;
-            background-color: #121212; /* Dark majestic background */
-            color: white;
+            background-color: #0a0a0a;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
-        #ui {
+        /* Majestic Glassmorphism UI */
+        #ui-container {
             position: absolute;
             top: 20px;
             left: 20px;
-            pointer-events: none;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 12px;
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
+            border-radius: 16px;
+            padding: 20px;
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
         }
-        h1 { margin: 0 0 10px 0; font-size: 24px; }
-        p { margin: 0; font-size: 14px; color: #aaa; }
+        h1 { margin: 0 0 5px 0; font-size: 22px; font-weight: 600; letter-spacing: 1px; }
+        p { margin: 0 0 15px 0; font-size: 13px; color: #aaa; }
+        
+        .weapon-btn {
+            display: block;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+        .weapon-btn:hover {
+            background: rgba(255, 50, 50, 0.2);
+            border-color: rgba(255, 50, 50, 0.5);
+            transform: translateX(5px);
+        }
+        .weapon-btn.active {
+            background: rgba(255, 50, 50, 0.4);
+            border-color: #ff3333;
+            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
+        }
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.5);
+            font-size: 24px;
+            pointer-events: none;
+        }
     </style>
+    
+    <!-- Import Maps for Three.js and Cannon-es -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+            }
+        }
+    </script>
 </head>
 <body>
 
-    <div id="ui">
-        <h1>Test Dummy Beta</h1>
-        <p>Left Click & Drag to move dummy.</p>
-        <p>Right Click to shoot a heavy weapon ball.</p>
+    <div id="ui-container">
+        <h1>TEST DUMMY 3D</h1>
+        <p>Right-Click & Drag to rotate camera.<br>Left-Click to shoot.</p>
+        
+        <button class="weapon-btn active" id="btn-pistol">Pistol (Fast, Light)</button>
+        <button class="weapon-btn" id="btn-shotgun">Shotgun (Spread)</button>
+        <button class="weapon-btn" id="btn-rocket">Heavy Slug (High Impact)</button>
     </div>
+    
+    <div id="crosshair">+</div>
 
-    <script>
-        // --- Setup Matter.js ---
-        const Engine = Matter.Engine,
-              Render = Matter.Render,
-              Runner = Matter.Runner,
-              Composites = Matter.Composites,
-              MouseConstraint = Matter.MouseConstraint,
-              Mouse = Matter.Mouse,
-              Composite = Matter.Composite,
-              Constraint = Matter.Constraint,
-              Bodies = Matter.Bodies,
-              Events = Matter.Events,
-              Vector = Matter.Vector;
+    <script type="module">
+        import * as THREE from 'three';
+        import * as CANNON from 'cannon-es';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        const engine = Engine.create();
-        const world = engine.world;
+        // --- Globals & Setup ---
+        let currentWeapon = 'pistol';
+        const syncList = []; // Keeps Three.js meshes synced with Cannon.js bodies
 
-        const render = Render.create({
-            element: document.body,
-            engine: engine,
-            options: {
-                width: window.innerWidth,
-                height: window.innerHeight,
-                wireframes: false,
-                background: '#121212'
-            }
+        // Three.js Scene Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a);
+        scene.fog = new THREE.Fog(0x1a1a1a, 10, 50);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 5, 10);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.set(0, 3, 0);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+        dirLight.position.set(5, 10, 5);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        // Cannon-es Physics Setup
+        const world = new CANNON.World({
+            gravity: new CANNON.Vec3(0, -9.81, 0),
         });
 
-        Render.run(render);
-        const runner = Runner.create();
-        Runner.run(runner, engine);
+        // --- Materials ---
+        const dummyMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.6 });
+        const bloodMat = new THREE.MeshStandardMaterial({ color: 0x8a0303, roughness: 0.2 });
+        const groundMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
 
-        // --- Build Boundaries ---
-        const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 50, { isStatic: true, render: { fillStyle: '#333' } });
-        const wallLeft = Bodies.rectangle(0, window.innerHeight / 2, 50, window.innerHeight, { isStatic: true, render: { fillStyle: '#333' } });
-        const wallRight = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 50, window.innerHeight, { isStatic: true, render: { fillStyle: '#333' } });
-        Composite.add(world, [ground, wallLeft, wallRight]);
+        const physicsMaterial = new CANNON.Material("standard");
+        const physicsContactMaterial = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {
+            friction: 0.8,
+            restitution: 0.3
+        });
+        world.addContactMaterial(physicsContactMaterial);
 
-        // --- Create "Test Dummy" Ragdoll ---
-        function createDummy(x, y) {
-            const headOptions = { friction: 0.8, restitution: 0.2, render: { fillStyle: '#e0e0e0' } };
-            const torsoOptions = { friction: 0.8, restitution: 0.2, render: { fillStyle: '#c0c0c0' } };
-            const limbOptions = { friction: 0.8, restitution: 0.2, render: { fillStyle: '#a0a0a0' } };
+        // --- Ground ---
+        const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), groundMat);
+        groundMesh.rotation.x = -Math.PI / 2;
+        groundMesh.receiveShadow = true;
+        scene.add(groundMesh);
 
-            const head = Bodies.circle(x, y - 60, 20, headOptions);
-            const torso = Bodies.rectangle(x, y, 40, 80, torsoOptions);
-            const leftArm = Bodies.rectangle(x - 35, y, 20, 60, limbOptions);
-            const rightArm = Bodies.rectangle(x + 35, y, 20, 60, limbOptions);
-            const leftLeg = Bodies.rectangle(x - 15, y + 70, 20, 60, limbOptions);
-            const rightLeg = Bodies.rectangle(x + 15, y + 70, 20, 60, limbOptions);
+        const groundBody = new CANNON.Body({
+            type: CANNON.Body.STATIC,
+            shape: new CANNON.Plane(),
+            material: physicsMaterial
+        });
+        groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        world.addBody(groundBody);
 
-            const dummyParts = [head, torso, leftArm, rightArm, leftLeg, rightLeg];
-            dummyParts.forEach(part => part.isDummy = true); // Tag parts for collision detection
+        // --- Ragdoll Generator ---
+        function createBox(x, y, z, w, h, d, mass) {
+            const shape = new CANNON.Box(new CANNON.Vec3(w/2, h/2, d/2));
+            const body = new CANNON.Body({ mass: mass, material: physicsMaterial });
+            body.addShape(shape);
+            body.position.set(x, y, z);
+            world.addBody(body);
 
-            const neck = Constraint.create({ bodyA: head, bodyB: torso, pointA: { x: 0, y: 20 }, pointB: { x: 0, y: -40 }, stiffness: 0.8, render: { visible: false }});
-            const leftShoulder = Constraint.create({ bodyA: torso, bodyB: leftArm, pointA: { x: -20, y: -30 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
-            const rightShoulder = Constraint.create({ bodyA: torso, bodyB: rightArm, pointA: { x: 20, y: -30 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
-            const leftHip = Constraint.create({ bodyA: torso, bodyB: leftLeg, pointA: { x: -10, y: 40 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
-            const rightHip = Constraint.create({ bodyA: torso, bodyB: rightLeg, pointA: { x: 10, y: 40 }, pointB: { x: 0, y: -25 }, stiffness: 0.8, render: { visible: false }});
+            const geometry = new THREE.BoxGeometry(w, h, d);
+            const mesh = new THREE.Mesh(geometry, dummyMat.clone()); // Clone mat so we can turn individual parts red
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            scene.add(mesh);
 
-            Composite.add(world, [...dummyParts, neck, leftShoulder, rightShoulder, leftHip, rightHip]);
+            syncList.push({ mesh, body });
+            return body;
         }
 
-        createDummy(window.innerWidth / 2, window.innerHeight / 2);
+        function createRagdoll(x, y, z) {
+            // Body parts
+            const head = createBox(x, y + 4.5, z, 1, 1, 1, 2);
+            const torso = createBox(x, y + 3, z, 1.5, 2, 1, 5);
+            const armL = createBox(x - 1.2, y + 3, z, 0.5, 1.5, 0.5, 1);
+            const armR = createBox(x + 1.2, y + 3, z, 0.5, 1.5, 0.5, 1);
+            const legL = createBox(x - 0.5, y + 1, z, 0.6, 2, 0.6, 2);
+            const legR = createBox(x + 0.5, y + 1, z, 0.6, 2, 0.6, 2);
 
-        // --- Mouse Interaction ---
-        const mouse = Mouse.create(render.canvas);
-        const mouseConstraint = MouseConstraint.create(engine, {
-            mouse: mouse,
-            constraint: { stiffness: 0.2, render: { visible: false } }
-        });
-        Composite.add(world, mouseConstraint);
-        render.mouse = mouse;
+            const parts = [head, torso, armL, armR, legL, legR];
+            parts.forEach(p => p.isDummy = true);
 
-        // --- Weapon System & Gore Physics ---
-        // Right click to shoot a weapon
-        window.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            const startX = 0;
-            const startY = e.clientY;
-            const bullet = Bodies.circle(startX, startY, 15, {
-                density: 0.05, // Heavy impact
-                frictionAir: 0.01,
-                restitution: 0.5,
-                render: { fillStyle: '#ffcc00' }
-            });
-            
-            // Calculate velocity towards mouse
-            const forceX = (e.clientX - startX) * 0.05;
-            const forceY = (e.clientY - startY) * 0.05;
-            
-            Matter.Body.setVelocity(bullet, { x: forceX, y: forceY });
-            Composite.add(world, bullet);
-        });
+            // Joints (PointToPoint)
+            const neck = new CANNON.PointToPointConstraint(head, new CANNON.Vec3(0,-0.6,0), torso, new CANNON.Vec3(0,1.1,0));
+            const shoulderL = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(-0.8,0.8,0), armL, new CANNON.Vec3(0,0.8,0));
+            const shoulderR = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(0.8,0.8,0), armR, new CANNON.Vec3(0,0.8,0));
+            const hipL = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(-0.5,-1.1,0), legL, new CANNON.Vec3(0,1.1,0));
+            const hipR = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(0.5,-1.1,0), legR, new CANNON.Vec3(0,1.1,0));
 
-        // Custom Particle System for "Blood/Gore"
-        let particles = [];
-        
-        function spawnGore(x, y, intensity) {
-            const particleCount = Math.min(Math.floor(intensity * 2), 30); // Cap particles to prevent lag
-            for (let i = 0; i < particleCount; i++) {
-                const particle = Bodies.circle(x, y, Math.random() * 4 + 2, {
-                    friction: 0.1,
-                    restitution: 0.1,
-                    isSensor: true, // Don't collide with other particles heavily
-                    render: { fillStyle: '#8a0303' } // Dark blood red
+            world.addConstraint(neck);
+            world.addConstraint(shoulderL);
+            world.addConstraint(shoulderR);
+            world.addConstraint(hipL);
+            world.addConstraint(hipR);
+
+            // Listen for heavy impacts to spawn blood
+            parts.forEach(part => {
+                part.addEventListener("collide", (e) => {
+                    const impactVel = Math.abs(e.contact.getImpactVelocityAlongNormal());
+                    if (impactVel > 15 && !e.body.isBlood) {
+                        spawnGore(e.contact.bj.position, impactVel);
+                        // Make the damaged part look bloody
+                        const syncObj = syncList.find(s => s.body === part);
+                        if(syncObj) syncObj.mesh.material.color.setHex(0xa61c1c);
+                    }
                 });
+            });
+        }
+
+        createRagdoll(0, 0, 0);
+
+        // --- Gore & Blood Particle System ---
+        function spawnGore(position, intensity) {
+            const count = Math.min(Math.floor(intensity / 2), 20); // Scale blood with impact
+            
+            for (let i = 0; i < count; i++) {
+                const radius = Math.random() * 0.15 + 0.05;
+                const shape = new CANNON.Sphere(radius);
+                const body = new CANNON.Body({ mass: 0.1, material: physicsMaterial });
+                body.isBlood = true; // Prevent blood from triggering more blood
+                body.addShape(shape);
+                
+                // Random position slightly offset from impact
+                body.position.set(
+                    position.x + (Math.random() - 0.5), 
+                    position.y + (Math.random() - 0.5), 
+                    position.z + (Math.random() - 0.5)
+                );
                 
                 // Explode outward
-                const velocity = {
-                    x: (Math.random() - 0.5) * intensity,
-                    y: (Math.random() - 0.5) * intensity
-                };
-                Matter.Body.setVelocity(particle, velocity);
-                
-                Composite.add(world, particle);
-                
-                // Remove particle after a few seconds to save memory
+                body.velocity.set(
+                    (Math.random() - 0.5) * intensity,
+                    Math.random() * intensity,
+                    (Math.random() - 0.5) * intensity
+                );
+                world.addBody(body);
+
+                const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 8, 8), bloodMat);
+                scene.add(mesh);
+                syncList.push({ mesh, body });
+
+                // Cleanup blood to prevent lag
                 setTimeout(() => {
-                    Composite.remove(world, particle);
-                }, 3000 + Math.random() * 2000);
+                    world.removeBody(body);
+                    scene.remove(mesh);
+                    const index = syncList.findIndex(s => s.body === body);
+                    if(index > -1) syncList.splice(index, 1);
+                }, 4000 + Math.random() * 2000);
             }
         }
 
-        // Listen for impacts
-        Events.on(engine, 'collisionStart', function(event) {
-            const pairs = event.pairs;
-            
-            for (let i = 0; i < pairs.length; i++) {
-                const bodyA = pairs[i].bodyA;
-                const bodyB = pairs[i].bodyB;
+        // --- Weapon System ---
+        function shootProjectile(speed, mass, size, isSpread = false) {
+            const direction = new THREE.Vector3();
+            camera.getWorldDirection(direction);
 
-                // Check if dummy was hit
-                if (bodyA.isDummy || bodyB.isDummy) {
-                    // Calculate impact speed based on velocity difference
-                    const velocityA = bodyA.velocity;
-                    const velocityB = bodyB.velocity;
-                    const relativeVelocity = Vector.magnitude(Vector.sub(velocityA, velocityB));
-                    
-                    // If the impact is hard enough, spawn gore particles
-                    if (relativeVelocity > 5) {
-                        const collisionPoint = pairs[i].collision.supports[0] || bodyA.position;
-                        spawnGore(collisionPoint.x, collisionPoint.y, relativeVelocity);
-                    }
-                }
+            const count = isSpread ? 6 : 1;
+
+            for(let i=0; i<count; i++) {
+                const shape = new CANNON.Sphere(size);
+                const body = new CANNON.Body({ mass: mass, material: physicsMaterial });
+                body.addShape(shape);
+                
+                // Start at camera position
+                body.position.copy(camera.position);
+                
+                // Add spread if shotgun
+                const spreadX = isSpread ? (Math.random() - 0.5) * 0.2 : 0;
+                const spreadY = isSpread ? (Math.random() - 0.5) * 0.2 : 0;
+                
+                body.velocity.set(
+                    (direction.x + spreadX) * speed,
+                    (direction.y + spreadY) * speed,
+                    (direction.z) * speed
+                );
+                world.addBody(body);
+
+                const mesh = new THREE.Mesh(new THREE.SphereGeometry(size, 8, 8), new THREE.MeshStandardMaterial({color: 0xffaa00}));
+                scene.add(mesh);
+                syncList.push({ mesh, body });
+
+                setTimeout(() => {
+                    world.removeBody(body);
+                    scene.remove(mesh);
+                }, 3000);
+            }
+        }
+
+        // Input Listeners
+        window.addEventListener('mousedown', (e) => {
+            if(e.button !== 0 || e.target.tagName === 'BUTTON') return; // Only left click, ignore UI
+            
+            if (currentWeapon === 'pistol') {
+                shootProjectile(80, 2, 0.2); // Fast, light
+            } else if (currentWeapon === 'shotgun') {
+                shootProjectile(60, 1, 0.1, true); // Multiple pellets
+            } else if (currentWeapon === 'rocket') {
+                shootProjectile(100, 50, 0.5); // Massive and heavy
             }
         });
 
-        // --- Window Resize Handling ---
-        window.addEventListener('resize', () => {
-            render.canvas.width = window.innerWidth;
-            render.canvas.height = window.innerHeight;
-            Matter.Body.setPosition(ground, { x: window.innerWidth / 2, y: window.innerHeight });
-            Matter.Body.setPosition(wallRight, { x: window.innerWidth, y: window.innerHeight / 2 });
+        // UI Logic
+        const buttons = document.querySelectorAll('.weapon-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                buttons.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentWeapon = e.target.id.replace('btn-', '');
+            });
         });
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Main Animation Loop ---
+        const timeStep = 1 / 60;
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Step physics world
+            world.step(timeStep);
+            
+            // Sync graphics to physics
+            syncList.forEach(item => {
+                item.mesh.position.copy(item.body.position);
+                item.mesh.quaternion.copy(item.body.quaternion);
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
     </script>
 </body>
 </html>
