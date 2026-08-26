@@ -3,341 +3,462 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Test Dummy - Gore Physics</title>
+    <title>I'm Sorry</title>
     <style>
-        body {
+        * {
             margin: 0;
-            overflow: hidden;
-            background-color: #0a0a0a;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-        }
-        /* Majestic Glassmorphism UI */
-        #ui-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(20, 20, 25, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
-            color: #fff;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            pointer-events: auto;
         }
-        h1 { margin: 0 0 5px 0; font-size: 22px; font-weight: 600; letter-spacing: 1px; }
-        p { margin: 0 0 15px 0; font-size: 13px; color: #aaa; }
-        
-        .weapon-btn {
-            display: block;
+
+        /* INTRO OVERLAY */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-            font-weight: 500;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
-        .weapon-btn:hover {
-            background: rgba(255, 50, 50, 0.2);
-            border-color: rgba(255, 50, 50, 0.5);
-            transform: translateX(5px);
-        }
-        .weapon-btn.active {
-            background: rgba(255, 50, 50, 0.4);
-            border-color: #ff3333;
-            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
-        }
-        #crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: rgba(255,255,255,0.5);
-            font-size: 24px;
+
+        .intro-overlay.hidden {
+            opacity: 0;
             pointer-events: none;
         }
-    </style>
-    
-    <!-- Import Maps for Three.js and Cannon-es -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-                "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+
+        .envelope {
+            background: white;
+            width: 300px;
+            height: 200px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: float 0.8s ease-out;
+        }
+
+        @keyframes float {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
             }
         }
-    </script>
+
+        .envelope-flap {
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #667eea;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.8s ease;
+            transform-origin: top center;
+            cursor: pointer;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            animation: flapOpen 0.8s ease forwards;
+        }
+
+        @keyframes flapOpen {
+            0% {
+                transform: rotateX(0deg);
+            }
+            100% {
+                transform: rotateX(180deg) translateY(-100px);
+            }
+        }
+
+        .envelope-body {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border: 2px solid #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .envelope-text {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInText 0.6s ease 0.4s forwards;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .click-prompt {
+            font-size: 12px;
+            color: #999;
+            opacity: 0;
+            animation: fadeInText 0.6s ease 0.6s forwards;
+        }
+
+        /* PROMPT MODAL */
+        .prompt-modal {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            animation: slideDown 0.5s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .prompt-modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prompt-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .prompt-text {
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .prompt-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .prompt-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .prompt-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-no {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-no:hover {
+            background: #e0e0e0;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 50px;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .container.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .heart {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 15px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .letter {
+            line-height: 1.8;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .letter p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .letter p:first-child::first-letter {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .emphasis {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .closing {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .signature {
+            font-style: italic;
+            color: #667eea;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .letter {
+                font-size: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <span class="heart">💔</span>
+            <h1>I'm Sorry</h1>
+            <p class="subtitle">A sincere apology from Kent</p>
+        </div>
 
-    <div id="ui-container">
-        <h1>TEST DUMMY 3D</h1>
-        <p>Right-Click & Drag to rotate camera.<br>Left-Click to shoot.</p>
-        
-        <button class="weapon-btn active" id="btn-pistol">Pistol (Fast, Light)</button>
-        <button class="weapon-btn" id="btn-shotgun">Shotgun (Spread)</button>
-        <button class="weapon-btn" id="btn-rocket">Heavy Slug (High Impact)</button>
+        <div class="letter">
+            <p>
+                I'm sorry for not talking to you. The truth is, I've been <span class="emphasis">struggling with jealousy</span>. When you're being friendly with other guys, I know that's just who you are—kind and genuine. But instead of being supportive, I let my own insecurities take over and shut you out. That wasn't fair.
+            </p>
+
+            <p>
+                <span class="emphasis">I have jealousy issues yk</span>, and I'm acknowledging that now. You shouldn't have to change or hold back your kindness because of my problems. I'm sorry for not communicating instead of just becoming distant.
+            </p>
+
+            <p>
+                I want to be better about this. I'm going to work on trusting you and handling my feelings in a healthier way. :> fix grammar by btw wallahi
+            </p>
+
+            <div class="closing">
+                <div class="signature">from kent to — christine <3</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📍 Made with sincerity and hope</p>
+        </div>
     </div>
-    
-    <div id="crosshair">+</div>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import * as CANNON from 'cannon-es';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    <!-- INTRO OVERLAY -->
+    <div class="intro-overlay" id="introOverlay">
+        <div style="text-align: center;">
+            <div class="envelope" id="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-body">
+                    <div class="envelope-text">💌 You've got mail</div>
+                    <div class="click-prompt">✨ Click to open ✨</div>
+                </div>
+            </div>
 
-        // --- Globals & Setup ---
-        let currentWeapon = 'pistol';
-        const syncList = []; // Keeps Three.js meshes synced with Cannon.js bodies
+            <div class="prompt-modal" id="promptModal">
+                <div class="prompt-icon">🤔</div>
+                <div class="prompt-text">Are you sure?</div>
+                <div class="prompt-subtitle">Read this letter from Kent?</div>
+                <div class="prompt-buttons">
+                    <button class="btn-yes" onclick="readLetter()">Yes, read it</button>
+                    <button class="btn-no" onclick="closeLetter()">Not ready</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Three.js Scene Setup
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x1a1a1a);
-        scene.fog = new THREE.Fog(0x1a1a1a, 10, 50);
+    <script>
+        let step = 0;
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.set(0, 5, 10);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        document.body.appendChild(renderer.domElement);
-
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.target.set(0, 3, 0);
-
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-        dirLight.position.set(5, 10, 5);
-        dirLight.castShadow = true;
-        scene.add(dirLight);
-
-        // Cannon-es Physics Setup
-        const world = new CANNON.World({
-            gravity: new CANNON.Vec3(0, -9.81, 0),
-        });
-
-        // --- Materials ---
-        const dummyMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.6 });
-        const bloodMat = new THREE.MeshStandardMaterial({ color: 0x8a0303, roughness: 0.2 });
-        const groundMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-
-        const physicsMaterial = new CANNON.Material("standard");
-        const physicsContactMaterial = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {
-            friction: 0.8,
-            restitution: 0.3
-        });
-        world.addContactMaterial(physicsContactMaterial);
-
-        // --- Ground ---
-        const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), groundMat);
-        groundMesh.rotation.x = -Math.PI / 2;
-        groundMesh.receiveShadow = true;
-        scene.add(groundMesh);
-
-        const groundBody = new CANNON.Body({
-            type: CANNON.Body.STATIC,
-            shape: new CANNON.Plane(),
-            material: physicsMaterial
-        });
-        groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
-        world.addBody(groundBody);
-
-        // --- Ragdoll Generator ---
-        function createBox(x, y, z, w, h, d, mass) {
-            const shape = new CANNON.Box(new CANNON.Vec3(w/2, h/2, d/2));
-            const body = new CANNON.Body({ mass: mass, material: physicsMaterial });
-            body.addShape(shape);
-            body.position.set(x, y, z);
-            world.addBody(body);
-
-            const geometry = new THREE.BoxGeometry(w, h, d);
-            const mesh = new THREE.Mesh(geometry, dummyMat.clone()); // Clone mat so we can turn individual parts red
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            scene.add(mesh);
-
-            syncList.push({ mesh, body });
-            return body;
-        }
-
-        function createRagdoll(x, y, z) {
-            // Body parts
-            const head = createBox(x, y + 4.5, z, 1, 1, 1, 2);
-            const torso = createBox(x, y + 3, z, 1.5, 2, 1, 5);
-            const armL = createBox(x - 1.2, y + 3, z, 0.5, 1.5, 0.5, 1);
-            const armR = createBox(x + 1.2, y + 3, z, 0.5, 1.5, 0.5, 1);
-            const legL = createBox(x - 0.5, y + 1, z, 0.6, 2, 0.6, 2);
-            const legR = createBox(x + 0.5, y + 1, z, 0.6, 2, 0.6, 2);
-
-            const parts = [head, torso, armL, armR, legL, legR];
-            parts.forEach(p => p.isDummy = true);
-
-            // Joints (PointToPoint)
-            const neck = new CANNON.PointToPointConstraint(head, new CANNON.Vec3(0,-0.6,0), torso, new CANNON.Vec3(0,1.1,0));
-            const shoulderL = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(-0.8,0.8,0), armL, new CANNON.Vec3(0,0.8,0));
-            const shoulderR = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(0.8,0.8,0), armR, new CANNON.Vec3(0,0.8,0));
-            const hipL = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(-0.5,-1.1,0), legL, new CANNON.Vec3(0,1.1,0));
-            const hipR = new CANNON.PointToPointConstraint(torso, new CANNON.Vec3(0.5,-1.1,0), legR, new CANNON.Vec3(0,1.1,0));
-
-            world.addConstraint(neck);
-            world.addConstraint(shoulderL);
-            world.addConstraint(shoulderR);
-            world.addConstraint(hipL);
-            world.addConstraint(hipR);
-
-            // Listen for heavy impacts to spawn blood
-            parts.forEach(part => {
-                part.addEventListener("collide", (e) => {
-                    const impactVel = Math.abs(e.contact.getImpactVelocityAlongNormal());
-                    if (impactVel > 15 && !e.body.isBlood) {
-                        spawnGore(e.contact.bj.position, impactVel);
-                        // Make the damaged part look bloody
-                        const syncObj = syncList.find(s => s.body === part);
-                        if(syncObj) syncObj.mesh.material.color.setHex(0xa61c1c);
-                    }
-                });
-            });
-        }
-
-        createRagdoll(0, 0, 0);
-
-        // --- Gore & Blood Particle System ---
-        function spawnGore(position, intensity) {
-            const count = Math.min(Math.floor(intensity / 2), 20); // Scale blood with impact
-            
-            for (let i = 0; i < count; i++) {
-                const radius = Math.random() * 0.15 + 0.05;
-                const shape = new CANNON.Sphere(radius);
-                const body = new CANNON.Body({ mass: 0.1, material: physicsMaterial });
-                body.isBlood = true; // Prevent blood from triggering more blood
-                body.addShape(shape);
-                
-                // Random position slightly offset from impact
-                body.position.set(
-                    position.x + (Math.random() - 0.5), 
-                    position.y + (Math.random() - 0.5), 
-                    position.z + (Math.random() - 0.5)
-                );
-                
-                // Explode outward
-                body.velocity.set(
-                    (Math.random() - 0.5) * intensity,
-                    Math.random() * intensity,
-                    (Math.random() - 0.5) * intensity
-                );
-                world.addBody(body);
-
-                const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 8, 8), bloodMat);
-                scene.add(mesh);
-                syncList.push({ mesh, body });
-
-                // Cleanup blood to prevent lag
-                setTimeout(() => {
-                    world.removeBody(body);
-                    scene.remove(mesh);
-                    const index = syncList.findIndex(s => s.body === body);
-                    if(index > -1) syncList.splice(index, 1);
-                }, 4000 + Math.random() * 2000);
-            }
-        }
-
-        // --- Weapon System ---
-        function shootProjectile(speed, mass, size, isSpread = false) {
-            const direction = new THREE.Vector3();
-            camera.getWorldDirection(direction);
-
-            const count = isSpread ? 6 : 1;
-
-            for(let i=0; i<count; i++) {
-                const shape = new CANNON.Sphere(size);
-                const body = new CANNON.Body({ mass: mass, material: physicsMaterial });
-                body.addShape(shape);
-                
-                // Start at camera position
-                body.position.copy(camera.position);
-                
-                // Add spread if shotgun
-                const spreadX = isSpread ? (Math.random() - 0.5) * 0.2 : 0;
-                const spreadY = isSpread ? (Math.random() - 0.5) * 0.2 : 0;
-                
-                body.velocity.set(
-                    (direction.x + spreadX) * speed,
-                    (direction.y + spreadY) * speed,
-                    (direction.z) * speed
-                );
-                world.addBody(body);
-
-                const mesh = new THREE.Mesh(new THREE.SphereGeometry(size, 8, 8), new THREE.MeshStandardMaterial({color: 0xffaa00}));
-                scene.add(mesh);
-                syncList.push({ mesh, body });
-
-                setTimeout(() => {
-                    world.removeBody(body);
-                    scene.remove(mesh);
-                }, 3000);
-            }
-        }
-
-        // Input Listeners
-        window.addEventListener('mousedown', (e) => {
-            if(e.button !== 0 || e.target.tagName === 'BUTTON') return; // Only left click, ignore UI
-            
-            if (currentWeapon === 'pistol') {
-                shootProjectile(80, 2, 0.2); // Fast, light
-            } else if (currentWeapon === 'shotgun') {
-                shootProjectile(60, 1, 0.1, true); // Multiple pellets
-            } else if (currentWeapon === 'rocket') {
-                shootProjectile(100, 50, 0.5); // Massive and heavy
+        document.getElementById('envelope').addEventListener('click', function() {
+            if (step === 0) {
+                this.classList.add('open');
+                document.getElementById('promptModal').classList.add('show');
+                step = 1;
             }
         });
 
-        // UI Logic
-        const buttons = document.querySelectorAll('.weapon-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                buttons.forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                currentWeapon = e.target.id.replace('btn-', '');
-            });
-        });
-
-        // Window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // --- Main Animation Loop ---
-        const timeStep = 1 / 60;
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Step physics world
-            world.step(timeStep);
-            
-            // Sync graphics to physics
-            syncList.forEach(item => {
-                item.mesh.position.copy(item.body.position);
-                item.mesh.quaternion.copy(item.body.quaternion);
-            });
-
-            controls.update();
-            renderer.render(scene, camera);
+        function readLetter() {
+            const overlay = document.getElementById('introOverlay');
+            overlay.classList.add('hidden');
+            document.querySelector('.container').classList.add('show');
         }
-        animate();
+
+        function closeLetter() {
+            alert("Take your time. I'll be here when you're ready. - Kent");
+        }
     </script>
 </body>
 </html>
